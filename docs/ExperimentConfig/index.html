@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment - ExperimentConfig</title>
+    <link rel="stylesheet" type="text/css" href="/experiment-ios-client/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="/experiment-ios-client">
+            <strong>
+                Experiment
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#relationships">Relationships</a><ul><li><a href="#relationships">Nested Types</a></li></ul></li><li><a href="#initializers">Initializers</a><ul><li class="initializer"><a href="#experimentconfig.init(debug:debugassignmentrequests:fallbackvariant:initialflags:instancename:serverurl:)">init(debug:​debug​Assignment​Requests:​fallback​Variant:​initial​Flags:​instance​Name:​server​Url:​)</a></li></ul></li><li><a href="#properties">Properties</a><ul><li class="variable"><a href="#experimentconfig.debug">debug</a></li><li class="variable"><a href="#experimentconfig.debugassignmentrequests">debug​Assignment​Requests</a></li><li class="variable"><a href="#experimentconfig.fallbackvariant">fallback​Variant</a></li><li class="variable"><a href="#experimentconfig.initialflags">initial​Flags</a></li><li class="variable"><a href="#experimentconfig.instancename">instance​Name</a></li><li class="variable"><a href="#experimentconfig.serverurl">server​Url</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Structure</small>
+    <code class="name">Experiment​Config</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">struct</span> <span class="type">ExperimentConfig</span> </code></pre>
+</div>
+<section id="relationships">
+    <h2 hidden>Relationships</h2>
+        
+        <h3>Nested Types</h3>
+<dl>
+    <dt class="structure"><code><a href="/experiment-ios-client/ExperimentConfig_Defaults">ExperimentConfig.Defaults</a></code></dt>
+<dd></dd>
+<dt class="structure"><code><a href="/experiment-ios-client/ExperimentConfig_Constants">ExperimentConfig.Constants</a></code></dt>
+<dd></dd>
+</dl>
+</section>
+    <section id="initializers">
+        <h2>Initializers</h2>
+
+        <div role="article" class="initializer" id="experimentconfig.init(debug:debugassignmentrequests:fallbackvariant:initialflags:instancename:serverurl:)">
+    <h3>
+        <code>init(debug:​debug​Assignment​Requests:​fallback​Variant:​initial​Flags:​instance​Name:​server​Url:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>(
+        <span class="variable">debug</span>: <span class="type">Bool</span> = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">Debug</span>,
+        <span class="variable">debugAssignmentRequests</span>: <span class="type">Bool</span> = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">DebugAssignmentRequests</span>,
+        <span class="variable">fallbackVariant</span>: <span class="type">Variant</span>? = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">FallbackVariant</span>,
+        <span class="variable">initialFlags</span>: [<span class="type">String</span>: <span class="type">Variant</span>] = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">InitialFlags</span>,
+        <span class="variable">instanceName</span>: <span class="type">String</span> = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">InstanceName</span>,
+        <span class="variable">serverUrl</span>: <span class="type">String</span> = <span class="variable">ExperimentConfig</span>.<span class="type">Defaults</span>.<span class="type">ServerUrl</span>
+    ) </code></pre>
+</div>
+</div>
+    </section>
+    <section id="properties">
+        <h2>Properties</h2>
+
+        <div role="article" class="variable" id="experimentconfig.debug">
+    <h3>
+        <code>debug</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">debug</span>: <span class="type">Bool</span></code></pre>
+</div>
+</div>
+<div role="article" class="variable" id="experimentconfig.debugassignmentrequests">
+    <h3>
+        <code>debug​Assignment​Requests</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">debugAssignmentRequests</span>: <span class="type">Bool</span></code></pre>
+</div>
+</div>
+<div role="article" class="variable" id="experimentconfig.fallbackvariant">
+    <h3>
+        <code>fallback​Variant</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">fallbackVariant</span>: <span class="type">Variant</span>?</code></pre>
+</div>
+</div>
+<div role="article" class="variable" id="experimentconfig.initialflags">
+    <h3>
+        <code>initial​Flags</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">initialFlags</span>: [<span class="type">String</span>: <span class="type">Variant</span>]</code></pre>
+</div>
+</div>
+<div role="article" class="variable" id="experimentconfig.instancename">
+    <h3>
+        <code>instance​Name</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">instanceName</span>: <span class="type">String</span></code></pre>
+</div>
+</div>
+<div role="article" class="variable" id="experimentconfig.serverurl">
+    <h3>
+        <code>server​Url</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">serverUrl</span>: <span class="type">String</span></code></pre>
+</div>
+</div>
+    </section>
+
+
+
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-05-24T14:16:58-0700">May 24, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>
