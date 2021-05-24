@@ -19,12 +19,12 @@ module.exports = {
       {
         "replacements": [
           {
-            "files": ["AmplitudeSkylab.podspec"],
-            "from": "skylab_version = \".*\"",
-            "to": "skylab_version = \"${nextRelease.version}\"",
+            "files": ["AmplitudeExperiment.podspec"],
+            "from": "experiment_version = \".*\"",
+            "to": "experiment_version = \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "AmplitudeSkylab.podspec",
+                "file": "AmplitudeExperiment.podspec",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -33,12 +33,12 @@ module.exports = {
             "countMatches": true
           },
           {
-            "files": ["Sources/Skylab/SkylabConfig.swift"],
+            "files": ["Sources/Experiment/ExperimentConfig.swift"],
             "from": "Version: String = \".*\"",
             "to": "Version: String = \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "Sources/Skylab/SkylabConfig.swift",
+                "file": "Sources/Experiment/ExperimentConfig.swift",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -50,11 +50,11 @@ module.exports = {
       }
     ],
     ["@semantic-release/git", {
-      "assets": ["AmplitudeSkylab.podspec", "Sources/Skylab/SkylabConfig.swift", "CHANGELOG.md", "docs/*"],
+      "assets": ["AmplitudeExperiment.podspec", "Sources/Experiment/ExperimentConfig.swift", "CHANGELOG.md", "docs/*"],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }],
     ["@semantic-release/exec", {
-      "publishCmd": "pod trunk push AmplitudeSkylab.podspec",
+      "publishCmd": "pod trunk push AmplitudeExperiment.podspec",
     }],
   ],
 }

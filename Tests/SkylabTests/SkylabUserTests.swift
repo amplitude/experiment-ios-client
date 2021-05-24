@@ -1,17 +1,17 @@
 //
-//  SkylabUserTest.swift
-//  SkylabTests
+//  ExperimentUserTest.swift
+//  ExperimentTests
 //
 //  Created by Brian Giori on 5/5/21.
 //
 
 import XCTest
-@testable import Skylab
+@testable import Experiment
 
-class SkylabUserTests: XCTestCase {
+class ExperimentUserTests: XCTestCase {
 
-    func testSkylabUserJSONSerialization() {
-        let user = SkylabUser(
+    func testExperimentUserJSONSerialization() {
+        let user = ExperimentUser(
             deviceId: "device_id",
             userId: "user_id",
             version: nil,
@@ -45,22 +45,22 @@ class SkylabUserTests: XCTestCase {
         XCTAssert(userUserDict == expectedUserDict)
     }
 
-    func testSkylabUserEquality() {
-        let user = SkylabUser(
+    func testExperimentUserEquality() {
+        let user = ExperimentUser(
             deviceId: "device_id",
             userId: "user_id",
             version: nil,
             country: "country",
             userProperties: ["userPropertyKey": "value"]
         )
-        let user2 = SkylabUser(
+        let user2 = ExperimentUser(
             deviceId: "device_id",
             userId: "user_id",
             version: nil,
             country: "country",
             userProperties: ["userPropertyKey": "different value"]
         )
-        let user3 = SkylabUser(
+        let user3 = ExperimentUser(
             deviceId: "device_id",
             userId: "user_id",
             version: nil,
@@ -71,8 +71,8 @@ class SkylabUserTests: XCTestCase {
         XCTAssert(user == user3)
     }
 
-    func testSkylabUserBuilderCopyUser() {
-        let builder = SkylabUser.Builder()
+    func testExperimentUserBuilderCopyUser() {
+        let builder = ExperimentUser.Builder()
             .setUserId("user_id")
             .setDeviceId("device_id")
             .setCountry("country")
@@ -89,13 +89,13 @@ class SkylabUserTests: XCTestCase {
             .setDeviceModel("test")
             .setCarrier("test")
             .setUserProperty("userPropertyKey", value: "value")
-        let user2 = SkylabUser.Builder()
+        let user2 = ExperimentUser.Builder()
             .setCountry("newCountry")
             .setVersion("newVersion")
             .setUserProperty("userPropertyKey2", value: "value2")
             .build()
         let user = builder.copyUser(user2).build()
-        let expected = SkylabUser.Builder()
+        let expected = ExperimentUser.Builder()
             .setUserId("user_id")
             .setDeviceId("device_id")
             .setCountry("newCountry") // overwrites value

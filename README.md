@@ -1,6 +1,6 @@
-# skylab-ios-client
+# experiment-ios-client
 
-iOS Client SDK for Skylab
+iOS Client SDK for Experiment
 
 ## Getting Started
 

@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "skylab-ios-client",
+    name: "experiment-ios-client",
     platforms: [
         .iOS(.v10),
         .macOS(.v10_10),
@@ -14,8 +14,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
-            name: "Skylab",
-            targets: ["Skylab"]),
+            name: "Experiment",
+            targets: ["Experiment"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -25,14 +25,14 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "Skylab",
+            name: "Experiment",
             dependencies: ["Amplitude"],
-            path: "Sources/Skylab",
+            path: "Sources/Experiment",
             exclude: ["Info.plist"]),
         .testTarget(
-            name: "SkylabTests",
-            dependencies: ["Skylab"],
-            path: "Tests/SkylabTests",
+            name: "ExperimentTests",
+            dependencies: ["Experiment"],
+            path: "Tests/ExperimentTests",
             exclude: ["Info.plist"]),
     ]
 )

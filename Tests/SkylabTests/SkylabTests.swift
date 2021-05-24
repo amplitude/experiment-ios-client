@@ -1,30 +1,30 @@
 //
-//  SkylabTests.swift
-//  SkylabTests
+//  ExperimentTests.swift
+//  ExperimentTests
 //
 //  Created by Curtis Liu on 12/3/20.
 //
 
 import XCTest
-@testable import Skylab
+@testable import Experiment
 
-class SkylabTests: XCTestCase {
+class ExperimentTests: XCTestCase {
 
     func testGetUserWithContext() {
-        let client = DefaultSkylabClient(apiKey: "", config: SkylabConfig())
+        let client = DefaultExperimentClient(apiKey: "", config: ExperimentConfig())
         _ = client.contextProvider = TestContextProvider()
-        client.user = SkylabUser(
+        client.user = ExperimentUser(
             deviceId: "device_id",
             userId: nil,
             version: "version"
         )
         let mergedUser = client.getUserWithContext()
-        let expectedUserAfterMerge = SkylabUser(
+        let expectedUserAfterMerge = ExperimentUser(
             deviceId: "device_id",
             userId: nil,
             version: "version",
             language: "language",
-            library: "\(SkylabConfig.Constants.Library)/\(SkylabConfig.Constants.Version)"
+            library: "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
         )
         XCTAssert(mergedUser == expectedUserAfterMerge)
     }

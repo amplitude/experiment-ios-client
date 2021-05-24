@@ -16,16 +16,16 @@ jobs:
       - name: iOS Tests
         run: |
           xcodebuild test \
-            -project Skylab.xcodeproj \
-            -scheme Skylab \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.4'
 
       - name: macOS Tests
         run: |
           xcodebuild \
-            -project Skylab.xcodeproj \
-            -scheme Skylab \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
             -sdk macosx \
             -destination 'platform=macosx' \
             test
@@ -33,8 +33,8 @@ jobs:
       - name: tvOS Tests
         run: |
           xcodebuild \
-            -project Skylab.xcodeproj \
-            -scheme Skylab \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
             -sdk appletvsimulator \
             -destination 'platform=tvOS Simulator,name=Apple TV' \
             test
