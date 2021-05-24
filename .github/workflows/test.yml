@@ -1,0 +1,41 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+
+      - name: Set Xcode 12.4
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_12.4.app
+
+      - name: iOS Tests
+        run: |
+          xcodebuild test \
+            -project Skylab.xcodeproj \
+            -scheme Skylab \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.4'
+
+      - name: macOS Tests
+        run: |
+          xcodebuild \
+            -project Skylab.xcodeproj \
+            -scheme Skylab \
+            -sdk macosx \
+            -destination 'platform=macosx' \
+            test
+
+      - name: tvOS Tests
+        run: |
+          xcodebuild \
+            -project Skylab.xcodeproj \
+            -scheme Skylab \
+            -sdk appletvsimulator \
+            -destination 'platform=tvOS Simulator,name=Apple TV' \
+            test
+
