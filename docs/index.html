@@ -14,7 +14,6 @@
             </strong>
             <span>Documentation</span>
         </a>
-        <sup>Beta</sup>
     </header>
 
     <!--
@@ -26,7 +25,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#classes">Classes</a></li><li><a href="#structures">Structures</a></li><li><a href="#protocols">Protocols</a></li></ol>
+            <ol><li><a href="#classes">Classes</a></li><li><a href="#structures">Structures</a></li><li><a href="#enumerations">Enumerations</a></li><li><a href="#protocols">Protocols</a></li></ol>
         </div>
     </nav>
 
@@ -36,8 +35,8 @@
         <h2>Classes</h2>
         <dl>
             <dt class="class">
-    <a href="/experiment-ios-client/AmplitudeContextProvider" title="class - AmplitudeContextProvider">
-        Amplitude​Context​Provider
+    <a href="/experiment-ios-client/DefaultUserProvider" title="class - DefaultUserProvider">
+        Default​User​Provider
     </a>
 </dt>
 <dd>
@@ -54,6 +53,14 @@
 <dt class="class">
     <a href="/experiment-ios-client/DefaultExperimentClient" title="class - DefaultExperimentClient">
         Default​Experiment​Client
+    </a>
+</dt>
+<dd>
+    
+</dd>
+<dt class="class">
+    <a href="/experiment-ios-client/ExperimentConfig_Builder" title="class - ExperimentConfig.Builder">
+        Experiment​Config.​Builder
     </a>
 </dt>
 <dd>
@@ -81,22 +88,6 @@
     
 </dd>
 <dt class="structure">
-    <a href="/experiment-ios-client/ExperimentConfig_Defaults" title="structure - ExperimentConfig.Defaults">
-        Experiment​Config.​Defaults
-    </a>
-</dt>
-<dd>
-    
-</dd>
-<dt class="structure">
-    <a href="/experiment-ios-client/ExperimentConfig_Constants" title="structure - ExperimentConfig.Constants">
-        Experiment​Config.​Constants
-    </a>
-</dt>
-<dd>
-    
-</dd>
-<dt class="structure">
     <a href="/experiment-ios-client/ExperimentUser" title="structure - ExperimentUser">
         Experiment​User
     </a>
@@ -114,24 +105,41 @@
 </dd>
         </dl>
     </section>
-    <section id="protocols">
-        <h2>Protocols</h2>
+    <section id="enumerations">
+        <h2>Enumerations</h2>
         <dl>
-            <dt class="protocol">
-    <a href="/experiment-ios-client/ContextProvider" title="protocol - ContextProvider">
-        Context​Provider
+            <dt class="enumeration">
+    <a href="/experiment-ios-client/Source" title="enumeration - Source">
+        Source
     </a>
 </dt>
 <dd>
     
 </dd>
-<dt class="protocol">
+        </dl>
+    </section>
+    <section id="protocols">
+        <h2>Protocols</h2>
+        <dl>
+            <dt class="protocol">
     <a href="/experiment-ios-client/ExperimentClient" title="protocol - ExperimentClient">
         Experiment​Client
     </a>
 </dt>
 <dd>
     
+</dd>
+<dt class="protocol">
+    <a href="/experiment-ios-client/ExperimentUserProvider" title="protocol - ExperimentUserProvider">
+        Experiment​User​Provider
+    </a>
+</dt>
+<dd>
+    <p>Provides a user to an ExperimentClient to be merged without overwriting prior to
+fetching variants for the user. In otherwords, fields are only sent in the fetch request
+if the user object passed into fetch or stored by the ExperimentClient does not
+define those fields.</p>
+
 </dd>
         </dl>
     </section>
@@ -141,7 +149,7 @@
 
     <footer>
         <p>
-    Generated on <time datetime="2021-05-24T14:16:58-0700">May 24, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-06-02T17:31:41+0000">June 2, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-rc.1</span>.
 </p>
     </footer>
 </body>
