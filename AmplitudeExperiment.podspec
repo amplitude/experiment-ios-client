@@ -24,6 +24,6 @@ Pod::Spec.new do |spec|
   spec.watchos.deployment_target = '3.0'
   spec.watchos.source_files      = 'sources/Experiment/**/*.{h,swift}'
 
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
 end
