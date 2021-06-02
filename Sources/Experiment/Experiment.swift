@@ -8,23 +8,29 @@
 import Foundation
 
 public class Experiment {
-    static var instances: [String: ExperimentClient] = [:]
-
-    public static func getInstance() -> ExperimentClient? {
-        return getInstance(ExperimentConfig.Defaults.InstanceName)
-    }
-
-    public static func getInstance(_ name: String) -> ExperimentClient? {
-        return instances[name]
-    }
+    
+    private static var defaultInstance = "$default_instance"
+    private static var instances: [String: ExperimentClient] = [:]
 
     public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
-        let instance = getInstance(config.instanceName)
+        let instance = instances[defaultInstance]
         if (instance != nil) {
             return instance!
         }
-        let newInstance: ExperimentClient = DefaultExperimentClient(apiKey: apiKey, config: config)
-        instances[config.instanceName] = newInstance
+        let storage = UserDefaultsStorage(instanceName: defaultInstance, apiKey: apiKey)
+        let newInstance: ExperimentClient = DefaultExperimentClient(
+            apiKey: apiKey,
+            config: config,
+            storage: storage
+        )
+        instances[defaultInstance] = newInstance
         return newInstance
+    }
+}
+
+internal struct ExperimentError: Error {
+    let message: String
+    init(_ msg: String) {
+        self.message = msg
     }
 }

@@ -3,16 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
 		E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9030DB425B8AFC600BA1BA8 /* Variant.swift */; };
 		E914961925796DA800C64B38 /* Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E914960F25796DA800C64B38 /* Experiment.framework */; };
-		E914961E25796DA800C64B38 /* ExperimentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914961D25796DA800C64B38 /* ExperimentTests.swift */; };
+		E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914961D25796DA800C64B38 /* ExperimentClientTests.swift */; };
 		E914962025796DA800C64B38 /* Experiment.h in Headers */ = {isa = PBXBuildFile; fileRef = E914961225796DA800C64B38 /* Experiment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9C5D91B2579718E00867574 /* AmplitudeContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9122579718E00867574 /* AmplitudeContextProvider.swift */; };
+		E9C5D91B2579718E00867574 /* DefaultUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9122579718E00867574 /* DefaultUserProvider.swift */; };
 		E9C5D91C2579718E00867574 /* ExperimentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9132579718E00867574 /* ExperimentClient.swift */; };
 		E9C5D91D2579718E00867574 /* UserDefaultsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9142579718E00867574 /* UserDefaultsStorage.swift */; };
 		E9C5D91E2579718E00867574 /* ExperimentConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9152579718E00867574 /* ExperimentConfig.swift */; };
@@ -20,8 +20,7 @@
 		E9C5D9202579718E00867574 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9172579718E00867574 /* Experiment.swift */; };
 		E9C5D9212579718E00867574 /* InMemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9182579718E00867574 /* InMemoryStorage.swift */; };
 		E9C5D9222579718E00867574 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D9192579718E00867574 /* Storage.swift */; };
-		E9C5D9232579718E00867574 /* ContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D91A2579718E00867574 /* ContextProvider.swift */; };
-		E9DF9D172610535300A781EB /* Amplitude in Frameworks */ = {isa = PBXBuildFile; productRef = E9DF9D162610535300A781EB /* Amplitude */; };
+		E9C5D9232579718E00867574 /* ExperimentUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C5D91A2579718E00867574 /* ExperimentUserProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,10 +40,10 @@
 		E914961225796DA800C64B38 /* Experiment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Experiment.h; sourceTree = "<group>"; };
 		E914961325796DA800C64B38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E914961825796DA800C64B38 /* ExperimentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExperimentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E914961D25796DA800C64B38 /* ExperimentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentTests.swift; sourceTree = "<group>"; };
+		E914961D25796DA800C64B38 /* ExperimentClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentClientTests.swift; sourceTree = "<group>"; };
 		E914961F25796DA800C64B38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9945CC325797C030066398B /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		E9C5D9122579718E00867574 /* AmplitudeContextProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AmplitudeContextProvider.swift; sourceTree = "<group>"; };
+		E9C5D9122579718E00867574 /* DefaultUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultUserProvider.swift; sourceTree = "<group>"; };
 		E9C5D9132579718E00867574 /* ExperimentClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentClient.swift; sourceTree = "<group>"; };
 		E9C5D9142579718E00867574 /* UserDefaultsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorage.swift; sourceTree = "<group>"; };
 		E9C5D9152579718E00867574 /* ExperimentConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentConfig.swift; sourceTree = "<group>"; };
@@ -52,7 +51,7 @@
 		E9C5D9172579718E00867574 /* Experiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
 		E9C5D9182579718E00867574 /* InMemoryStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InMemoryStorage.swift; sourceTree = "<group>"; };
 		E9C5D9192579718E00867574 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
-		E9C5D91A2579718E00867574 /* ContextProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContextProvider.swift; sourceTree = "<group>"; };
+		E9C5D91A2579718E00867574 /* ExperimentUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentUserProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +59,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9DF9D172610535300A781EB /* Amplitude in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,15 +103,15 @@
 		E914961125796DA800C64B38 /* Experiment */ = {
 			isa = PBXGroup;
 			children = (
-				E9C5D9122579718E00867574 /* AmplitudeContextProvider.swift */,
-				E9C5D91A2579718E00867574 /* ContextProvider.swift */,
+				E9C5D9142579718E00867574 /* UserDefaultsStorage.swift */,
 				E9C5D9182579718E00867574 /* InMemoryStorage.swift */,
+				E9C5D9192579718E00867574 /* Storage.swift */,
+				E9C5D9122579718E00867574 /* DefaultUserProvider.swift */,
+				E9C5D91A2579718E00867574 /* ExperimentUserProvider.swift */,
 				E9C5D9172579718E00867574 /* Experiment.swift */,
 				E9C5D9132579718E00867574 /* ExperimentClient.swift */,
 				E9C5D9152579718E00867574 /* ExperimentConfig.swift */,
 				E9C5D9162579718E00867574 /* ExperimentUser.swift */,
-				E9C5D9192579718E00867574 /* Storage.swift */,
-				E9C5D9142579718E00867574 /* UserDefaultsStorage.swift */,
 				E914961225796DA800C64B38 /* Experiment.h */,
 				E914961325796DA800C64B38 /* Info.plist */,
 				E9030DB425B8AFC600BA1BA8 /* Variant.swift */,
@@ -124,7 +122,7 @@
 		E914961C25796DA800C64B38 /* ExperimentTests */ = {
 			isa = PBXGroup;
 			children = (
-				E914961D25796DA800C64B38 /* ExperimentTests.swift */,
+				E914961D25796DA800C64B38 /* ExperimentClientTests.swift */,
 				E914961F25796DA800C64B38 /* Info.plist */,
 				201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */,
 			);
@@ -176,7 +174,6 @@
 			);
 			name = Experiment;
 			packageProductDependencies = (
-				E9DF9D162610535300A781EB /* Amplitude */,
 			);
 			productName = Experiment;
 			productReference = E914960F25796DA800C64B38 /* Experiment.framework */;
@@ -228,7 +225,6 @@
 			);
 			mainGroup = E914960525796DA800C64B38;
 			packageReferences = (
-				E9DF9D152610535300A781EB /* XCRemoteSwiftPackageReference "Amplitude-iOS" */,
 			);
 			productRefGroup = E914961025796DA800C64B38 /* Products */;
 			projectDirPath = "";
@@ -262,7 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C5D9232579718E00867574 /* ContextProvider.swift in Sources */,
+				E9C5D9232579718E00867574 /* ExperimentUserProvider.swift in Sources */,
 				E9C5D91F2579718E00867574 /* ExperimentUser.swift in Sources */,
 				E9C5D91C2579718E00867574 /* ExperimentClient.swift in Sources */,
 				E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */,
@@ -271,7 +267,7 @@
 				E9C5D91D2579718E00867574 /* UserDefaultsStorage.swift in Sources */,
 				E9C5D9222579718E00867574 /* Storage.swift in Sources */,
 				E9C5D9212579718E00867574 /* InMemoryStorage.swift in Sources */,
-				E9C5D91B2579718E00867574 /* AmplitudeContextProvider.swift in Sources */,
+				E9C5D91B2579718E00867574 /* DefaultUserProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +276,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */,
-				E914961E25796DA800C64B38 /* ExperimentTests.swift in Sources */,
+				E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,25 +553,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		E9DF9D152610535300A781EB /* XCRemoteSwiftPackageReference "Amplitude-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/amplitude/Amplitude-iOS.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		E9DF9D162610535300A781EB /* Amplitude */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E9DF9D152610535300A781EB /* XCRemoteSwiftPackageReference "Amplitude-iOS" */;
-			productName = Amplitude;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E914960625796DA800C64B38 /* Project object */;
 }

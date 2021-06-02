@@ -7,14 +7,10 @@
 
 import Foundation
 
-public struct Variant: Codable {
+public struct Variant {
+    
     public let value: String
     public let payload: Any?
-
-    enum CodingKeys: String, CodingKey {
-        case value
-        case payload
-    }
 
     public init(_ value: String, payload: Any? = nil) {
         self.value = value
@@ -31,6 +27,16 @@ public struct Variant: Codable {
         self.payload = json["payload"]
     }
 
+    
+}
+
+extension Variant : Codable {
+    
+    enum CodingKeys: String, CodingKey {
+        case value
+        case payload
+    }
+    
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.value = try values.decode(String.self, forKey: .value)
@@ -48,5 +54,23 @@ public struct Variant: Codable {
             data = try JSONSerialization.data(withJSONObject: v, options: [])
         }
         try container.encode(data, forKey: .payload)
+    }
+}
+
+extension Variant : Equatable {
+    
+    public static func == (lhs: Variant, rhs: Variant) -> Bool {
+        guard lhs.value == rhs.value else {
+            return false
+        }
+        if lhs.payload == nil && rhs.payload == nil {
+            return true
+        }
+        guard lhs.payload != nil, rhs.payload != nil else {
+            return false
+        }
+        let lhsData = try? JSONEncoder().encode(lhs)
+        let rhsData = try? JSONEncoder().encode(rhs)
+        return lhsData == rhsData
     }
 }

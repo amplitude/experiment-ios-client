@@ -8,174 +8,167 @@
 import Foundation
 
 public protocol ExperimentClient {
-    func start(user: ExperimentUser, completion: (() -> Void)?) -> Void
-    func setUser(user: ExperimentUser, completion: (() -> Void)?) -> Void
+    func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)?)
+    func variant(_ key: String, fallback: Variant?) -> Variant?
+    func all() -> [String:Variant]
+    func setUser(_ user: ExperimentUser?)
     func getUser() -> ExperimentUser?
-    func getUserWithContext() -> ExperimentUser
-    func getVariant(_ flagKey: String, fallback: Variant?) -> Variant?
-    func getVariant(_ flagKey: String, fallback: String) -> Variant
-    func getVariants() -> [String:Variant]
-    func refetchAll(completion: (() -> Void)?) -> Void
-    func setContextProvider(_ contextProvider: ContextProvider) -> ExperimentClient
-}
-
-public extension ExperimentClient {
-    func getVariant(_ flagKey: String, fallback: Variant? = nil) -> Variant? {
-        return getVariant(flagKey, fallback: fallback)
-    }
-
-    func getVariant(_ flagKey: String, fallback: String) -> Variant {
-        return getVariant(flagKey, fallback: fallback)
-    }
+    func getUserProvider() -> ExperimentUserProvider?
+    func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
 }
 
 public class DefaultExperimentClient : ExperimentClient {
 
-    internal let apiKey: String
-    internal let storage: Storage
-    internal let config: ExperimentConfig
-    internal var userId: String?
-    internal var user: ExperimentUser?
-    internal var contextProvider: ContextProvider?
+    private let apiKey: String
+    private let storage: Storage
+    private let storageLock = DispatchSemaphore(value: 1)
+    private let config: ExperimentConfig
+    
+    private var user: ExperimentUser? = nil
+    private var userProvider: ExperimentUserProvider? = nil
 
-    init(apiKey: String, config: ExperimentConfig) {
+    internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
-        self.storage = UserDefaultsStorage(apiKey: apiKey)
         self.config = config
-        self.userId = nil
-        self.user = nil
-        self.contextProvider = nil
+        self.storage = storage
+        self.storage.load()
     }
 
-    public func start(user: ExperimentUser, completion: (() -> Void)? = nil) -> Void {
+    public func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
         self.user = user
-        self.loadFromStorage()
-        self.fetchAll(completion: completion)
+        let fetchUser = self.mergeUserWithProvider()
+        self.doFetch(user: fetchUser) { result in
+            switch result {
+            case .success(let variants):
+                self.storeVariants(variants)
+                completion?(self, nil)
+            case .failure(let error):
+                completion?(self, error)
+            }
+        }
+    }
+    
+    public func variant(_ key: String, fallback: Variant? = nil) -> Variant? {
+        return self.all()[key] ??
+            fallback ??
+            self.config.initialVariants?[key] ??
+            self.config.fallbackVariant
     }
 
-    public func setUser(user: ExperimentUser, completion: (() -> Void)? = nil) -> Void {
-        if self.user != user {
-            self.user = user
-            self.fetchAll(completion: completion)
-        } else {
-            completion?()
+    public func all() -> [String: Variant] {
+        let storageVariants = self.storage.getAll()
+        let initialVariants = self.config.initialVariants ?? [:]
+        switch config.source {
+        case .LocalStorage:
+            return storageVariants.merging(initialVariants) { (current, _) in current }
+        case .InitialVariants:
+            return storageVariants.merging(initialVariants) { (_, new) in new }
         }
     }
 
     public func getUser() -> ExperimentUser? {
         return self.user
     }
-
-    public func getUserWithContext() -> ExperimentUser {
-        let builder = ExperimentUser.Builder()
-        if self.contextProvider != nil {
-            if let deviceId = self.contextProvider?.getDeviceId(), deviceId != "" {
-                _ = builder.setDeviceId(deviceId)
-            }
-            if let userId = self.contextProvider?.getUserId(), userId != "" {
-                _ = builder.setUserId(userId)
-            }
-            _ = builder.setPlatform(self.contextProvider?.getPlatform())
-                .setVersion(self.contextProvider?.getVersion())
-                .setLanguage(self.contextProvider?.getLanguage())
-                .setOs(self.contextProvider?.getOs())
-                .setDeviceManufacturer(self.contextProvider?.getDeviceManufacturer())
-                .setDeviceModel(self.contextProvider?.getDeviceModel())
-        }
-        return builder.setLibrary("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
-            .copyUser(self.user ?? ExperimentUser())
-            .build()
+    
+    public func setUser(_ user: ExperimentUser?) {
+        self.user = user
     }
-
-    public func refetchAll(completion: (() -> Void)? = nil) -> Void {
-        self.fetchAll(completion:completion)
+    
+    public func getUserProvider() -> ExperimentUserProvider? {
+        return self.userProvider
     }
-
-    public func fetchAll(completion:  (() -> Void)? = nil) {
-        let start = CFAbsoluteTimeGetCurrent()
-        DispatchQueue.global(qos: .background).async {
-            let session = URLSession.shared
-            let userContext = self.getUserWithContext()
-            let userId = userContext.userId
-            let deviceId = userContext.deviceId
-            if userId == nil && deviceId == nil {
-                print("[Experiment] WARN: user id and device id are null; amplitude will not be able to resolve identity")
-            }
-            let userContextDictionary = userContext.toDictionary()
-            do {
-                let requestData = try JSONSerialization.data(withJSONObject: userContextDictionary, options: [])
-                let b64encodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
-                    .replacingOccurrences(of: "/", with: "_")
-                    .replacingOccurrences(of: "=", with: "")
-
-                let url = URL(string: "\(self.config.serverUrl)/sdk/vardata/\(b64encodedUrl)")!
-                var request = URLRequest(url: url)
-                request.httpMethod = "GET"
-                request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
-                let task = session.dataTask(with: request) { (data, response, error) in
-                    // Check the response
-                    if let httpResponse = response as? HTTPURLResponse {
-
-                        // Check if an error occured
-                        if (error != nil) {
-                            // HERE you can manage the error
-                            print("[Experiment] \(error!)")
-                            completion?()
-                            return
-                        }
-
-                        if (httpResponse.statusCode != 200) {
-                            print("[Experiment] \(httpResponse.statusCode) received for \(url)")
-                            completion?()
-                            return
-                        }
-
-                        // Serialize the data into an object
-                        do {
-                            let flags = try JSONSerialization.jsonObject(with: data!, options: []) as? [String: [String: Any]] ?? [:]
-                            self.storage.clear()
-                            for (key, value) in flags {
-                                let variant = Variant(json: value)
-                                if (variant != nil) {
-                                    let _ = self.storage.put(key: key, value: variant!)
-                                }
-                            }
-                            self.storage.save()
-                            let end = CFAbsoluteTimeGetCurrent()
-                            print("[Experiment] Fetched all: \(flags) for user \(userContext) in \(end - start)s")
-                        } catch {
-                            print("[Experiment] Error during JSON serialization: \(error.localizedDescription)")
-                        }
-                    }
-
-                    completion?()
-                }
-                task.resume()
-            } catch {
-                print("[Experiment] Error during JSON serialization: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    public func getVariant(_ flagKey: String, fallback: String) -> Variant {
-        return self.storage.get(key: flagKey) ?? Variant(fallback, payload:nil)
-    }
-
-    public func getVariant(_ flagKey: String, fallback: Variant?) -> Variant? {
-        return self.storage.get(key: flagKey) ?? fallback ?? self.config.initialFlags[flagKey] ?? self.config.fallbackVariant
-    }
-
-    public func getVariants() -> [String: Variant] {
-        return self.storage.getAll()
-    }
-
-    public func setContextProvider(_ contextProvider: ContextProvider) -> ExperimentClient {
-        self.contextProvider = contextProvider
+    
+    public func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient {
+        self.userProvider = userProvider
         return self
     }
 
-    func loadFromStorage() -> Void {
-        self.storage.load()
-        print("[Experiment] loaded \(self.storage.getAll())")
+    public func doFetch(
+        user: ExperimentUser,
+        completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+    ) {
+        let start = CFAbsoluteTimeGetCurrent()
+        
+        let userId = user.userId
+        let deviceId = user.deviceId
+        if userId == nil && deviceId == nil {
+            print("[Experiment] WARN: user id and device id are null; amplitude will not be able to resolve identity")
+        }
+        
+        // Build fetch request
+        let userDictionary = user.toDictionary()
+        guard let requestData = try? JSONSerialization.data(withJSONObject: userDictionary, options: []) else {
+            completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
+            return
+        }
+        let b64encodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+        let url = URL(string: "\(self.config.serverUrl)/sdk/vardata/\(b64encodedUrl)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = Double(config.fetchTimeoutMillis) / 1000.0
+        
+        // Do fetch request
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                completion(Result.failure(error))
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(Result.failure(ExperimentError("Response is nil")))
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                completion(Result.failure(ExperimentError("Error Response: status=\(httpResponse.statusCode)")))
+                return
+            }
+            do {
+                let variants = try self.parseResponseData(data)
+                let end = CFAbsoluteTimeGetCurrent()
+                print("[Experiment] Fetched variants in \(end - start) s")
+                completion(Result.success(variants))
+            } catch {
+                print("[Experiment] Failed to parse response data: \(error)")
+                completion(Result.failure(error))
+            }
+        }
+        task.resume()
+    }
+
+    internal func mergeUserWithProvider() -> ExperimentUser {
+        var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
+        if self.user?.library == nil {
+            let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
+            libraryUser = libraryUser.copyToBuilder().library(library).build()
+        }
+        return libraryUser.merge(userProvider?.getUser())
+    }
+
+    private func parseResponseData(_ data: Data?) throws -> [String: Variant] {
+        guard let data = data else {
+            throw ExperimentError("Response data is nil")
+        }
+        let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+        guard let keys = jsonObject as? [String: [String: Any]] else {
+            throw ExperimentError("Failed to cast response json to [String: [String: Any]]")
+        }
+        var variants = [String: Variant]()
+        for (key, value) in keys {
+            if let variant = Variant(json: value) {
+                variants[key] = variant
+            }
+        }
+        return variants
+    }
+    
+    private func storeVariants(_ variants: [String: Variant]) {
+        storageLock.wait()
+        defer { storageLock.signal() }
+        storage.clear()
+        for (key, variant) in variants {
+            self.storage.put(key: key, value: variant)
+        }
     }
 }

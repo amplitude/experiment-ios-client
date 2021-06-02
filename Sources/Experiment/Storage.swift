@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol Storage {
-    func put(key: String, value: Variant) -> Variant?
+internal protocol Storage {
+    func put(key: String, value: Variant)
     func get(key: String) -> Variant?
     func clear()
     func getAll() -> [String:Variant]

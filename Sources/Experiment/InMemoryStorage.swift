@@ -7,13 +7,12 @@
 
 import Foundation
 
-class InMemoryStorage: Storage {
+internal class InMemoryStorage: Storage {
+    
     var map: [String:Variant] = [:]
 
-    func put(key: String, value: Variant) -> Variant? {
-        let oldValue = self.get(key: key)
+    func put(key: String, value: Variant) {
         map[key] = value
-        return oldValue
     }
 
     func get(key: String) -> Variant? {
@@ -31,6 +30,4 @@ class InMemoryStorage: Storage {
     
     func load() {}
     func save() {}
-    
-    
 }

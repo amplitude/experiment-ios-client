@@ -7,20 +7,17 @@
 
 import Foundation
 
-class UserDefaultsStorage: Storage {
+internal class UserDefaultsStorage: Storage {
     let userDefaults = UserDefaults.standard
-    let sharedPrefsKey: String
-    let sharedPrefsPrefix = "com.amplitude.flags.cached."
+    let key: String
     var map: [String:Variant] = [:]
 
-    init(apiKey: String) {
-        sharedPrefsKey = sharedPrefsPrefix + apiKey
+    init(instanceName: String, apiKey: String) {
+        key = "com.amplituide.experiment.variants.\(instanceName).\(apiKey.suffix(6))"
     }
 
-    func put(key: String, value: Variant) -> Variant? {
-        let oldValue = self.get(key: key)
+    func put(key: String, value: Variant) {
         map[key] = value
-        return oldValue
     }
 
     func get(key: String) -> Variant? {
@@ -38,7 +35,7 @@ class UserDefaultsStorage: Storage {
 
     func load() {
         if
-            let data = userDefaults.value(forKey: self.sharedPrefsKey) as? Data,
+            let data = userDefaults.value(forKey: self.key) as? Data,
             let loaded = try? JSONDecoder().decode([String:Variant].self, from: data) {
             for (key, value) in loaded {
                 map[key] = value
@@ -47,7 +44,7 @@ class UserDefaultsStorage: Storage {
         }
 
         if
-            let loaded = userDefaults.dictionary(forKey: self.sharedPrefsKey) as? [String:String] {
+            let loaded = userDefaults.dictionary(forKey: self.key) as? [String:String] {
             for (key, value) in loaded {
                 map[key] = Variant(value)
             }
@@ -57,7 +54,7 @@ class UserDefaultsStorage: Storage {
 
     func save() {
         if let data = try? JSONEncoder().encode(map) {
-            userDefaults.set(data, forKey: self.sharedPrefsKey)
+            userDefaults.set(data, forKey: self.key)
         }
     }
 
