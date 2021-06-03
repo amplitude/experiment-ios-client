@@ -14,32 +14,15 @@ public enum Source {
 
 public struct ExperimentConfig {
 
-    public private(set) var debug: Bool
-    public private(set) var fallbackVariant: Variant
-    public private(set) var initialVariants: [String: Variant]
-    public private(set) var source: Source
-    public private(set) var serverUrl: String
-    public private(set) var fetchTimeoutMillis: Int
-
-    internal init() {
-        // call private init with defaults
-        self.init(debug: ExperimentConfig.Defaults.debug)
-    }
+    public private(set) var debug: Bool = ExperimentConfig.Defaults.debug
+    public private(set) var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
+    public private(set) var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
+    public private(set) var source: Source = ExperimentConfig.Defaults.source
+    public private(set) var serverUrl: String = ExperimentConfig.Defaults.serverUrl
+    public private(set) var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     
-    private init(
-        debug: Bool = ExperimentConfig.Defaults.debug,
-        fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant,
-        initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants,
-        source: Source = ExperimentConfig.Defaults.source,
-        serverUrl: String = ExperimentConfig.Defaults.serverUrl,
-        fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
-    ) {
-        self.debug = debug
-        self.fallbackVariant = fallbackVariant
-        self.initialVariants = initialVariants
-        self.source = source
-        self.serverUrl = serverUrl
-        self.fetchTimeoutMillis = fetchTimeoutMillis
+    public init() {
+        // Default Config
     }
 
     internal struct Defaults {

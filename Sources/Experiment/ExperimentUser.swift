@@ -25,6 +25,10 @@ public struct ExperimentUser: Equatable {
     public private(set) var library: String?
     public private(set) var userProperties: [String: String]?
     
+    public init() {
+        // Empty User
+    }
+    
     public func copyToBuilder() -> Builder {
         return Builder()
             .deviceId(self.deviceId)
