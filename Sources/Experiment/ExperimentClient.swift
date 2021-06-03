@@ -9,7 +9,8 @@ import Foundation
 
 public protocol ExperimentClient {
     func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)?)
-    func variant(_ key: String, fallback: Variant?) -> Variant?
+    func variant(_ key: String) -> Variant
+    func variant(_ key: String, fallback: Variant?) -> Variant
     func all() -> [String:Variant]
     func setUser(_ user: ExperimentUser?)
     func getUser() -> ExperimentUser?
@@ -48,21 +49,24 @@ public class DefaultExperimentClient : ExperimentClient {
         }
     }
     
-    public func variant(_ key: String, fallback: Variant? = nil) -> Variant? {
+    public func variant(_ key: String) -> Variant {
+        return self.all()[key] ??
+            self.config.fallbackVariant
+    }
+    
+    public func variant(_ key: String, fallback: Variant? = nil) -> Variant {
         return self.all()[key] ??
             fallback ??
-            self.config.initialVariants?[key] ??
             self.config.fallbackVariant
     }
 
     public func all() -> [String: Variant] {
         let storageVariants = self.storage.getAll()
-        let initialVariants = self.config.initialVariants ?? [:]
         switch config.source {
         case .LocalStorage:
-            return storageVariants.merging(initialVariants) { (current, _) in current }
+            return storageVariants.merging(self.config.initialVariants) { (current, _) in current }
         case .InitialVariants:
-            return storageVariants.merging(initialVariants) { (_, new) in new }
+            return storageVariants.merging(self.config.initialVariants) { (_, new) in new }
         }
     }
 

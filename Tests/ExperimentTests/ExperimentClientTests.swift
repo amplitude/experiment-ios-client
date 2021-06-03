@@ -61,8 +61,8 @@ class ExperimentClientTests: XCTestCase {
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
             XCTAssertNotNil(variant)
-            XCTAssertEqual(ON_VARIANT_VALUE, variant?.value)
-            XCTAssertEqual(ON_VARIANT_PAYLOAD, variant?.payload as? String)
+            XCTAssertEqual(ON_VARIANT_VALUE, variant.value)
+            XCTAssertEqual(ON_VARIANT_PAYLOAD, variant.payload as? String)
             s.signal()
         }
         s.wait()
@@ -73,7 +73,7 @@ class ExperimentClientTests: XCTestCase {
         timeoutClient.fetch(user: testUser) { (client, error) in
             XCTAssertNotNil(error)
             let variant = client.variant(KEY, fallback: nil)
-            XCTAssertEqual("off", variant?.value)
+            XCTAssertEqual("off", variant.value)
             s.signal()
         }
         s.wait()
@@ -117,8 +117,8 @@ class ExperimentClientTests: XCTestCase {
         initialVariantSourceClient.fetch(user: testUser) { (client, error) in
             variant = client.variant(KEY, fallback: nil)
             XCTAssertNotNil(variant)
-            XCTAssertEqual("off", variant?.value)
-            XCTAssertNil(variant?.payload)
+            XCTAssertEqual("off", variant.value)
+            XCTAssertNil(variant.payload)
             s.signal()
         }
         s.wait()

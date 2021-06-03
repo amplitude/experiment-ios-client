@@ -13,17 +13,18 @@ public enum Source {
 }
 
 public struct ExperimentConfig {
+
     public let debug: Bool
-    public let fallbackVariant: Variant?
-    public let initialVariants: [String: Variant]?
+    public let fallbackVariant: Variant
+    public let initialVariants: [String: Variant]
     public let source: Source
     public let serverUrl: String
     public let fetchTimeoutMillis: Int
 
     internal init(
         debug: Bool = ExperimentConfig.Defaults.debug,
-        fallbackVariant: Variant? = ExperimentConfig.Defaults.fallbackVariant,
-        initialVariants: [String: Variant]? = ExperimentConfig.Defaults.initialVariants,
+        fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant,
+        initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants,
         source: Source = ExperimentConfig.Defaults.source,
         serverUrl: String = ExperimentConfig.Defaults.serverUrl,
         fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
@@ -38,8 +39,8 @@ public struct ExperimentConfig {
 
     internal struct Defaults {
         static let debug: Bool = false
-        static let fallbackVariant: Variant? = nil
-        static let initialVariants: [String: Variant]? = nil
+        static let fallbackVariant: Variant = Variant()
+        static let initialVariants: [String: Variant] = [:]
         static let source: Source = Source.LocalStorage
         static let serverUrl: String = "https://api.lab.amplitude.com"
         static let fetchTimeoutMillis: Int = 10000
@@ -48,8 +49,8 @@ public struct ExperimentConfig {
     public class Builder {
         
         private var debug: Bool = ExperimentConfig.Defaults.debug
-        private var fallbackVariant: Variant? = ExperimentConfig.Defaults.fallbackVariant
-        private var initialVariants: [String: Variant]? = ExperimentConfig.Defaults.initialVariants
+        private var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
+        private var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
         private var source: Source = ExperimentConfig.Defaults.source
         private var serverUrl: String = ExperimentConfig.Defaults.serverUrl
         
@@ -62,12 +63,12 @@ public struct ExperimentConfig {
             return self
         }
         
-        public func fallbackVariant(_ fallbackVariant: Variant?) -> Builder {
+        public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
             self.fallbackVariant = fallbackVariant
             return self
         }
         
-        public func initialVariants(_ initialVariants: [String: Variant]?) -> Builder {
+        public func initialVariants(_ initialVariants: [String: Variant]) -> Builder {
             self.initialVariants = initialVariants
             return self
         }

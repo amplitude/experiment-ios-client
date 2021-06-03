@@ -9,10 +9,10 @@ import Foundation
 
 public struct Variant {
     
-    public let value: String
+    public let value: String?
     public let payload: Any?
 
-    public init(_ value: String, payload: Any? = nil) {
+    public init(_ value: String? = nil, payload: Any? = nil) {
         self.value = value
         self.payload = payload
     }
