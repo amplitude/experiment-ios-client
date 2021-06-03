@@ -168,7 +168,7 @@ public class DefaultExperimentClient : ExperimentClient {
         for (key, variant) in variants {
             self.storage.put(key: key, value: variant)
         }
-//        storage.save()
+        storage.save()
     }
     
     private func sourceVariants() -> [String: Variant] {
