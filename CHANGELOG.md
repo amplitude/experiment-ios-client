@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/amplitude/experiment-ios-client/compare/v0.2.0...v0.3.0) (2021-06-03)
+
+
+### Features
+
+* fix builder bug and scoping ([634b2a3](https://github.com/amplitude/experiment-ios-client/commit/634b2a324070020295fa24276285f6e0ecc9fa60))
+
 # [0.2.0](https://github.com/amplitude/experiment-ios-client/compare/v0.1.0...v0.2.0) (2021-06-03)
 
 
