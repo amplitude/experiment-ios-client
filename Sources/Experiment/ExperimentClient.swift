@@ -50,24 +50,18 @@ public class DefaultExperimentClient : ExperimentClient {
     }
     
     public func variant(_ key: String) -> Variant {
-        return self.all()[key] ??
-            self.config.fallbackVariant
+        return self.all()[key] ?? self.config.fallbackVariant
     }
     
-    public func variant(_ key: String, fallback: Variant? = nil) -> Variant {
-        return self.all()[key] ??
+    public func variant(_ key: String, fallback: Variant?) -> Variant {
+        return sourceVariants()[key] ??
             fallback ??
+            secondaryVariants()[key] ??
             self.config.fallbackVariant
     }
 
     public func all() -> [String: Variant] {
-        let storageVariants = self.storage.getAll()
-        switch config.source {
-        case .LocalStorage:
-            return storageVariants.merging(self.config.initialVariants) { (current, _) in current }
-        case .InitialVariants:
-            return storageVariants.merging(self.config.initialVariants) { (_, new) in new }
-        }
+        return sourceVariants().merging(secondaryVariants()) { (source, _) in source }
     }
 
     public func getUser() -> ExperimentUser? {
@@ -173,6 +167,24 @@ public class DefaultExperimentClient : ExperimentClient {
         storage.clear()
         for (key, variant) in variants {
             self.storage.put(key: key, value: variant)
+        }
+    }
+    
+    private func sourceVariants() -> [String: Variant] {
+        switch config.source {
+        case .LocalStorage:
+            return storage.getAll()
+        case .InitialVariants:
+            return config.initialVariants
+        }
+    }
+    
+    private func secondaryVariants() -> [String: Variant] {
+        switch config.source {
+        case .LocalStorage:
+            return config.initialVariants
+        case .InitialVariants:
+            return storage.getAll()
         }
     }
 }

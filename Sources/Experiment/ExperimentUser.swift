@@ -47,6 +47,10 @@ public struct ExperimentUser: Equatable {
     public class Builder {
 
         private var user = ExperimentUser()
+        
+        public init() {
+            // public init
+        }
 
         public func userId(_ userId: String?) -> Builder {
             self.user.userId = userId

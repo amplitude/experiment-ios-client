@@ -10,14 +10,14 @@ import XCTest
 
 let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
 let KEY = "sdk-ci-test"
-let ON_VARIANT_VALUE = "on"
-let ON_VARIANT_PAYLOAD = "payload"
+let INITIAL_KEY = "initial-key"
 
 let testUser = ExperimentUser(userId: "test_user")
+let serverVariant = Variant("on", payload: "payload")
 let fallbackVariant = Variant("fallback", payload: "payload")
+let initialVariant = Variant("initial")
 let initialVariants: [String: Variant] = [
-    "initial1": Variant("initial1", payload: ["abc":"cdf"]),
-    "initial2": Variant("initial2"),
+    INITIAL_KEY: initialVariant,
     KEY: Variant("off")
 ]
 
@@ -25,33 +25,32 @@ class ExperimentClientTests: XCTestCase {
     
     let client = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig(
-            debug: true,
-            fallbackVariant: fallbackVariant,
-            initialVariants: initialVariants
-        ),
+        config: ExperimentConfig.Builder()
+            .debug(true)
+            .fallbackVariant(fallbackVariant)
+            .initialVariants(initialVariants)
+            .build(),
         storage: InMemoryStorage()
     )
     
     let timeoutClient = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig(
-            debug: true,
-            fallbackVariant: fallbackVariant,
-            initialVariants: initialVariants,
-            fetchTimeoutMillis: 1
-        ),
+        config: ExperimentConfig.Builder()
+            .debug(true)
+            .fallbackVariant(fallbackVariant)
+            .initialVariants(initialVariants)
+            .fetchTimeoutMillis(1)
+            .build(),
         storage: InMemoryStorage()
     )
     
     let initialVariantSourceClient = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig(
-            debug: true,
-            fallbackVariant: fallbackVariant,
-            initialVariants: initialVariants,
-            source: Source.InitialVariants
-        ),
+        config: ExperimentConfig.Builder()
+            .debug(true)
+            .initialVariants(initialVariants)
+            .source(.InitialVariants)
+            .build(),
         storage: InMemoryStorage()
     )
     
@@ -60,9 +59,7 @@ class ExperimentClientTests: XCTestCase {
         client.fetch(user: testUser) { (client, error) in
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
-            XCTAssertNotNil(variant)
-            XCTAssertEqual(ON_VARIANT_VALUE, variant.value)
-            XCTAssertEqual(ON_VARIANT_PAYLOAD, variant.payload as? String)
+            XCTAssertEqual(serverVariant, variant)
             s.signal()
         }
         s.wait()
@@ -72,7 +69,7 @@ class ExperimentClientTests: XCTestCase {
         let s = DispatchSemaphore(value: 0)
         timeoutClient.fetch(user: testUser) { (client, error) in
             XCTAssertNotNil(error)
-            let variant = client.variant(KEY, fallback: nil)
+            let variant = client.variant(KEY)
             XCTAssertEqual("off", variant.value)
             s.signal()
         }
@@ -83,7 +80,11 @@ class ExperimentClientTests: XCTestCase {
         let firstFallback = Variant("first")
         var variant = client.variant("asdf", fallback: firstFallback)
         XCTAssertEqual(firstFallback, variant)
-        variant = client.variant("asdf", fallback: nil)
+        
+        variant = client.variant("asdf")
+        XCTAssertEqual(fallbackVariant, variant)
+        
+        variant = client.variant("asdf")
         XCTAssertEqual(fallbackVariant, variant)
     }
     

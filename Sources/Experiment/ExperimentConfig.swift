@@ -14,14 +14,19 @@ public enum Source {
 
 public struct ExperimentConfig {
 
-    public let debug: Bool
-    public let fallbackVariant: Variant
-    public let initialVariants: [String: Variant]
-    public let source: Source
-    public let serverUrl: String
-    public let fetchTimeoutMillis: Int
+    public private(set) var debug: Bool
+    public private(set) var fallbackVariant: Variant
+    public private(set) var initialVariants: [String: Variant]
+    public private(set) var source: Source
+    public private(set) var serverUrl: String
+    public private(set) var fetchTimeoutMillis: Int
 
-    internal init(
+    internal init() {
+        // call private init with defaults
+        self.init(debug: ExperimentConfig.Defaults.debug)
+    }
+    
+    private init(
         debug: Bool = ExperimentConfig.Defaults.debug,
         fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant,
         initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants,
@@ -48,53 +53,44 @@ public struct ExperimentConfig {
     
     public class Builder {
         
-        private var debug: Bool = ExperimentConfig.Defaults.debug
-        private var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
-        private var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
-        private var source: Source = ExperimentConfig.Defaults.source
-        private var serverUrl: String = ExperimentConfig.Defaults.serverUrl
+        private var config = ExperimentConfig()
         
         public init() {
             // public init
         }
         
         public func debug(_ debug: Bool) -> Builder {
-            self.debug = debug
+            config.debug = debug
             return self
         }
         
         public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
-            self.fallbackVariant = fallbackVariant
+            config.fallbackVariant = fallbackVariant
             return self
         }
         
         public func initialVariants(_ initialVariants: [String: Variant]) -> Builder {
-            self.initialVariants = initialVariants
+            config.initialVariants = initialVariants
             return self
         }
         
         public func source(_ source: Source) -> Builder {
-            self.source = source
+            config.source = source
             return self
         }
         
         public func serverUrl(_ serverUrl: String) -> Builder {
-            self.serverUrl = serverUrl
+            config.serverUrl = serverUrl
             return self
         }
         
-        public func fetchTimeoutMillis(_ serverUrl: String) -> Builder {
-            self.serverUrl = serverUrl
+        public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> Builder {
+            config.fetchTimeoutMillis = fetchTimeoutMillis
             return self
         }
         
         public func build() -> ExperimentConfig {
-            return ExperimentConfig(
-                debug: self.debug,
-                fallbackVariant: self.fallbackVariant,
-                initialVariants: self.initialVariants,
-                serverUrl: self.serverUrl
-            )
+            return config
         }
     }
 

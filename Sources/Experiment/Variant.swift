@@ -26,8 +26,6 @@ public struct Variant {
         self.value = (value ?? key)!
         self.payload = json["payload"]
     }
-
-    
 }
 
 extension Variant : Codable {
