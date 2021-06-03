@@ -137,6 +137,7 @@ public struct ExperimentUser: Equatable {
                 return self
             }
             userProperties[property] = value
+            self.user.userProperties = userProperties
             return self
         }
 

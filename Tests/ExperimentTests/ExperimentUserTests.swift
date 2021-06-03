@@ -10,14 +10,16 @@ import XCTest
 
 class ExperimentUserTests: XCTestCase {
 
+    let user = ExperimentUser.Builder()
+        .deviceId("device_id")
+        .userId("user_id")
+        .version(nil)
+        .country("country")
+        .userProperty("userPropertyKey", value: "value")
+        .build()
+    
     func testExperimentUserJSONSerialization() {
-        let user = ExperimentUser(
-            deviceId: "device_id",
-            userId: "user_id",
-            version: nil,
-            country: "country",
-            userProperties: ["userPropertyKey": "value"]
-        )
+        
         let expectedDictionary: [String : Any] = [
             "user_id": "user_id",
             "device_id": "device_id",
@@ -46,27 +48,12 @@ class ExperimentUserTests: XCTestCase {
     }
 
     func testExperimentUserEquality() {
-        let user = ExperimentUser(
-            deviceId: "device_id",
-            userId: "user_id",
-            version: nil,
-            country: "country",
-            userProperties: ["userPropertyKey": "value"]
-        )
-        let user2 = ExperimentUser(
-            deviceId: "device_id",
-            userId: "user_id",
-            version: nil,
-            country: "country",
-            userProperties: ["userPropertyKey": "different value"]
-        )
-        let user3 = ExperimentUser(
-            deviceId: "device_id",
-            userId: "user_id",
-            version: nil,
-            country: "country",
-            userProperties: ["userPropertyKey": "value"]
-        )
+        let user2 = user.copyToBuilder()
+            .userProperty("userPropertyKey", value: "different value")
+            .build()
+        let user3 = user.copyToBuilder().build()
+        print(user)
+        print(user2)
         XCTAssert(user != user2)
         XCTAssert(user == user3)
     }

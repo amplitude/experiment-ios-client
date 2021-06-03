@@ -12,7 +12,7 @@ let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
 let KEY = "sdk-ci-test"
 let INITIAL_KEY = "initial-key"
 
-let testUser = ExperimentUser(userId: "test_user")
+let testUser = ExperimentUser.Builder().userId("test_user").build()
 let serverVariant = Variant("on", payload: "payload")
 let fallbackVariant = Variant("fallback", payload: "payload")
 let initialVariant = Variant("initial")
@@ -95,19 +95,20 @@ class ExperimentClientTests: XCTestCase {
     
     func testMergeUserWithProvider() {
         _ = client.setUserProvider(TestContextProvider())
-        client.setUser(ExperimentUser(
-            deviceId: "device_id",
-            userId: nil,
-            version: "version"
-        ))
+        let user = ExperimentUser.Builder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .build()
+        client.setUser(user)
         let mergedUser = client.mergeUserWithProvider()
-        let expectedUserAfterMerge = ExperimentUser(
-            deviceId: "device_id",
-            userId: nil,
-            version: "version",
-            language: "",
-            library: "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
-        )
+        let expectedUserAfterMerge = ExperimentUser.Builder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .language("")
+            .library("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
+            .build()
         XCTAssertEqual(expectedUserAfterMerge, mergedUser)
     }
     
