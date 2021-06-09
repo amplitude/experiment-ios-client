@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/amplitude/experiment-ios-client/compare/v1.0.1...v1.0.2) (2021-06-09)
+
+
+### Bug Fixes
+
+* remove amplitude as dependency ([713a9b8](https://github.com/amplitude/experiment-ios-client/commit/713a9b832ca5783ff1dd7edd6a7d38ef1920826d))
+
 ## [1.0.1](https://github.com/amplitude/experiment-ios-client/compare/v1.0.0...v1.0.1) (2021-06-09)
 
 
