@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/amplitude/experiment-ios-client/compare/v1.0.0...v1.0.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* remove Amplitude as dependency for SPM ([#1](https://github.com/amplitude/experiment-ios-client/issues/1)) ([5ac6beb](https://github.com/amplitude/experiment-ios-client/commit/5ac6beb9f3de8cd08b715266466744462be1f75b))
+
 # [1.0.0](https://github.com/amplitude/experiment-ios-client/compare/v0.3.0...v1.0.0) (2021-06-03)
 
 
