@@ -40,6 +40,19 @@ class ExperimentClientTests: XCTestCase {
             .fallbackVariant(fallbackVariant)
             .initialVariants(initialVariants)
             .fetchTimeoutMillis(1)
+            .fetchRetryOnFailure(false)
+            .build(),
+        storage: InMemoryStorage()
+    )
+
+    let timeoutRetryClient = DefaultExperimentClient(
+        apiKey: API_KEY,
+        config: ExperimentConfig.Builder()
+            .debug(true)
+            .fallbackVariant(fallbackVariant)
+            .initialVariants(initialVariants)
+            .fetchTimeoutMillis(1)
+            .fetchRetryOnFailure(true)
             .build(),
         storage: InMemoryStorage()
     )
@@ -74,6 +87,25 @@ class ExperimentClientTests: XCTestCase {
             s.signal()
         }
         s.wait()
+        // Wait for retry to succeed
+        _ = s.wait(timeout: .now() + .seconds(1))
+        let variant = timeoutClient.variant(KEY, fallback: nil)
+        XCTAssertEqual("off", variant.value)
+    }
+
+    func testFetchTimeoutAndRetrySuccess() {
+        let s = DispatchSemaphore(value: 0)
+        timeoutRetryClient.fetch(user: testUser) { (client, error) in
+            XCTAssertNotNil(error)
+            let variant = client.variant(KEY)
+            XCTAssertEqual("off", variant.value)
+            s.signal()
+        }
+        s.wait()
+        // Wait for retry to succeed
+        _ = s.wait(timeout: .now() + .seconds(1))
+        let variant = timeoutRetryClient.variant(KEY, fallback: nil)
+        XCTAssertEqual(serverVariant, variant)
     }
     
     func testFallbackVariantReturnedInCorrectOrder() {

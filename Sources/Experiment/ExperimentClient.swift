@@ -18,6 +18,12 @@ public protocol ExperimentClient {
     func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
 }
 
+private let fetchBackoffTimeout = 10000
+private let fetchBackoffAttempts = 8
+private let fetchBackoffMinMillis = 500
+private let fetchBackoffMaxMillis = 10000
+private let fetchBackoffScalar: Float = 1.5
+
 public class DefaultExperimentClient : ExperimentClient {
 
     private let apiKey: String
@@ -27,6 +33,9 @@ public class DefaultExperimentClient : ExperimentClient {
     
     private var user: ExperimentUser? = nil
     private var userProvider: ExperimentUserProvider? = nil
+
+    private var backoff: Backoff? = nil
+    private let backoffLock = DispatchSemaphore(value: 1)
 
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
@@ -38,10 +47,13 @@ public class DefaultExperimentClient : ExperimentClient {
     public func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
         self.user = user
         let fetchUser = self.mergeUserWithProvider()
-        self.doFetch(user: fetchUser) { result in
+        _ = fetchInternal(
+            user: fetchUser,
+            timeoutMillis: config.fetchTimeoutMillis,
+            retry: config.retryFetchOnFailure
+        ) { result in
             switch result {
-            case .success(let variants):
-                self.storeVariants(variants)
+            case .success:
                 completion?(self, nil)
             case .failure(let error):
                 completion?(self, error)
@@ -81,10 +93,37 @@ public class DefaultExperimentClient : ExperimentClient {
         return self
     }
 
+    public func fetchInternal(
+        user: ExperimentUser,
+        timeoutMillis: Int,
+        retry: Bool,
+        completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+    ) -> URLSessionTask? {
+        // Proactively cancel retries if active in order to avoid unecessary API
+        // requests. A new failure will restart the retries.
+        if retry {
+            self.stopRetries()
+        }
+        return self.doFetch(user: user, timeoutMillis: timeoutMillis) { result in
+            switch result {
+            case .success(let variants):
+                self.storeVariants(variants)
+                completion(result)
+            case .failure:
+                completion(result)
+                if retry {
+                    self.startRetries(user: user)
+                }
+            }
+        }
+    }
+
+    // Must be run on fetchQueue
     public func doFetch(
         user: ExperimentUser,
+        timeoutMillis: Int,
         completion: @escaping ((Result<[String: Variant], Error>) -> Void)
-    ) {
+    ) -> URLSessionTask? {
         let start = CFAbsoluteTimeGetCurrent()
         
         let userId = user.userId
@@ -97,7 +136,7 @@ public class DefaultExperimentClient : ExperimentClient {
         let userDictionary = user.toDictionary()
         guard let requestData = try? JSONSerialization.data(withJSONObject: userDictionary, options: []) else {
             completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
-            return
+            return nil
         }
         let b64encodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
             .replacingOccurrences(of: "/", with: "_")
@@ -106,7 +145,7 @@ public class DefaultExperimentClient : ExperimentClient {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
-        request.timeoutInterval = Double(config.fetchTimeoutMillis) / 1000.0
+        request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
         // Do fetch request
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -133,6 +172,37 @@ public class DefaultExperimentClient : ExperimentClient {
             }
         }
         task.resume()
+        return task
+    }
+
+    private func startRetries(user: ExperimentUser) {
+        backoffLock.wait()
+        defer { backoffLock.signal() }
+        self.backoff?.cancel()
+        self.backoff = Backoff(
+            attempts: fetchBackoffAttempts,
+            min: fetchBackoffMinMillis,
+            max: fetchBackoffMaxMillis,
+            scalar: fetchBackoffScalar
+        )
+        self.backoff?.start() { completion in
+            return self.fetchInternal(user: user, timeoutMillis: fetchBackoffTimeout, retry: false) { result in
+                switch result {
+                case .success:
+                    completion(nil)
+                case .failure(let error):
+                    completion(error)
+                }
+            }
+        }
+    }
+
+    private func stopRetries() {
+        backoffLock.wait()
+        defer { backoffLock.signal() }
+        print("[Experiment] Stop retries")
+        self.backoff?.cancel()
+        self.backoff = nil
     }
 
     internal func mergeUserWithProvider() -> ExperimentUser {
