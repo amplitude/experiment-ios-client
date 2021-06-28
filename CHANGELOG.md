@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/amplitude/experiment-ios-client/compare/v1.0.2...v1.1.0) (2021-06-28)
+
+
+### Features
+
+* add automatic background retries to fetch ([#3](https://github.com/amplitude/experiment-ios-client/issues/3)) ([8fc3d98](https://github.com/amplitude/experiment-ios-client/commit/8fc3d9802aafdabde1ef4c08eb6dbd0f88f5a9c0))
+* set DefaultUserProvider by default ([#4](https://github.com/amplitude/experiment-ios-client/issues/4)) ([fa49ef3](https://github.com/amplitude/experiment-ios-client/commit/fa49ef37adf5aee03a7868d8c8d9b7d6d0ec7ea8))
+
 ## [1.0.2](https://github.com/amplitude/experiment-ios-client/compare/v1.0.1...v1.0.2) (2021-06-09)
 
 
