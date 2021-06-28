@@ -26,7 +26,7 @@ public class DefaultExperimentClient : ExperimentClient {
     private let config: ExperimentConfig
     
     private var user: ExperimentUser? = nil
-    private var userProvider: ExperimentUserProvider? = nil
+    private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
 
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
