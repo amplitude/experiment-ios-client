@@ -77,9 +77,3 @@ extension Variant : Equatable {
         return lhsData == rhsData
     }
 }
-
-extension Variant {
-    internal func toJson() throws -> Data {
-        return try JSONSerialization.data(withJSONObject: self, options: [])
-    }
-}
