@@ -34,29 +34,23 @@ internal class UserDefaultsStorage: Storage {
     }
 
     func load() {
-        if
-            let data = userDefaults.value(forKey: self.key) as? Data,
-            let loaded = try? JSONDecoder().decode([String:Variant].self, from: data) {
+        do {
+            let data = userDefaults.value(forKey: self.key) as! Data
+            let loaded = try JSONDecoder().decode([String:Variant].self, from: data)
             for (key, value) in loaded {
                 map[key] = value
             }
-            return
-        }
-
-        if
-            let loaded = userDefaults.dictionary(forKey: self.key) as? [String:String] {
-            for (key, value) in loaded {
-                map[key] = Variant(value)
-            }
-            return
+        } catch {
+            print("[Experiment] load failed: \(error)")
         }
     }
 
     func save() {
-        if let data = try? JSONEncoder().encode(map) {
+        do {
+            let data = try JSONEncoder().encode(map)
             userDefaults.set(data, forKey: self.key)
+        } catch {
+            print("[Experiment] save failed: \(error)")
         }
     }
-
-
 }

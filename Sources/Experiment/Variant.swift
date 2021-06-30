@@ -17,6 +17,7 @@ public struct Variant {
         self.payload = payload
     }
 
+    // TODO (next major) - make this internal
     init?(json: [String: Any]) {
         let key = json["key"] as? String
         let value = json["value"] as? String
@@ -28,6 +29,7 @@ public struct Variant {
     }
 }
 
+// TODO (next major) - Remove codable. Codable does not work well with "Any?" fields.
 extension Variant : Codable {
     
     enum CodingKeys: String, CodingKey {
@@ -38,20 +40,23 @@ extension Variant : Codable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.value = try values.decode(String.self, forKey: .value)
-        let data = try values.decode(Data.self, forKey: .payload)
-        let payload = try JSONSerialization.jsonObject(with: data, options: []) as! [String:Any]
-        self.payload = payload["payload"]
+        if let data = try? values.decode(Data.self, forKey: .payload),
+           let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
+            self.payload = objectPayload["payload"] ?? nil
+        } else {
+            self.payload = nil
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(value, forKey: .value)
-        var data: Data? = nil
-        if (payload != nil) {
-            let v:[String:Any] = ["payload": payload!]
-            data = try JSONSerialization.data(withJSONObject: v, options: [])
+        let objectPayload = ["payload": self.payload]
+        if let data = try? JSONSerialization.data(withJSONObject: objectPayload, options: []) {
+            try container.encode(data, forKey: .payload)
+        } else {
+            try container.encodeNil(forKey: .payload)
         }
-        try container.encode(data, forKey: .payload)
     }
 }
 
@@ -70,5 +75,11 @@ extension Variant : Equatable {
         let lhsData = try? JSONEncoder().encode(lhs)
         let rhsData = try? JSONEncoder().encode(rhs)
         return lhsData == rhsData
+    }
+}
+
+extension Variant {
+    internal func toJson() throws -> Data {
+        return try JSONSerialization.data(withJSONObject: self, options: [])
     }
 }
