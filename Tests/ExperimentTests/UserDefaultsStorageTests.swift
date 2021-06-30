@@ -30,7 +30,6 @@ class UserDefaultsStorageTests: XCTestCase {
         storage.load()
         let storageVariants = storage.getAll()
         XCTAssertEqual(variants, storageVariants)
-        
     }
     
     func testPutSaveAndGetAll() {
