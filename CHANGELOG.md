@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/amplitude/experiment-ios-client/compare/v1.1.0...v1.1.1) (2021-07-01)
+
+
+### Bug Fixes
+
+* variant encoding/decoding from storage ([#5](https://github.com/amplitude/experiment-ios-client/issues/5)) ([713e475](https://github.com/amplitude/experiment-ios-client/commit/713e4757b77d22a8cabba06703871559b7058bc5))
+
 # [1.1.0](https://github.com/amplitude/experiment-ios-client/compare/v1.0.2...v1.1.0) (2021-06-28)
 
 
