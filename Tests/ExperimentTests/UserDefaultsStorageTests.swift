@@ -45,6 +45,12 @@ class UserDefaultsStorageTests: XCTestCase {
         XCTAssertEqual(storageVariants, storageVariants2)
     }
     
+    func testLoadNilStorage() {
+        userDefaults.set(nil, forKey: userDefaultsKey)
+        storage.load()
+        print(storage.getAll())
+    }
+    
     func testClear() {
         preload(variants)
         storage.load()
