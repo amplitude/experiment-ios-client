@@ -35,10 +35,11 @@ internal class UserDefaultsStorage: Storage {
 
     func load() {
         do {
-            let data = userDefaults.value(forKey: self.key) as! Data
-            let loaded = try JSONDecoder().decode([String:Variant].self, from: data)
-            for (key, value) in loaded {
-                map[key] = value
+            if let data = userDefaults.value(forKey: self.key) as? Data {
+                let loaded = try JSONDecoder().decode([String:Variant].self, from: data)
+                for (key, value) in loaded {
+                    map[key] = value
+                }
             }
         } catch {
             print("[Experiment] load failed: \(error)")
