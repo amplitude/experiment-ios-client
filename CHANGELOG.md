@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/amplitude/experiment-ios-client/compare/v1.1.1...v1.1.2) (2021-07-01)
+
+
+### Bug Fixes
+
+* dont force unwrap ([2276624](https://github.com/amplitude/experiment-ios-client/commit/2276624871fef4cf4c6627dd2684cebc02930a65))
+
 ## [1.1.1](https://github.com/amplitude/experiment-ios-client/compare/v1.1.0...v1.1.1) (2021-07-01)
 
 
