@@ -24,7 +24,7 @@ private let fetchBackoffMinMillis = 500
 private let fetchBackoffMaxMillis = 10000
 private let fetchBackoffScalar: Float = 1.5
 
-@objc public class DefaultExperimentClient : NSObject, ExperimentClient {
+internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     private let apiKey: String
     private let storage: Storage
