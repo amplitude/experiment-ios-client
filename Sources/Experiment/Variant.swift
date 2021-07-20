@@ -7,18 +7,17 @@
 
 import Foundation
 
-public struct Variant {
+@objc public class Variant : NSObject, Codable {
     
-    public let value: String?
-    public let payload: Any?
+    @objc public let value: String?
+    @objc public let payload: Any?
 
-    public init(_ value: String? = nil, payload: Any? = nil) {
+    @objc public init(_ value: String? = nil, payload: Any? = nil) {
         self.value = value
         self.payload = payload
     }
 
-    // TODO (next major) - make this internal
-    init?(json: [String: Any]) {
+    internal init?(json: [String: Any]) {
         let key = json["key"] as? String
         let value = json["value"] as? String
         if (key == nil && value == nil) {
@@ -27,17 +26,13 @@ public struct Variant {
         self.value = (value ?? key)!
         self.payload = json["payload"]
     }
-}
-
-// TODO (next major) - Remove codable. Codable does not work well with "Any?" fields.
-extension Variant : Codable {
     
     enum CodingKeys: String, CodingKey {
         case value
         case payload
     }
-    
-    public init(from decoder: Decoder) throws {
+
+    required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.value = try values.decode(String.self, forKey: .value)
         if let data = try? values.decode(Data.self, forKey: .payload),
@@ -60,20 +55,20 @@ extension Variant : Codable {
     }
 }
 
-extension Variant : Equatable {
-    
-    public static func == (lhs: Variant, rhs: Variant) -> Bool {
-        guard lhs.value == rhs.value else {
-            return false
-        }
-        if lhs.payload == nil && rhs.payload == nil {
-            return true
-        }
-        guard lhs.payload != nil, rhs.payload != nil else {
-            return false
-        }
-        let lhsData = try? JSONEncoder().encode(lhs)
-        let rhsData = try? JSONEncoder().encode(rhs)
-        return lhsData == rhsData
-    }
-}
+//extension Variant : Equatable {
+//
+//    public static func == (lhs: Variant, rhs: Variant) -> Bool {
+//        guard lhs.value == rhs.value else {
+//            return false
+//        }
+//        if lhs.payload == nil && rhs.payload == nil {
+//            return true
+//        }
+//        guard lhs.payload != nil, rhs.payload != nil else {
+//            return false
+//        }
+//        let lhsData = try? JSONEncoder().encode(lhs)
+//        let rhsData = try? JSONEncoder().encode(rhs)
+//        return lhsData == rhsData
+//    }
+//}

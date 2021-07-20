@@ -7,15 +7,15 @@
 
 import Foundation
 
-public protocol ExperimentClient {
-    func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)?)
-    func variant(_ key: String) -> Variant
-    func variant(_ key: String, fallback: Variant?) -> Variant
-    func all() -> [String:Variant]
-    func setUser(_ user: ExperimentUser?)
-    func getUser() -> ExperimentUser?
-    func getUserProvider() -> ExperimentUserProvider?
-    func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
+@objc public protocol ExperimentClient {
+    @objc func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)?)
+    @objc func variant(_ key: String) -> Variant
+    @objc func variant(_ key: String, fallback: Variant?) -> Variant
+    @objc func all() -> [String:Variant]
+    @objc func setUser(_ user: ExperimentUser?)
+    @objc func getUser() -> ExperimentUser?
+    @objc func getUserProvider() -> ExperimentUserProvider?
+    @objc func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
 }
 
 private let fetchBackoffTimeout = 10000
@@ -24,7 +24,7 @@ private let fetchBackoffMinMillis = 500
 private let fetchBackoffMaxMillis = 10000
 private let fetchBackoffScalar: Float = 1.5
 
-public class DefaultExperimentClient : ExperimentClient {
+internal class DefaultExperimentClient : ExperimentClient {
 
     private let apiKey: String
     private let storage: Storage

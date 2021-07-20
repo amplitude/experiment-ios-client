@@ -12,7 +12,7 @@ public class Experiment {
     private static var defaultInstance = "$default_instance"
     private static var instances: [String: ExperimentClient] = [:]
 
-    public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
+    @objc public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
         let instance = instances[defaultInstance]
         if (instance != nil) {
             return instance!

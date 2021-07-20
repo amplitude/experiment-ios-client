@@ -12,7 +12,7 @@ let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
 let KEY = "sdk-ci-test"
 let INITIAL_KEY = "initial-key"
 
-let testUser = ExperimentUser.Builder().userId("test_user").build()
+let testUser = ExperimentUserBuilder().userId("test_user").build()
 let serverVariant = Variant("on", payload: "payload")
 let fallbackVariant = Variant("fallback", payload: "payload")
 let initialVariant = Variant("initial")
@@ -25,7 +25,7 @@ class ExperimentClientTests: XCTestCase {
     
     let client = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig.Builder()
+        config: ExperimentConfigBuilder()
             .debug(true)
             .fallbackVariant(fallbackVariant)
             .initialVariants(initialVariants)
@@ -35,7 +35,7 @@ class ExperimentClientTests: XCTestCase {
     
     let timeoutClient = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig.Builder()
+        config: ExperimentConfigBuilder()
             .debug(true)
             .fallbackVariant(fallbackVariant)
             .initialVariants(initialVariants)
@@ -47,7 +47,7 @@ class ExperimentClientTests: XCTestCase {
 
     let timeoutRetryClient = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig.Builder()
+        config: ExperimentConfigBuilder()
             .debug(true)
             .fallbackVariant(fallbackVariant)
             .initialVariants(initialVariants)
@@ -59,13 +59,16 @@ class ExperimentClientTests: XCTestCase {
     
     let initialVariantSourceClient = DefaultExperimentClient(
         apiKey: API_KEY,
-        config: ExperimentConfig.Builder()
+        config: ExperimentConfigBuilder()
             .debug(true)
             .initialVariants(initialVariants)
             .source(.InitialVariants)
             .build(),
         storage: InMemoryStorage()
     )
+    
+    override class func setUp() {
+    }
     
     func testFetch() {
         let s = DispatchSemaphore(value: 0)
@@ -127,14 +130,14 @@ class ExperimentClientTests: XCTestCase {
     
     func testMergeUserWithProvider() {
         _ = client.setUserProvider(TestContextProvider())
-        let user = ExperimentUser.Builder()
+        let user = ExperimentUserBuilder()
             .deviceId("device_id")
             .userId(nil)
             .version("version")
             .build()
         client.setUser(user)
         let mergedUser = client.mergeUserWithProvider()
-        let expectedUserAfterMerge = ExperimentUser.Builder()
+        let expectedUserAfterMerge = ExperimentUserBuilder()
             .deviceId("device_id")
             .userId(nil)
             .version("version")
@@ -169,7 +172,7 @@ class ExperimentClientTests: XCTestCase {
 
 class TestContextProvider : ExperimentUserProvider {
     func getUser() -> ExperimentUser {
-        return ExperimentUser.Builder()
+        return ExperimentUserBuilder()
             .deviceId("")
             .version("version2")
             .language("")

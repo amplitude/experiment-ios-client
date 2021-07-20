@@ -7,23 +7,39 @@
 
 import Foundation
 
-public enum Source {
-    case LocalStorage
-    case InitialVariants
+@objc public enum Source: Int {
+    case LocalStorage = 0
+    case InitialVariants = 1
 }
 
-public struct ExperimentConfig {
+@objc public class ExperimentConfig : NSObject {
 
-    public private(set) var debug: Bool = ExperimentConfig.Defaults.debug
-    public private(set) var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
-    public private(set) var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
-    public private(set) var source: Source = ExperimentConfig.Defaults.source
-    public private(set) var serverUrl: String = ExperimentConfig.Defaults.serverUrl
-    public private(set) var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
-    public private(set) var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
-
-    public init() {
-        // Default Config
+    @objc public let debug: Bool
+    @objc public let fallbackVariant: Variant
+    @objc public let initialVariants: [String: Variant]
+    @objc public let source: Source
+    @objc public let serverUrl: String
+    @objc public let fetchTimeoutMillis: Int
+    @objc public let retryFetchOnFailure: Bool
+    
+    @objc public override init() {
+        self.debug = ExperimentConfig.Defaults.debug
+        self.fallbackVariant = ExperimentConfig.Defaults.fallbackVariant
+        self.initialVariants = ExperimentConfig.Defaults.initialVariants
+        self.source = ExperimentConfig.Defaults.source
+        self.serverUrl = ExperimentConfig.Defaults.serverUrl
+        self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
+        self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
+    }
+    
+    internal init(builder: ExperimentConfigBuilder) {
+        self.debug = builder.debug
+        self.fallbackVariant = builder.fallbackVariant
+        self.initialVariants = builder.initialVariants
+        self.source = builder.source
+        self.serverUrl = builder.serverUrl
+        self.fetchTimeoutMillis = builder.fetchTimeoutMillis
+        self.retryFetchOnFailure = builder.retryFetchOnFailure
     }
 
     internal struct Defaults {
@@ -36,54 +52,6 @@ public struct ExperimentConfig {
         static let retryFetchOnFailure: Bool = true
     }
     
-    public class Builder {
-        
-        private var config = ExperimentConfig()
-        
-        public init() {
-            // public init
-        }
-        
-        public func debug(_ debug: Bool) -> Builder {
-            config.debug = debug
-            return self
-        }
-        
-        public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
-            config.fallbackVariant = fallbackVariant
-            return self
-        }
-        
-        public func initialVariants(_ initialVariants: [String: Variant]) -> Builder {
-            config.initialVariants = initialVariants
-            return self
-        }
-        
-        public func source(_ source: Source) -> Builder {
-            config.source = source
-            return self
-        }
-        
-        public func serverUrl(_ serverUrl: String) -> Builder {
-            config.serverUrl = serverUrl
-            return self
-        }
-        
-        public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> Builder {
-            config.fetchTimeoutMillis = fetchTimeoutMillis
-            return self
-        }
-        
-        public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> Builder {
-            config.retryFetchOnFailure = fetchRetryOnFailure
-            return self
-        }
-
-        public func build() -> ExperimentConfig {
-            return config
-        }
-    }
-
     internal struct Constants {
         // Version string is matched in release.config.js
         // Changing this may result in breaking automated releases
@@ -91,3 +59,54 @@ public struct ExperimentConfig {
         internal static let Library: String = "experiment-ios-client"
     }
 }
+
+@objc public class ExperimentConfigBuilder : NSObject {
+    
+    internal var debug: Bool = ExperimentConfig.Defaults.debug
+    internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
+    internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
+    internal var source: Source = ExperimentConfig.Defaults.source
+    internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
+    internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
+    internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
+    
+    @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
+        self.debug = debug
+        return self
+    }
+    
+    @objc public func fallbackVariant(_ fallbackVariant: Variant) -> ExperimentConfigBuilder {
+        self.fallbackVariant = fallbackVariant
+        return self
+    }
+    
+    @objc public func initialVariants(_ initialVariants: [String: Variant]) -> ExperimentConfigBuilder {
+        self.initialVariants = initialVariants
+        return self
+    }
+    
+    @objc public func source(_ source: Source) -> ExperimentConfigBuilder {
+        self.source = source
+        return self
+    }
+    
+    @objc public func serverUrl(_ serverUrl: String) -> ExperimentConfigBuilder {
+        self.serverUrl = serverUrl
+        return self
+    }
+    
+    @objc public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> ExperimentConfigBuilder {
+        self.fetchTimeoutMillis = fetchTimeoutMillis
+        return self
+    }
+    
+    @objc public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> ExperimentConfigBuilder {
+        self.retryFetchOnFailure = fetchRetryOnFailure
+        return self
+    }
+
+    @objc public func build() -> ExperimentConfig {
+        return ExperimentConfig(builder: self)
+    }
+}
+
