@@ -24,7 +24,7 @@ private let fetchBackoffMinMillis = 500
 private let fetchBackoffMaxMillis = 10000
 private let fetchBackoffScalar: Float = 1.5
 
-internal class DefaultExperimentClient : ExperimentClient {
+@objc public class DefaultExperimentClient : NSObject, ExperimentClient {
 
     private let apiKey: String
     private let storage: Storage
@@ -201,7 +201,6 @@ internal class DefaultExperimentClient : ExperimentClient {
     private func stopRetries() {
         backoffLock.wait()
         defer { backoffLock.signal() }
-        print("[Experiment] Stop retries")
         self.backoff?.cancel()
         self.backoff = nil
     }

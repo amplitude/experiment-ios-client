@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Experiment {
+@objc public class Experiment : NSObject {
     
     private static var defaultInstance = "$default_instance"
     private static var instances: [String: ExperimentClient] = [:]

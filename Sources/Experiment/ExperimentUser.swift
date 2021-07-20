@@ -79,6 +79,28 @@ import Foundation
             .library(self.library)
             .userProperties(self.userProperties)
     }
+    
+    @objc public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ExperimentUser else {
+            return false
+        }
+        
+        return self.deviceId == other.deviceId &&
+            self.userId == other.userId &&
+            self.version == other.version &&
+            self.country == other.country &&
+            self.region == other.region &&
+            self.dma == other.dma &&
+            self.city == other.city &&
+            self.language == other.language &&
+            self.platform == other.platform &&
+            self.os == other.os &&
+            self.deviceManufacturer == other.deviceManufacturer &&
+            self.deviceModel == other.deviceModel &&
+            self.carrier == other.carrier &&
+            self.library == other.library &&
+            self.userProperties == other.userProperties
+    }
 }
 
 @objc public class ExperimentUserBuilder : NSObject {

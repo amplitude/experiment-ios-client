@@ -53,22 +53,22 @@ import Foundation
             try container.encodeNil(forKey: .payload)
         }
     }
+    
+    @objc public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? Variant else {
+            return false
+        }
+        guard self.value == other.value else {
+            return false
+        }
+        if self.payload == nil && other.payload == nil {
+            return true
+        }
+        guard self.payload != nil, other.payload != nil else {
+            return false
+        }
+        let lhsData = try? JSONEncoder().encode(self)
+        let rhsData = try? JSONEncoder().encode(other)
+        return lhsData == rhsData
+    }
 }
-
-//extension Variant : Equatable {
-//
-//    public static func == (lhs: Variant, rhs: Variant) -> Bool {
-//        guard lhs.value == rhs.value else {
-//            return false
-//        }
-//        if lhs.payload == nil && rhs.payload == nil {
-//            return true
-//        }
-//        guard lhs.payload != nil, rhs.payload != nil else {
-//            return false
-//        }
-//        let lhsData = try? JSONEncoder().encode(lhs)
-//        let rhsData = try? JSONEncoder().encode(rhs)
-//        return lhsData == rhsData
-//    }
-//}
