@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// Provides a analytics implementation for standard experiment events generated
+/// by the client (e.g. ``ExposureEvent``).
 public protocol ExperimentAnalyticsProvider {
+    
     func track(_ event: ExperimentAnalyticsEvent)
 }
