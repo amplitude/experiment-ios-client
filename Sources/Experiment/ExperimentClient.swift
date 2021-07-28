@@ -150,15 +150,15 @@ public class DefaultExperimentClient : ExperimentClient {
             completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
             return nil
         }
-        if requestData.count > 8000 {
-            print("[Experiment] encoded user object length \(requestData.count) cannot be cached by CDN; must be < 8KB")
-        }
+        let userB64EncodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
         let url = URL(string: "\(self.config.serverUrl)/sdk/vardata")!
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
-        request.httpBody = requestData
         
         // Do fetch request
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
