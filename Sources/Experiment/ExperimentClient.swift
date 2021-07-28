@@ -14,7 +14,10 @@ public protocol ExperimentClient {
     func all() -> [String:Variant]
     func setUser(_ user: ExperimentUser?)
     func getUser() -> ExperimentUser?
+    
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     func getUserProvider() -> ExperimentUserProvider?
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
 }
 
@@ -62,11 +65,18 @@ public class DefaultExperimentClient : ExperimentClient {
     }
     
     public func variant(_ key: String) -> Variant {
-        return self.all()[key] ?? self.config.fallbackVariant
+        return variant(key, fallback: nil)
     }
     
     public func variant(_ key: String, fallback: Variant?) -> Variant {
-        return sourceVariants()[key] ??
+        let sourceVariant = sourceVariants()[key]
+        if let variant = sourceVariant, variant.value != nil {
+            let exposedUser = mergeUserWithProvider()
+            config.analyticsProvider?.track(
+                ExposureEvent(user: exposedUser, key: key, variant: variant)
+            )
+        }
+        return sourceVariant ??
             fallback ??
             secondaryVariants()[key] ??
             self.config.fallbackVariant
@@ -84,10 +94,12 @@ public class DefaultExperimentClient : ExperimentClient {
         self.user = user
     }
     
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     public func getUserProvider() -> ExperimentUserProvider? {
         return self.userProvider
     }
     
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     public func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient {
         self.userProvider = userProvider
         return self

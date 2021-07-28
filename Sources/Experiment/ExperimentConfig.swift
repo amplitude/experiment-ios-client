@@ -21,6 +21,8 @@ public struct ExperimentConfig {
     public private(set) var serverUrl: String = ExperimentConfig.Defaults.serverUrl
     public private(set) var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     public private(set) var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
+    public private(set) var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
+    public private(set) var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
 
     public init() {
         // Default Config
@@ -34,6 +36,8 @@ public struct ExperimentConfig {
         static let serverUrl: String = "https://api.lab.amplitude.com"
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
+        static let userProvider: ExperimentUserProvider? = nil
+        static let analyticsProvider: ExperimentAnalyticsProvider? = nil
     }
     
     public class Builder {
@@ -76,6 +80,16 @@ public struct ExperimentConfig {
         
         public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> Builder {
             config.retryFetchOnFailure = fetchRetryOnFailure
+            return self
+        }
+        
+        public func userProvider(_ userProvider: ExperimentUserProvider?) -> Builder {
+            config.userProvider = userProvider
+            return self
+        }
+        
+        public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> Builder {
+            config.analyticsProvider = analyticsProvider
             return self
         }
 
