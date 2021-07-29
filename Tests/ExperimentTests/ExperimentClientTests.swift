@@ -103,7 +103,7 @@ class ExperimentClientTests: XCTestCase {
         }
         s.wait()
         // Wait for retry to succeed
-        _ = s.wait(timeout: .now() + .seconds(1))
+        _ = s.wait(timeout: .now() + .seconds(2))
         let variant = timeoutRetryClient.variant(KEY, fallback: nil)
         XCTAssertEqual(serverVariant, variant)
     }
