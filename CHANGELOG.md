@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/amplitude/experiment-ios-client/compare/v1.1.2...v1.2.0) (2021-07-29)
+
+
+### Bug Fixes
+
+* revert post to get with header ([#9](https://github.com/amplitude/experiment-ios-client/issues/9)) ([17b14cd](https://github.com/amplitude/experiment-ios-client/commit/17b14cd7f3e96eebf0b57b0474d908ba84dbd0b2))
+* use post instead of get for fetch ([#6](https://github.com/amplitude/experiment-ios-client/issues/6)) ([3a56e7d](https://github.com/amplitude/experiment-ios-client/commit/3a56e7d550f08c5aea83042b3a0afbf3583ae934))
+
+
+### Features
+
+* exposure tracking through analytics provider ([#8](https://github.com/amplitude/experiment-ios-client/issues/8)) ([10f08e9](https://github.com/amplitude/experiment-ios-client/commit/10f08e9f7d63fdcaa8f1ea07f042449e0b771138))
+
 ## [1.1.2](https://github.com/amplitude/experiment-ios-client/compare/v1.1.1...v1.1.2) (2021-07-01)
 
 

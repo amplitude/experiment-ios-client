@@ -74,6 +74,16 @@
 <dd>
     
 </dd>
+<dt class="class">
+    <a href="/experiment-ios-client/ExposureEvent" title="class - ExposureEvent">
+        Exposure​Event
+    </a>
+</dt>
+<dd>
+    <p>Event for tracking a user's exposure to a variant. This event will not count
+towards your analytics event volume.</p>
+
+</dd>
         </dl>
     </section>
     <section id="structures">
@@ -122,6 +132,27 @@
         <h2>Protocols</h2>
         <dl>
             <dt class="protocol">
+    <a href="/experiment-ios-client/ExperimentAnalyticsEvent" title="protocol - ExperimentAnalyticsEvent">
+        Experiment​Analytics​Event
+    </a>
+</dt>
+<dd>
+    <p>Analytics event for tracking events generated from the experiment SDK client.
+These events are sent to the implementation provided by an
+<code>ExperimentAnalyticsProvider</code>.</p>
+
+</dd>
+<dt class="protocol">
+    <a href="/experiment-ios-client/ExperimentAnalyticsProvider" title="protocol - ExperimentAnalyticsProvider">
+        Experiment​Analytics​Provider
+    </a>
+</dt>
+<dd>
+    <p>Provides a analytics implementation for standard experiment events generated
+by the client (e.g. <code>ExposureEvent</code>).</p>
+
+</dd>
+<dt class="protocol">
     <a href="/experiment-ios-client/ExperimentClient" title="protocol - ExperimentClient">
         Experiment​Client
     </a>
@@ -149,7 +180,7 @@ define those fields.</p>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-07-01T22:38:33+0000">July 1, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-rc.1</span>.
+    Generated on <time datetime="2021-07-29T16:41:42+0000">July 29, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-rc.1</span>.
 </p>
     </footer>
 </body>
