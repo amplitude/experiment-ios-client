@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/amplitude/experiment-ios-client/compare/v1.2.0...v1.2.1) (2021-08-10)
+
+
+### Bug Fixes
+
+* use config user provider ([1e4a05c](https://github.com/amplitude/experiment-ios-client/commit/1e4a05c2e0b93d0bec65d09275dca6a44e4fc96b))
+
 # [1.2.0](https://github.com/amplitude/experiment-ios-client/compare/v1.1.2...v1.2.0) (2021-07-29)
 
 
