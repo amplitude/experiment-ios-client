@@ -43,6 +43,9 @@ public class DefaultExperimentClient : ExperimentClient {
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
         self.config = config
+        if config.userProvider != nil {
+            self.userProvider = config.userProvider
+        }
         self.storage = storage
         self.storage.load()
     }
@@ -213,7 +216,6 @@ public class DefaultExperimentClient : ExperimentClient {
     private func stopRetries() {
         backoffLock.wait()
         defer { backoffLock.signal() }
-        print("[Experiment] Stop retries")
         self.backoff?.cancel()
         self.backoff = nil
     }
