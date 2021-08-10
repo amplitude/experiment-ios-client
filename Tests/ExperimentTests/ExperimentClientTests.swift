@@ -235,6 +235,28 @@ class ExperimentClientTests: XCTestCase {
         _ = client.variant(INITIAL_KEY)
         _ = client.variant("asdf")
     }
+    
+    func testExposureEventThroughAnalyticsProviderWithUserProperties() {
+        let userProperties = ["string": "string"]
+        let analyticsProvider = TestAnalyticsProvider(block: { event in
+            XCTAssertEqual(event.userProperties?["string"] as? String, userProperties["string"])
+        })
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfig.Builder()
+                .analyticsProvider(analyticsProvider)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let s = DispatchSemaphore(value: 0)
+        let user = testUser.copyToBuilder().userProperties(userProperties).build()
+        client.fetch(user: user) { (_, _) in
+            s.signal()
+        }
+        s.wait()
+        _ = client.variant(KEY)
+        XCTAssertTrue(analyticsProvider.didExposureGetTracked)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
