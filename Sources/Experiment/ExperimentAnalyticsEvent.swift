@@ -20,4 +20,11 @@ public protocol ExperimentAnalyticsEvent {
     /// properties to the analytics implementation provided by the
     /// ``ExperimentAnalyticsProvider``.
     var properties: [String: String?] { get }
+    
+    /**
+     * Custom user properties from the ``ExperimentUser`` stored by the
+     * ``ExperimentClient``. Also includes merged properties provided by the
+     * ``ExperimentUserProvider``.
+     */
+    var userProperties: [String: Any?]? { get }
 }
