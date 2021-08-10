@@ -144,6 +144,32 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(expectedUserAfterMerge, mergedUser)
     }
     
+    func testMergeUserWithConfiguredProvider() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfig.Builder()
+                .userProvider(TestUserProvider())
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let user = ExperimentUser.Builder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .build()
+        client.setUser(user)
+        let mergedUser = client.mergeUserWithProvider()
+        let expectedUserAfterMerge = ExperimentUser.Builder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .language("")
+            .library("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
+            .build()
+        XCTAssertEqual(expectedUserAfterMerge, mergedUser)
+    }
+    
+    
     func testInitialVariantsSourceOverridesFetch() {
         var variant = initialVariantSourceClient.variant(KEY, fallback: nil)
         XCTAssertNotNil(variant)
