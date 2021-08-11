@@ -33,6 +33,6 @@ public class ExposureEvent : ExperimentAnalyticsEvent {
             "key": key,
             "variant": variant.value
         ]
-        self.userProperties = user.userProperties
+        self.userProperties = ["[Experiment] \(key)": variant.value]
     }
 }

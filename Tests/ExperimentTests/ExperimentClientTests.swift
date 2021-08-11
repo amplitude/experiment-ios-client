@@ -237,9 +237,9 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testExposureEventThroughAnalyticsProviderWithUserProperties() {
-        let userProperties = ["string": "string"]
         let analyticsProvider = TestAnalyticsProvider(block: { event in
-            XCTAssertEqual(event.userProperties?["string"] as? String, userProperties["string"])
+            let actualValue = event.userProperties?["[Experiment] \(KEY)"] as! String
+            XCTAssertEqual(actualValue, serverVariant.value)
         })
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
@@ -249,8 +249,7 @@ class ExperimentClientTests: XCTestCase {
             storage: InMemoryStorage()
         )
         let s = DispatchSemaphore(value: 0)
-        let user = testUser.copyToBuilder().userProperties(userProperties).build()
-        client.fetch(user: user) { (_, _) in
+        client.fetch(user: testUser) { (_, _) in
             s.signal()
         }
         s.wait()
