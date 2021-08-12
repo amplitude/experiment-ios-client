@@ -146,7 +146,7 @@ public class DefaultExperimentClient : ExperimentClient {
         if userId == nil && deviceId == nil {
             print("[Experiment] WARN: user id and device id are null; amplitude will not be able to resolve identity")
         }
-        
+        self.debug("Fetch variants for user: \(user)")
         // Build fetch request
         let userDictionary = user.toDictionary()
         guard let requestData = try? JSONSerialization.data(withJSONObject: userDictionary, options: []) else {
@@ -173,6 +173,7 @@ public class DefaultExperimentClient : ExperimentClient {
                 completion(Result.failure(ExperimentError("Response is nil")))
                 return
             }
+            self.debug("Received fetch response: \(httpResponse)")
             guard httpResponse.statusCode == 200 else {
                 completion(Result.failure(ExperimentError("Error Response: status=\(httpResponse.statusCode)")))
                 return
@@ -180,7 +181,7 @@ public class DefaultExperimentClient : ExperimentClient {
             do {
                 let variants = try self.parseResponseData(data)
                 let end = CFAbsoluteTimeGetCurrent()
-                print("[Experiment] Fetched variants in \(end - start) s")
+                self.debug("Fetched variants in \(end - start) s")
                 completion(Result.success(variants))
             } catch {
                 print("[Experiment] Failed to parse response data: \(error)")
@@ -254,6 +255,7 @@ public class DefaultExperimentClient : ExperimentClient {
             self.storage.put(key: key, value: variant)
         }
         storage.save()
+        self.debug("Stored variants: \(variants)")
     }
     
     private func sourceVariants() -> [String: Variant] {
@@ -271,6 +273,12 @@ public class DefaultExperimentClient : ExperimentClient {
             return config.initialVariants
         case .InitialVariants:
             return storage.getAll()
+        }
+    }
+    
+    private func debug(_ msg: String) {
+        if self.config.debug {
+            print("[Experiment] \(msg)")
         }
     }
 }
