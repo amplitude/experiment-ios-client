@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/amplitude/experiment-ios-client/compare/v1.2.1...v1.3.0) (2021-08-12)
+
+
+### Features
+
+* add user properties to exposure event ([#10](https://github.com/amplitude/experiment-ios-client/issues/10)) ([6c77b1e](https://github.com/amplitude/experiment-ios-client/commit/6c77b1ecbe888d455367f1e8714dfe3e70ad6d77))
+
 ## [1.2.1](https://github.com/amplitude/experiment-ios-client/compare/v1.2.0...v1.2.1) (2021-08-10)
 
 
