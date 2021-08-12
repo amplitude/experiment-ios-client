@@ -20,4 +20,8 @@ public protocol ExperimentAnalyticsEvent {
     /// properties to the analytics implementation provided by the
     /// ``ExperimentAnalyticsProvider``.
     var properties: [String: String?] { get }
+    
+    
+    /// User properties to identify with the user prior to sending the event.
+    var userProperties: [String: Any?]? { get }
 }

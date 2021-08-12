@@ -11,9 +11,11 @@ import Foundation
 /// towards your analytics event volume.
 public class ExposureEvent : ExperimentAnalyticsEvent {
     
+    
     public let name: String = "[Experiment] Exposure"
     public let properties: [String: String?]
-    
+    public let userProperties: [String : Any?]?
+
     /// The user exposed to the flag/experiment variant.
     public let user: ExperimentUser
     
@@ -31,5 +33,6 @@ public class ExposureEvent : ExperimentAnalyticsEvent {
             "key": key,
             "variant": variant.value
         ]
+        self.userProperties = ["[Experiment] \(key)": variant.value]
     }
 }
