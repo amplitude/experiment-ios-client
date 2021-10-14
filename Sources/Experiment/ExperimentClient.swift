@@ -72,17 +72,63 @@ public class DefaultExperimentClient : ExperimentClient {
     }
     
     public func variant(_ key: String, fallback: Variant?) -> Variant {
-        let sourceVariant = sourceVariants()[key]
-        if let variant = sourceVariant, variant.value != nil {
+        let variantAndSource = resolveVariantAndSource(key: key, fallback: fallback)
+        let variant = variantAndSource.variant;
+        let source = variantAndSource.source;
+        // Track the exposure event if an analytics provider is set
+        if (source.isFallback() || variant.value == nil) {
             let exposedUser = mergeUserWithProvider()
-            config.analyticsProvider?.track(
-                ExposureEvent(user: exposedUser, key: key, variant: variant)
-            )
+            config.analyticsProvider?.unsetUserProperty(ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue))
+        } else if (variant.value != nil) {
+            let exposedUser = mergeUserWithProvider()
+            let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
+            config.analyticsProvider?.setUserProperty(event)
+            config.analyticsProvider?.track(event)
         }
-        return sourceVariant ??
-            fallback ??
-            secondaryVariants()[key] ??
-            self.config.fallbackVariant
+        return variant
+    }
+
+    private func resolveVariantAndSource(key: String, fallback: Variant?) -> VariantAndSource {
+        if (config.source == Source.InitialVariants) {
+            // for source = InitialVariants, fallback order goes:
+            // 1. InitialFlags
+            // 2. Local Storage
+            // 3. Function fallback
+            // 4. Config fallback
+
+            let sourceVariant = sourceVariants()[key];
+            if let variant = sourceVariant {
+                print(variant)
+                return VariantAndSource(variant: variant, source: VariantSource.InitialVariants)
+            }
+            let secondaryVariant = secondaryVariants()[key]
+            if let variant = secondaryVariant {
+                return VariantAndSource(variant: variant, source: VariantSource.SecondaryLocalStorage)
+            }
+            if let variant = fallback {
+                return VariantAndSource(variant: variant, source: VariantSource.FallbackInline)
+            }
+            return VariantAndSource(variant: config.fallbackVariant, source: VariantSource.FallbackConfig)
+        } else {
+            // for source = LocalStorage, fallback order goes:
+            // 1. Local Storage
+            // 2. Function fallback
+            // 3. InitialFlags
+            // 4. Config fallback
+
+            let sourceVariant = sourceVariants()[key];
+            if let variant = sourceVariant {
+                return VariantAndSource(variant: variant, source: VariantSource.LocalStorage)
+            }
+            if let variant = fallback {
+                return VariantAndSource(variant: variant, source: VariantSource.FallbackInline)
+            }
+            let secondaryVariant = secondaryVariants()[key]
+            if let variant = secondaryVariant {
+                return VariantAndSource(variant: variant, source: VariantSource.SecondaryInitialVariants)
+            }
+            return VariantAndSource(variant: config.fallbackVariant, source: VariantSource.FallbackConfig)
+        }
     }
 
     public func all() -> [String: Variant] {
@@ -279,6 +325,29 @@ public class DefaultExperimentClient : ExperimentClient {
     private func debug(_ msg: String) {
         if self.config.debug {
             print("[Experiment] \(msg)")
+        }
+    }
+}
+
+private struct VariantAndSource {
+    public private(set) var variant:Variant
+    public private(set) var source:VariantSource
+}
+
+private enum VariantSource : String {
+    case LocalStorage = "storage"
+    case InitialVariants = "initial"
+    case SecondaryLocalStorage = "secondary-storage"
+    case SecondaryInitialVariants = "secondary-initial"
+    case FallbackInline = "fallback-inline"
+    case FallbackConfig = "fallback-config"
+
+    func isFallback() -> Bool {
+        switch self {
+        case .FallbackInline, .FallbackConfig:
+            return true
+        default:
+            return false
         }
     }
 }
