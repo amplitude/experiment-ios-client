@@ -330,8 +330,8 @@ public class DefaultExperimentClient : ExperimentClient {
 }
 
 private struct VariantAndSource {
-    public private(set) var variant:Variant
-    public private(set) var source:VariantSource
+    public private(set) var variant: Variant
+    public private(set) var source: VariantSource
 }
 
 private enum VariantSource : String {
