@@ -9,30 +9,27 @@ import Foundation
 
 /// Event for tracking a user's exposure to a variant. This event will not count
 /// towards your analytics event volume.
-public class ExposureEvent : ExperimentAnalyticsEvent {
-    
-    
+public class ExposureEvent : ExperimentAnalyticsEvent {    
     public let name: String = "[Experiment] Exposure"
     public let properties: [String: String?]
     public let userProperties: [String : Any?]?
 
-    /// The user exposed to the flag/experiment variant.
     public let user: ExperimentUser
-    
-    /// The key of the flag/experiment that the user has been exposed to.
     public let key: String
-    
-    /// The variant of the flag/experiment that the user has been exposed to.
     public let variant: Variant
+    public let userProperty: String
+
     
-    public init(user: ExperimentUser, key: String, variant: Variant) {
+    public init(user: ExperimentUser, key: String, variant: Variant, source: String) {
         self.user = user
         self.key = key
         self.variant = variant
         self.properties = [
             "key": key,
-            "variant": variant.value
+            "variant": variant.value,
+            "source": source
         ]
         self.userProperties = ["[Experiment] \(key)": variant.value]
+        self.userProperty = "[Experiment] \(key)"
     }
 }

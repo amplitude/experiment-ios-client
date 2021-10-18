@@ -24,4 +24,20 @@ public protocol ExperimentAnalyticsEvent {
     
     /// User properties to identify with the user prior to sending the event.
     var userProperties: [String: Any?]? { get }
+
+
+    /// The user exposed to the flag/experiment variant.
+    var user: ExperimentUser { get };
+
+
+    /// The key of the flag/experiment that the user has been exposed to.
+    var key: String { get };
+
+
+    /// The variant of the flag/experiment that the user has been exposed to.
+    var variant: Variant { get };
+
+
+    /// The user property for the flag/experiment (auto-generated from the key)
+    var userProperty: String { get };
 }
