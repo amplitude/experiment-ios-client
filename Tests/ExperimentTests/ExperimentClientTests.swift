@@ -106,7 +106,7 @@ class ExperimentClientTests: XCTestCase {
         }
         s.wait()
         // Wait for retry to succeed
-        _ = s.wait(timeout: .now() + .seconds(1))
+        _ = s.wait(timeout: .now() + .seconds(2))
         let variant = timeoutRetryClient.variant(KEY, fallback: nil)
         XCTAssertEqual(serverVariant, variant)
     }
@@ -147,6 +147,32 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(expectedUserAfterMerge, mergedUser)
     }
     
+    func testMergeUserWithConfiguredProvider() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .userProvider(TestUserProvider())
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let user = ExperimentUserBuilder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .build()
+        client.setUser(user)
+        let mergedUser = client.mergeUserWithProvider()
+        let expectedUserAfterMerge = ExperimentUserBuilder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .language("")
+            .library("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
+            .build()
+        XCTAssertEqual(expectedUserAfterMerge, mergedUser)
+    }
+    
+    
     func testInitialVariantsSourceOverridesFetch() {
         var variant = initialVariantSourceClient.variant(KEY, fallback: nil)
         XCTAssertNotNil(variant)
@@ -168,9 +194,86 @@ class ExperimentClientTests: XCTestCase {
         client.setUser(newUser)
         XCTAssertEqual(newUser, client.getUser())
     }
+    
+    func testExposureEventThroughAnalyticsProviderWhenVariantCalled() {
+        let analyticsProvider = TestAnalyticsProvider(block: { event in
+            XCTAssertEqual("[Experiment] Exposure", event.name)
+            let exposureEvent = event as! ExposureEvent
+            XCTAssertEqual(event.properties, [
+                "key": KEY,
+                "variant": serverVariant.value
+            ])
+            XCTAssertEqual(KEY, exposureEvent.key)
+            XCTAssertEqual(serverVariant, exposureEvent.variant)
+        })
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfig.Builder()
+                .analyticsProvider(analyticsProvider)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let s = DispatchSemaphore(value: 0)
+        client.fetch(user: testUser) { (_, _) in
+            s.signal()
+        }
+        s.wait()
+        _ = client.variant(KEY)
+        XCTAssertTrue(analyticsProvider.didExposureGetTracked)
+    }
+    
+    func testExposureEventNotTrackedOnFallback() {
+        let analyticsProvider = TestAnalyticsProvider(block: { _ in
+            XCTFail()
+        })
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfig.Builder()
+                .analyticsProvider(analyticsProvider)
+                .initialVariants(initialVariants)
+                .fallbackVariant(fallbackVariant)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        _ = client.variant(INITIAL_KEY)
+        _ = client.variant("asdf")
+    }
+    
+    func testExposureEventThroughAnalyticsProviderWithUserProperties() {
+        let analyticsProvider = TestAnalyticsProvider(block: { event in
+            let actualValue = event.userProperties?["[Experiment] \(KEY)"] as! String
+            XCTAssertEqual(actualValue, serverVariant.value)
+        })
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfig.Builder()
+                .analyticsProvider(analyticsProvider)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let s = DispatchSemaphore(value: 0)
+        client.fetch(user: testUser) { (_, _) in
+            s.signal()
+        }
+        s.wait()
+        _ = client.variant(KEY)
+        XCTAssertTrue(analyticsProvider.didExposureGetTracked)
+    }
 }
 
-class TestContextProvider : ExperimentUserProvider {
+class TestAnalyticsProvider : ExperimentAnalyticsProvider {
+    var didExposureGetTracked = false
+    let block: (ExperimentAnalyticsEvent) -> ()
+    init(block: @escaping (ExperimentAnalyticsEvent) -> ()) {
+        self.block = block
+    }
+    func track(_ event: ExperimentAnalyticsEvent) {
+        block(event)
+        didExposureGetTracked = true
+    }
+}
+
+class TestUserProvider : ExperimentUserProvider {
     func getUser() -> ExperimentUser {
         return ExperimentUserBuilder()
             .deviceId("")

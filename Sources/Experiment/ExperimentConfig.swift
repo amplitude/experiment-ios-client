@@ -21,6 +21,8 @@ import Foundation
     @objc public let serverUrl: String
     @objc public let fetchTimeoutMillis: Int
     @objc public let retryFetchOnFailure: Bool
+    @objc public let userProvider: ExperimentUserProvider?
+    @objc public let analyticsProvider: ExperimentAnalyticsProvider?
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
@@ -30,6 +32,8 @@ import Foundation
         self.serverUrl = ExperimentConfig.Defaults.serverUrl
         self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
         self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
+        self.userProvider = ExperimentConfig.Defaults.userProvider
+        self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
     }
     
     internal init(builder: ExperimentConfigBuilder) {
@@ -40,6 +44,8 @@ import Foundation
         self.serverUrl = builder.serverUrl
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
+        self.userProvider = builder.userProvider
+        self.analyticsProvider = builder.analyticsProvider
     }
 
     internal struct Defaults {
@@ -50,12 +56,14 @@ import Foundation
         static let serverUrl: String = "https://api.lab.amplitude.com"
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
+        static let userProvider: ExperimentUserProvider? = nil
+        static let analyticsProvider: ExperimentAnalyticsProvider? = nil
     }
     
     internal struct Constants {
         // Version string is matched in release.config.js
         // Changing this may result in breaking automated releases
-        internal static let Version: String = "1.1.2"
+        internal static let Version: String = "1.3.0"
         internal static let Library: String = "experiment-ios-client"
     }
 }
@@ -69,7 +77,9 @@ import Foundation
     internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
     internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
-    
+    internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
+    internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
+
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
         return self
@@ -105,6 +115,16 @@ import Foundation
         return self
     }
 
+    @objc public func userProvider(_ userProvider: ExperimentUserProvider?) -> ExperimentConfigBuilder {
+        self.userProvider = userProvider
+        return self
+    }
+    
+    @objc public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> ExperimentConfigBuilder {
+        self.analyticsProvider = analyticsProvider
+        return self
+    }
+    
     @objc public func build() -> ExperimentConfig {
         return ExperimentConfig(builder: self)
     }

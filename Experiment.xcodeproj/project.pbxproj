@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
 		2093E3A026A7690D0036A930 /* ObjectiveCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2093E39F26A7690D0036A930 /* ObjectiveCTest.m */; };
+		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
+		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
+		207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9726AB8C9800A0029D /* ExposureEvent.swift */; };
 		20B1BB8E2683CC2A003A960F /* Backoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BB8D2683CC2A003A960F /* Backoff.swift */; };
 		20B1BF21268BBDA4003A960F /* VariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF20268BBDA4003A960F /* VariantTests.swift */; };
 		20B1BF2B268BFFD7003A960F /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */; };
@@ -41,6 +44,9 @@
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
 		2093E39E26A7690D0036A930 /* ExperimentTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ExperimentTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		2093E39F26A7690D0036A930 /* ObjectiveCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectiveCTest.m; sourceTree = "<group>"; };
+		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
+		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
+		207CBB9726AB8C9800A0029D /* ExposureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureEvent.swift; sourceTree = "<group>"; };
 		20B1BB8D2683CC2A003A960F /* Backoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backoff.swift; sourceTree = "<group>"; };
 		20B1BF20268BBDA4003A960F /* VariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantTests.swift; sourceTree = "<group>"; };
 		20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
@@ -125,6 +131,9 @@
 				E9030DB425B8AFC600BA1BA8 /* Variant.swift */,
 				E914961225796DA800C64B38 /* Experiment.h */,
 				E914961325796DA800C64B38 /* Info.plist */,
+				207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */,
+				207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */,
+				207CBB9726AB8C9800A0029D /* ExposureEvent.swift */,
 			);
 			path = Experiment;
 			sourceTree = "<group>";
@@ -277,9 +286,12 @@
 				E9C5D91F2579718E00867574 /* ExperimentUser.swift in Sources */,
 				E9C5D91C2579718E00867574 /* ExperimentClient.swift in Sources */,
 				E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */,
+				207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */,
+				207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */,
 				E9C5D91E2579718E00867574 /* ExperimentConfig.swift in Sources */,
 				E9C5D9202579718E00867574 /* Experiment.swift in Sources */,
 				E9C5D91D2579718E00867574 /* UserDefaultsStorage.swift in Sources */,
+				207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */,
 				E9C5D9222579718E00867574 /* Storage.swift in Sources */,
 				E9C5D9212579718E00867574 /* InMemoryStorage.swift in Sources */,
 				20B1BB8E2683CC2A003A960F /* Backoff.swift in Sources */,

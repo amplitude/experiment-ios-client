@@ -14,7 +14,10 @@ import Foundation
     @objc func all() -> [String:Variant]
     @objc func setUser(_ user: ExperimentUser?)
     @objc func getUser() -> ExperimentUser?
+
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient
 }
 
@@ -40,6 +43,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
         self.config = config
+        if config.userProvider != nil {
+            self.userProvider = config.userProvider
+        }
         self.storage = storage
         self.storage.load()
     }
@@ -62,11 +68,18 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     public func variant(_ key: String) -> Variant {
-        return self.all()[key] ?? self.config.fallbackVariant
+        return variant(key, fallback: nil)
     }
     
     public func variant(_ key: String, fallback: Variant?) -> Variant {
-        return sourceVariants()[key] ??
+        let sourceVariant = sourceVariants()[key]
+        if let variant = sourceVariant, variant.value != nil {
+            let exposedUser = mergeUserWithProvider()
+            config.analyticsProvider?.track(
+                ExposureEvent(user: exposedUser, key: key, variant: variant)
+            )
+        }
+        return sourceVariant ??
             fallback ??
             secondaryVariants()[key] ??
             self.config.fallbackVariant
@@ -84,10 +97,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.user = user
     }
     
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     public func getUserProvider() -> ExperimentUserProvider? {
         return self.userProvider
     }
     
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     public func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient {
         self.userProvider = userProvider
         return self
@@ -131,22 +146,22 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if userId == nil && deviceId == nil {
             print("[Experiment] WARN: user id and device id are null; amplitude will not be able to resolve identity")
         }
-        
+        self.debug("Fetch variants for user: \(user)")
         // Build fetch request
         let userDictionary = user.toDictionary()
         guard let requestData = try? JSONSerialization.data(withJSONObject: userDictionary, options: []) else {
             completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
             return nil
         }
-        if requestData.count > 8000 {
-            print("[Experiment] encoded user object length \(requestData.count) cannot be cached by CDN; must be < 8KB")
-        }
+        let userB64EncodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
         let url = URL(string: "\(self.config.serverUrl)/sdk/vardata")!
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
-        request.httpBody = requestData
         
         // Do fetch request
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -158,6 +173,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 completion(Result.failure(ExperimentError("Response is nil")))
                 return
             }
+            self.debug("Received fetch response: \(httpResponse)")
             guard httpResponse.statusCode == 200 else {
                 completion(Result.failure(ExperimentError("Error Response: status=\(httpResponse.statusCode)")))
                 return
@@ -165,7 +181,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             do {
                 let variants = try self.parseResponseData(data)
                 let end = CFAbsoluteTimeGetCurrent()
-                print("[Experiment] Fetched variants in \(end - start) s")
+                self.debug("Fetched variants in \(end - start) s")
                 completion(Result.success(variants))
             } catch {
                 print("[Experiment] Failed to parse response data: \(error)")
@@ -239,6 +255,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             self.storage.put(key: key, value: variant)
         }
         storage.save()
+        self.debug("Stored variants: \(variants)")
     }
     
     private func sourceVariants() -> [String: Variant] {
@@ -256,6 +273,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             return config.initialVariants
         case .InitialVariants:
             return storage.getAll()
+        }
+    }
+    
+    private func debug(_ msg: String) {
+        if self.config.debug {
+            print("[Experiment] \(msg)")
         }
     }
 }
