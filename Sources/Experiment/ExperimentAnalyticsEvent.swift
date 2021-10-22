@@ -21,7 +21,18 @@ import Foundation
     /// ``ExperimentAnalyticsProvider``.
     @objc var properties: [String: String] { get }
     
-    
     /// User properties to identify with the user prior to sending the event.
     @objc var userProperties: [String: Any]? { get }
+
+    /// The user exposed to the flag/experiment variant.
+    @objc var user: ExperimentUser { get };
+
+    /// The key of the flag/experiment that the user has been exposed to.
+    @objc var key: String { get };
+
+    /// The variant of the flag/experiment that the user has been exposed to.
+    @objc var variant: Variant { get };
+
+    /// The user property for the flag/experiment (auto-generated from the key)
+    @objc var userProperty: String { get };
 }

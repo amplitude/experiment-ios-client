@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/amplitude/experiment-ios-client/compare/v1.3.0...v1.4.0) (2021-10-18)
+
+
+### Features
+
+* unset user properties when variant evaluates to null or is a fa… ([#12](https://github.com/amplitude/experiment-ios-client/issues/12)) ([63776fa](https://github.com/amplitude/experiment-ios-client/commit/63776fa16c2d626efa61c4c12bfd6ff7501c2a24))
+
 # [1.3.0](https://github.com/amplitude/experiment-ios-client/compare/v1.2.1...v1.3.0) (2021-08-12)
 
 

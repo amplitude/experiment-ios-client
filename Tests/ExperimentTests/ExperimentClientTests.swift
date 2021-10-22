@@ -129,7 +129,7 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testMergeUserWithProvider() {
-        _ = client.setUserProvider(TestContextProvider())
+        _ = client.setUserProvider(TestUserProvider())
         let user = ExperimentUserBuilder()
             .deviceId("device_id")
             .userId(nil)
@@ -196,19 +196,24 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testExposureEventThroughAnalyticsProviderWhenVariantCalled() {
-        let analyticsProvider = TestAnalyticsProvider(block: { event in
+        let analyticsProvider = TestAnalyticsProvider(track: { event in
             XCTAssertEqual("[Experiment] Exposure", event.name)
             let exposureEvent = event as! ExposureEvent
             XCTAssertEqual(event.properties, [
                 "key": KEY,
-                "variant": serverVariant.value
+                "variant": serverVariant.value,
+                "source": "storage"
             ])
             XCTAssertEqual(KEY, exposureEvent.key)
             XCTAssertEqual(serverVariant, exposureEvent.variant)
+        }, setUserProperty: { event in
+            XCTAssertEqual("[Experiment] \(KEY)", event.userProperty)
+        }, unsetUserProperty: { _ in
+            XCTFail()
         })
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
-            config: ExperimentConfig.Builder()
+            config: ExperimentConfigBuilder()
                 .analyticsProvider(analyticsProvider)
                 .build(),
             storage: InMemoryStorage()
@@ -222,13 +227,46 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertTrue(analyticsProvider.didExposureGetTracked)
     }
     
-    func testExposureEventNotTrackedOnFallback() {
-        let analyticsProvider = TestAnalyticsProvider(block: { _ in
+    func testExposureEventNotTrackedOnFallbackAndUnsetCalled() {
+        let analyticsProvider = TestAnalyticsProvider(track: { _ in
+            XCTFail()
+        }, setUserProperty: { _ in
+            XCTFail()
+        }, unsetUserProperty: { event in
+            XCTAssertEqual("[Experiment] asdf", event.userProperty)
+        })
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .analyticsProvider(analyticsProvider)
+                .initialVariants(initialVariants)
+                .fallbackVariant(fallbackVariant)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        _ = client.variant("asdf")
+        XCTAssertTrue(analyticsProvider.didUserPropertyGetUnset)
+    }
+
+    func testExposureEventTrackedOnSecondaryAndUnsetNotCalled() {
+        let analyticsProvider = TestAnalyticsProvider(track: { event in
+            XCTAssertEqual("[Experiment] Exposure", event.name)
+            let exposureEvent = event as! ExposureEvent
+            XCTAssertEqual(event.properties, [
+                "key": INITIAL_KEY,
+                "variant": initialVariants[INITIAL_KEY]!.value,
+                "source": "secondary-initial"
+            ])
+            XCTAssertEqual(INITIAL_KEY, exposureEvent.key)
+            XCTAssertEqual(initialVariants[INITIAL_KEY], exposureEvent.variant)
+        }, setUserProperty: { event in
+            XCTAssertEqual("[Experiment] \(INITIAL_KEY)", event.userProperty)
+        }, unsetUserProperty: { _ in
             XCTFail()
         })
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
-            config: ExperimentConfig.Builder()
+            config: ExperimentConfigBuilder()
                 .analyticsProvider(analyticsProvider)
                 .initialVariants(initialVariants)
                 .fallbackVariant(fallbackVariant)
@@ -236,17 +274,22 @@ class ExperimentClientTests: XCTestCase {
             storage: InMemoryStorage()
         )
         _ = client.variant(INITIAL_KEY)
-        _ = client.variant("asdf")
+        XCTAssertTrue(analyticsProvider.didExposureGetTracked)
+        XCTAssertTrue(analyticsProvider.didUserPropertyGetSet)
     }
     
     func testExposureEventThroughAnalyticsProviderWithUserProperties() {
-        let analyticsProvider = TestAnalyticsProvider(block: { event in
+        let analyticsProvider = TestAnalyticsProvider(track: { event in
             let actualValue = event.userProperties?["[Experiment] \(KEY)"] as! String
             XCTAssertEqual(actualValue, serverVariant.value)
+        }, setUserProperty: {event in
+            XCTAssertEqual("[Experiment] \(KEY)", event.userProperty)
+        }, unsetUserProperty: { _ in
+            XCTFail()
         })
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
-            config: ExperimentConfig.Builder()
+            config: ExperimentConfigBuilder()
                 .analyticsProvider(analyticsProvider)
                 .build(),
             storage: InMemoryStorage()
@@ -263,13 +306,27 @@ class ExperimentClientTests: XCTestCase {
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
     var didExposureGetTracked = false
-    let block: (ExperimentAnalyticsEvent) -> ()
-    init(block: @escaping (ExperimentAnalyticsEvent) -> ()) {
-        self.block = block
+    var didUserPropertyGetSet = false
+    var didUserPropertyGetUnset = false
+    let _track: (ExperimentAnalyticsEvent) -> ()
+    let _setUserProperty: (ExperimentAnalyticsEvent) -> ()
+    let _unsetUserProperty: (ExperimentAnalyticsEvent) -> ()
+    init(track: @escaping (ExperimentAnalyticsEvent) -> (), setUserProperty: @escaping (ExperimentAnalyticsEvent) -> (), unsetUserProperty: @escaping (ExperimentAnalyticsEvent) -> ()) {
+        self._track = track
+        self._setUserProperty = setUserProperty
+        self._unsetUserProperty = unsetUserProperty
     }
     func track(_ event: ExperimentAnalyticsEvent) {
-        block(event)
+        _track(event)
         didExposureGetTracked = true
+    }
+    func setUserProperty(_ event: ExperimentAnalyticsEvent) {
+        _setUserProperty(event)
+        didUserPropertyGetSet = true
+    }
+    func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
+        _unsetUserProperty(event)
+        didUserPropertyGetUnset = true
     }
 }
 

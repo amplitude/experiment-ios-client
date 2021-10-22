@@ -10,8 +10,7 @@ import Foundation
 /// Event for tracking a user's exposure to a variant. This event will not count
 /// towards your analytics event volume.
 @objc public class ExposureEvent : NSObject, ExperimentAnalyticsEvent {
-    
-    
+
     @objc public let name: String = "[Experiment] Exposure"
     @objc public let properties: [String: String]
     @objc public let userProperties: [String : Any]?
@@ -24,15 +23,20 @@ import Foundation
     
     /// The variant of the flag/experiment that the user has been exposed to.
     @objc public let variant: Variant
+
+    /// The user property key used to set user properties
+    @objc public let userProperty: String
     
-    @objc public init(user: ExperimentUser, key: String, variant: Variant) {
+    @objc public init(user: ExperimentUser, key: String, variant: Variant, source: String) {
         self.user = user
         self.key = key
         self.variant = variant
         self.properties = [
             "key": key,
-            "variant": variant.value ?? "null"
+            "variant": variant.value ?? "null",
+            "source": source
         ]
         self.userProperties = ["[Experiment] \(key)": variant.value ?? "null"]
+        self.userProperty = "[Experiment] \(key)"
     }
 }
