@@ -61,6 +61,24 @@ import Foundation
         self.userProperties = builder.userProperties
     }
     
+    internal init(builder: ExperimentUser.Builder) {
+        self.deviceId = builder.deviceId
+        self.userId = builder.userId
+        self.version = builder.version
+        self.country = builder.country
+        self.region = builder.region
+        self.dma = builder.dma
+        self.city = builder.city
+        self.language = builder.language
+        self.platform = builder.platform
+        self.os = builder.os
+        self.deviceManufacturer = builder.deviceManufacturer
+        self.deviceModel = builder.deviceModel
+        self.carrier = builder.carrier
+        self.library = builder.library
+        self.userProperties = builder.userProperties
+    }
+    
     @objc public func copyToBuilder() -> ExperimentUserBuilder {
         return ExperimentUserBuilder()
             .deviceId(self.deviceId)
@@ -100,6 +118,119 @@ import Foundation
             self.carrier == other.carrier &&
             self.library == other.library &&
             self.userProperties == other.userProperties
+    }
+    
+    @available(*, deprecated, message: "Use ExperimentUserBuilder instead")
+    public class Builder {
+
+        internal var deviceId: String?
+        internal var userId: String?
+        internal var version: String?
+        internal var country: String?
+        internal var region: String?
+        internal var dma: String?
+        internal var city: String?
+        internal var language: String?
+        internal var platform: String?
+        internal var os: String?
+        internal var deviceManufacturer: String?
+        internal var deviceModel: String?
+        internal var carrier: String?
+        internal var library: String?
+        internal var userProperties: [String: String]?
+        
+        public init() {
+            // public init
+        }
+
+        public func userId(_ userId: String?) -> Builder {
+            self.userId = userId
+            return self
+        }
+
+        public func deviceId(_ deviceId: String?) -> Builder {
+            self.deviceId = deviceId
+            return self
+        }
+
+        public func country(_ country: String?) -> Builder {
+            self.country = country
+            return self
+        }
+
+        public func region(_ region: String?) -> Builder {
+            self.region = region
+            return self
+        }
+
+        public func city(_ city: String?) -> Builder {
+            self.city = city
+            return self
+        }
+
+        public func language(_ language: String?) -> Builder {
+            self.language = language
+            return self
+        }
+
+        public func platform(_ platform: String?) -> Builder {
+            self.platform = platform
+            return self
+        }
+
+        public func version(_ version: String?) -> Builder {
+            self.version = version
+            return self
+        }
+
+        public func dma(_ dma: String?) -> Builder {
+            self.dma = dma
+            return self
+        }
+
+        public func os(_ os: String?) -> Builder {
+            self.os = os
+            return self
+        }
+
+        public func deviceManufacturer(_ deviceManufacturer: String?) -> Builder {
+            self.deviceManufacturer = deviceManufacturer
+            return self
+        }
+
+        public func deviceModel(_ deviceModel: String?) -> Builder {
+            self.deviceModel = deviceModel
+            return self
+        }
+
+        public func carrier(_ carrier: String?) -> Builder {
+            self.carrier = carrier
+            return self
+        }
+
+        public func library(_ library: String?) -> Builder {
+            self.library = library
+            return self
+        }
+
+        public func userProperties(_ userProperties: [String: String]?) -> Builder {
+            self.userProperties = userProperties
+            return self
+        }
+
+        public func userProperty(_ property: String, value: String) -> Builder {
+            guard var userProperties = self.userProperties else {
+                self.userProperties = [property: value]
+                return self
+            }
+            userProperties[property] = value
+            self.userProperties = userProperties
+            return self
+        }
+
+        public func build() -> ExperimentUser {
+            return ExperimentUser(builder: self)
+        }
     }
 }
 
