@@ -307,6 +307,8 @@ public class DefaultExperimentClient : ExperimentClient {
     private func sourceVariants() -> [String: Variant] {
         switch config.source {
         case .LocalStorage:
+            storageLock.wait()
+            defer { storageLock.signal() }
             return storage.getAll()
         case .InitialVariants:
             return config.initialVariants
@@ -318,6 +320,8 @@ public class DefaultExperimentClient : ExperimentClient {
         case .LocalStorage:
             return config.initialVariants
         case .InitialVariants:
+            storageLock.wait()
+            defer { storageLock.signal() }
             return storage.getAll()
         }
     }
