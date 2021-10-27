@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/amplitude/experiment-ios-client/compare/v1.4.0...v1.4.1) (2021-10-27)
+
+
+### Bug Fixes
+
+* potential crash with concurrent storage map copy and write ([#13](https://github.com/amplitude/experiment-ios-client/issues/13)) ([e9786f0](https://github.com/amplitude/experiment-ios-client/commit/e9786f03bded995790b86add5e1900e597879590))
+
 # [1.4.0](https://github.com/amplitude/experiment-ios-client/compare/v1.3.0...v1.4.0) (2021-10-18)
 
 
