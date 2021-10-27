@@ -10,7 +10,7 @@ import XCTest
 
 class ExperimentUserTests: XCTestCase {
 
-    let user = ExperimentUser.Builder()
+    let user = ExperimentUserBuilder()
         .deviceId("device_id")
         .userId("user_id")
         .version(nil)
@@ -59,7 +59,7 @@ class ExperimentUserTests: XCTestCase {
     }
 
     func testExperimentUserBuilderCopyUser() {
-        let user1 = ExperimentUser.Builder()
+        let user1 = ExperimentUserBuilder()
             .userId("user_id")
             .deviceId("device_id")
             .country("country")
@@ -75,14 +75,14 @@ class ExperimentUserTests: XCTestCase {
             .carrier("test")
             .userProperty("userPropertyKey", value: "value")
             .build()
-        let user2 = ExperimentUser.Builder()
+        let user2 = ExperimentUserBuilder()
             .country("newCountry")
             .version("newVersion")
             .userProperty("userPropertyKey2", value: "value2")
             .build()
         
         let mergedUser = user2.merge(user1)
-        let expected = ExperimentUser.Builder()
+        let expected = ExperimentUserBuilder()
             .userId("user_id")
             .deviceId("device_id")
             .country("newCountry") // overwrites value

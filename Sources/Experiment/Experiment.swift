@@ -7,12 +7,12 @@
 
 import Foundation
 
-public class Experiment {
+@objc public class Experiment : NSObject {
     
     private static var defaultInstance = "$default_instance"
     private static var instances: [String: ExperimentClient] = [:]
 
-    public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
+    @objc public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
         let instance = instances[defaultInstance]
         if (instance != nil) {
             return instance!

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
+		2093E3A026A7690D0036A930 /* ObjectiveCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2093E39F26A7690D0036A930 /* ObjectiveCTest.m */; };
 		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
 		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
 		207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9726AB8C9800A0029D /* ExposureEvent.swift */; };
@@ -41,6 +42,8 @@
 
 /* Begin PBXFileReference section */
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
+		2093E39E26A7690D0036A930 /* ExperimentTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ExperimentTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		2093E39F26A7690D0036A930 /* ObjectiveCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectiveCTest.m; sourceTree = "<group>"; };
 		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
 		207CBB9726AB8C9800A0029D /* ExposureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureEvent.swift; sourceTree = "<group>"; };
@@ -143,6 +146,8 @@
 				201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */,
 				20B1BF20268BBDA4003A960F /* VariantTests.swift */,
 				20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */,
+				2093E39F26A7690D0036A930 /* ObjectiveCTest.m */,
+				2093E39E26A7690D0036A930 /* ExperimentTests-Bridging-Header.h */,
 			);
 			path = ExperimentTests;
 			sourceTree = "<group>";
@@ -230,6 +235,7 @@
 					};
 					E914961725796DA800C64B38 = {
 						CreatedOnToolsVersion = 12.2;
+						LastSwiftMigration = 1240;
 					};
 				};
 			};
@@ -299,6 +305,7 @@
 			files = (
 				20B1BF2B268BFFD7003A960F /* UserDefaultsStorageTests.swift in Sources */,
 				201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */,
+				2093E3A026A7690D0036A930 /* ObjectiveCTest.m in Sources */,
 				E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */,
 				20B1BF21268BBDA4003A960F /* VariantTests.swift in Sources */,
 			);
@@ -504,6 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/ExperimentTests/Info.plist;
@@ -517,6 +525,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.ExperimentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/ExperimentTests/ExperimentTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -527,6 +537,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/ExperimentTests/Info.plist;
@@ -540,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.ExperimentTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/ExperimentTests/ExperimentTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 9.0;

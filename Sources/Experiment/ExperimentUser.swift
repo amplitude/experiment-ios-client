@@ -7,30 +7,80 @@
 
 import Foundation
 
-public struct ExperimentUser: Equatable {
+@objc public class ExperimentUser: NSObject {
 
-    public private(set) var deviceId: String?
-    public private(set) var userId: String?
-    public private(set) var version: String?
-    public private(set) var country: String?
-    public private(set) var region: String?
-    public private(set) var dma: String?
-    public private(set) var city: String?
-    public private(set) var language: String?
-    public private(set) var platform: String?
-    public private(set) var os: String?
-    public private(set) var deviceManufacturer: String?
-    public private(set) var deviceModel: String?
-    public private(set) var carrier: String?
-    public private(set) var library: String?
-    public private(set) var userProperties: [String: String]?
+    @objc public let deviceId: String?
+    @objc public let userId: String?
+    @objc public let version: String?
+    @objc public let country: String?
+    @objc public let region: String?
+    @objc public let dma: String?
+    @objc public let city: String?
+    @objc public let language: String?
+    @objc public let platform: String?
+    @objc public let os: String?
+    @objc public let deviceManufacturer: String?
+    @objc public let deviceModel: String?
+    @objc public let carrier: String?
+    @objc public let library: String?
+    @objc public let userProperties: [String: String]?
     
-    public init() {
-        // Empty User
+    @objc public override init() {
+        self.deviceId = nil
+        self.userId = nil
+        self.version = nil
+        self.country = nil
+        self.region = nil
+        self.dma = nil
+        self.city = nil
+        self.language = nil
+        self.platform = nil
+        self.os = nil
+        self.deviceManufacturer = nil
+        self.deviceModel = nil
+        self.carrier = nil
+        self.library = nil
+        self.userProperties = nil
     }
     
-    public func copyToBuilder() -> Builder {
-        return Builder()
+    internal init(builder: ExperimentUserBuilder) {
+        self.deviceId = builder.deviceId
+        self.userId = builder.userId
+        self.version = builder.version
+        self.country = builder.country
+        self.region = builder.region
+        self.dma = builder.dma
+        self.city = builder.city
+        self.language = builder.language
+        self.platform = builder.platform
+        self.os = builder.os
+        self.deviceManufacturer = builder.deviceManufacturer
+        self.deviceModel = builder.deviceModel
+        self.carrier = builder.carrier
+        self.library = builder.library
+        self.userProperties = builder.userProperties
+    }
+    
+    internal init(builder: ExperimentUser.Builder) {
+        self.deviceId = builder.deviceId
+        self.userId = builder.userId
+        self.version = builder.version
+        self.country = builder.country
+        self.region = builder.region
+        self.dma = builder.dma
+        self.city = builder.city
+        self.language = builder.language
+        self.platform = builder.platform
+        self.os = builder.os
+        self.deviceManufacturer = builder.deviceManufacturer
+        self.deviceModel = builder.deviceModel
+        self.carrier = builder.carrier
+        self.library = builder.library
+        self.userProperties = builder.userProperties
+    }
+    
+    @objc public func copyToBuilder() -> ExperimentUserBuilder {
+        return ExperimentUserBuilder()
             .deviceId(self.deviceId)
             .userId(self.userId)
             .version(self.version)
@@ -47,106 +97,254 @@ public struct ExperimentUser: Equatable {
             .library(self.library)
             .userProperties(self.userProperties)
     }
-
+    
+    @objc public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ExperimentUser else {
+            return false
+        }
+        
+        return self.deviceId == other.deviceId &&
+            self.userId == other.userId &&
+            self.version == other.version &&
+            self.country == other.country &&
+            self.region == other.region &&
+            self.dma == other.dma &&
+            self.city == other.city &&
+            self.language == other.language &&
+            self.platform == other.platform &&
+            self.os == other.os &&
+            self.deviceManufacturer == other.deviceManufacturer &&
+            self.deviceModel == other.deviceModel &&
+            self.carrier == other.carrier &&
+            self.library == other.library &&
+            self.userProperties == other.userProperties
+    }
+    
+    @available(*, deprecated, message: "Use ExperimentUserBuilder instead")
     public class Builder {
 
-        private var user = ExperimentUser()
+        internal var deviceId: String?
+        internal var userId: String?
+        internal var version: String?
+        internal var country: String?
+        internal var region: String?
+        internal var dma: String?
+        internal var city: String?
+        internal var language: String?
+        internal var platform: String?
+        internal var os: String?
+        internal var deviceManufacturer: String?
+        internal var deviceModel: String?
+        internal var carrier: String?
+        internal var library: String?
+        internal var userProperties: [String: String]?
         
         public init() {
             // public init
         }
 
         public func userId(_ userId: String?) -> Builder {
-            self.user.userId = userId
+            self.userId = userId
             return self
         }
 
         public func deviceId(_ deviceId: String?) -> Builder {
-            self.user.deviceId = deviceId
+            self.deviceId = deviceId
             return self
         }
 
         public func country(_ country: String?) -> Builder {
-            self.user.country = country
+            self.country = country
             return self
         }
 
         public func region(_ region: String?) -> Builder {
-            self.user.region = region
+            self.region = region
             return self
         }
 
         public func city(_ city: String?) -> Builder {
-            self.user.city = city
+            self.city = city
             return self
         }
 
         public func language(_ language: String?) -> Builder {
-            self.user.language = language
+            self.language = language
             return self
         }
 
         public func platform(_ platform: String?) -> Builder {
-            self.user.platform = platform
+            self.platform = platform
             return self
         }
 
         public func version(_ version: String?) -> Builder {
-            self.user.version = version
+            self.version = version
             return self
         }
 
         public func dma(_ dma: String?) -> Builder {
-            self.user.dma = dma
+            self.dma = dma
             return self
         }
 
         public func os(_ os: String?) -> Builder {
-            self.user.os = os
+            self.os = os
             return self
         }
 
         public func deviceManufacturer(_ deviceManufacturer: String?) -> Builder {
-            self.user.deviceManufacturer = deviceManufacturer
+            self.deviceManufacturer = deviceManufacturer
             return self
         }
 
         public func deviceModel(_ deviceModel: String?) -> Builder {
-            self.user.deviceModel = deviceModel
+            self.deviceModel = deviceModel
             return self
         }
 
         public func carrier(_ carrier: String?) -> Builder {
-            self.user.carrier = carrier
+            self.carrier = carrier
             return self
         }
 
         public func library(_ library: String?) -> Builder {
-            self.user.library = library
+            self.library = library
             return self
         }
 
         public func userProperties(_ userProperties: [String: String]?) -> Builder {
-            self.user.userProperties = userProperties
+            self.userProperties = userProperties
             return self
         }
 
         public func userProperty(_ property: String, value: String) -> Builder {
-            guard var userProperties = user.userProperties else {
-                self.user.userProperties = [property: value]
+            guard var userProperties = self.userProperties else {
+                self.userProperties = [property: value]
                 return self
             }
             userProperties[property] = value
-            self.user.userProperties = userProperties
+            self.userProperties = userProperties
             return self
         }
 
         public func build() -> ExperimentUser {
-            return user
+            return ExperimentUser(builder: self)
         }
     }
+}
 
-    internal func toDictionary() -> [String:Any] {
+@objc public class ExperimentUserBuilder : NSObject {
+    
+    internal var deviceId: String?
+    internal var userId: String?
+    internal var version: String?
+    internal var country: String?
+    internal var region: String?
+    internal var dma: String?
+    internal var city: String?
+    internal var language: String?
+    internal var platform: String?
+    internal var os: String?
+    internal var deviceManufacturer: String?
+    internal var deviceModel: String?
+    internal var carrier: String?
+    internal var library: String?
+    internal var userProperties: [String: String]?
+
+    @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
+        self.userId = userId
+        return self
+    }
+
+    @objc public func deviceId(_ deviceId: String?) -> ExperimentUserBuilder {
+        self.deviceId = deviceId
+        return self
+    }
+
+    @objc public func country(_ country: String?) -> ExperimentUserBuilder {
+        self.country = country
+        return self
+    }
+
+    @objc public func region(_ region: String?) -> ExperimentUserBuilder {
+        self.region = region
+        return self
+    }
+
+    @objc public func city(_ city: String?) -> ExperimentUserBuilder {
+        self.city = city
+        return self
+    }
+
+    @objc public func language(_ language: String?) -> ExperimentUserBuilder {
+        self.language = language
+        return self
+    }
+
+    @objc public func platform(_ platform: String?) -> ExperimentUserBuilder {
+        self.platform = platform
+        return self
+    }
+
+    @objc public func version(_ version: String?) -> ExperimentUserBuilder {
+        self.version = version
+        return self
+    }
+
+    @objc public func dma(_ dma: String?) -> ExperimentUserBuilder {
+        self.dma = dma
+        return self
+    }
+
+    @objc public func os(_ os: String?) -> ExperimentUserBuilder {
+        self.os = os
+        return self
+    }
+
+    @objc public func deviceManufacturer(_ deviceManufacturer: String?) -> ExperimentUserBuilder {
+        self.deviceManufacturer = deviceManufacturer
+        return self
+    }
+
+    @objc public func deviceModel(_ deviceModel: String?) -> ExperimentUserBuilder {
+        self.deviceModel = deviceModel
+        return self
+    }
+
+    @objc public func carrier(_ carrier: String?) -> ExperimentUserBuilder {
+        self.carrier = carrier
+        return self
+    }
+
+    @objc public func library(_ library: String?) -> ExperimentUserBuilder {
+        self.library = library
+        return self
+    }
+
+    @objc public func userProperties(_ userProperties: [String: String]?) -> ExperimentUserBuilder {
+        self.userProperties = userProperties
+        return self
+    }
+
+    @objc public func userProperty(_ property: String, value: String) -> ExperimentUserBuilder {
+        guard var userProperties = self.userProperties else {
+            self.userProperties = [property: value]
+            return self
+        }
+        userProperties[property] = value
+        self.userProperties = userProperties
+        return self
+    }
+
+    @objc public func build() -> ExperimentUser {
+        return ExperimentUser(builder: self)
+    }
+}
+
+internal extension ExperimentUser {
+    
+    func toDictionary() -> [String:Any] {
         var data = [String:Any]()
         data["device_id"] = self.deviceId
         data["user_id"] = self.userId
@@ -165,9 +363,7 @@ public struct ExperimentUser: Equatable {
         data["user_properties"] = self.userProperties
         return data
     }
-}
-
-internal extension ExperimentUser {
+    
     func merge(_ user: ExperimentUser?) -> ExperimentUser {
         return self.copyToBuilder()
             .deviceId(takeOrOverwrite(self.deviceId, user?.deviceId))

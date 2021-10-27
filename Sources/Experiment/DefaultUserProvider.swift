@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class DefaultUserProvider : ExperimentUserProvider {
+@objc public class DefaultUserProvider : NSObject, ExperimentUserProvider {
     
     private let userId: String?
     private let deviceId: String?
@@ -18,7 +18,7 @@ public class DefaultUserProvider : ExperimentUserProvider {
     private let deviceManufacturer: String
     private let deviceModel: String
 
-    public init(userId: String? = nil, deviceId: String? = nil) {
+    @objc public init(userId: String? = nil, deviceId: String? = nil) {
         self.userId = userId
         self.deviceId = deviceId
         self.version = DefaultUserProvider.getVersion()
@@ -29,8 +29,8 @@ public class DefaultUserProvider : ExperimentUserProvider {
         self.deviceModel = DefaultUserProvider.getDeviceModel()
     }
     
-    public func getUser() -> ExperimentUser {
-        return ExperimentUser.Builder()
+    @objc public func getUser() -> ExperimentUser {
+        return ExperimentUserBuilder()
             .deviceId(deviceId)
             .userId(userId)
             .version(version)
