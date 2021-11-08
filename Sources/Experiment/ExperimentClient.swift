@@ -50,8 +50,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.storage.load()
     }
 
+    // TODO: allow for user to be null / missing
     public func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
-        self.user = user
+        if self.user == nil || user != ExperimentUser() {
+            self.user = user
+        }
         let fetchUser = self.mergeUserWithProvider()
         _ = fetchInternal(
             user: fetchUser,

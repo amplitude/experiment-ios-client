@@ -302,6 +302,18 @@ class ExperimentClientTests: XCTestCase {
         _ = client.variant(KEY)
         XCTAssertTrue(analyticsProvider.didExposureGetTracked)
     }
+    
+    func testEmptyUserDoesNotOverwriteCurrentUser() {
+        let user = ExperimentUserBuilder()
+            .deviceId("device_id")
+            .userId(nil)
+            .version("version")
+            .build()
+        client.setUser(user)
+        client.fetch(user: ExperimentUser())
+        let storedUser = client.getUser()
+        XCTAssertEqual(storedUser, user)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
