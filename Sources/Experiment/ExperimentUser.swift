@@ -112,17 +112,11 @@ import Foundation
             return false
         }
         
-        // Check the equality of [String: Any] dictionary by json encoding the object and comparing the data
-        var userPropertiesAnyValueEqual: Bool = false
-        if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
-            do {
-                let userPropertiesData = try JSONSerialization.data(withJSONObject: userPropertiesAnyValue, options: [])
-                let otherUserPropertiesData = try JSONSerialization.data(withJSONObject: otherUserPropertiesAnyValue, options: [])
-                userPropertiesAnyValueEqual = userPropertiesData == otherUserPropertiesData
-            } catch {
-                // Invalid data should not be equal
-                userPropertiesAnyValueEqual = false
-            }
+        var userPropertiesAnyValueEqual = false
+        if let userPropertiesAnyValue = self.userPropertiesAnyValue {
+            userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: other.userPropertiesAnyValue)
+        } else {
+            userPropertiesAnyValueEqual = other.userPropertiesAnyValue == nil
         }
         
         return self.deviceId == other.deviceId &&
@@ -238,10 +232,14 @@ import Foundation
         }
 
         public func userProperties(_ userProperties: [String: Any]?) -> Builder {
-            if let userPropertiesStringValue = userProperties as? [String: String]? {
-                self.userProperties = userPropertiesStringValue
+            guard let userProperties = userProperties else {
+                self.userProperties = nil
+                self.userPropertiesAnyValue = nil
+                return self
             }
-            self.userPropertiesAnyValue = userProperties
+            for (k, v) in userProperties {
+                _ = self.userProperty(k, value: v)
+            }
             return self
         }
 
@@ -358,27 +356,30 @@ import Foundation
     }
 
     @objc public func userProperties(_ userProperties: [String: Any]?) -> ExperimentUserBuilder {
-        if let userPropertiesStringValue = userProperties as? [String: String]? {
-            self.userProperties = userPropertiesStringValue
+        guard let userProperties = userProperties else {
+            self.userProperties = nil
+            self.userPropertiesAnyValue = nil
+            return self
         }
-        self.userPropertiesAnyValue = userProperties
+        for (k, v) in userProperties {
+            _ = self.userProperty(k, value: v)
+        }
         return self
     }
 
     @objc public func userProperty(_ property: String, value: Any) -> ExperimentUserBuilder {
-        guard var userProperties = self.userProperties, var userPropertiesAnyValue = self.userPropertiesAnyValue else {
-            if let stringValue = value as? String {
-                self.userProperties = [property: stringValue]
-            }
-            self.userPropertiesAnyValue = [property: value]
-            return self
-        }
         if let stringValue = value as? String {
-            userProperties[property] = stringValue
-            self.userProperties = userProperties
+            if self.userProperties == nil {
+                self.userProperties = [property: stringValue]
+            } else {
+                self.userProperties![property] = stringValue
+            }
         }
-        userPropertiesAnyValue[property] = value
-        self.userPropertiesAnyValue = userPropertiesAnyValue
+        if self.userPropertiesAnyValue == nil {
+            self.userPropertiesAnyValue = [property: value]
+        } else {
+            self.userPropertiesAnyValue![property] = value
+        }
         return self
     }
 

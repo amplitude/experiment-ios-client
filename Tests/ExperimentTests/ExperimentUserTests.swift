@@ -30,41 +30,51 @@ class ExperimentUserTests: XCTestCase {
         .version(nil)
         .country("country")
         .userProperties([
-            "user_id": "user_id",
-            "device_id": "device_id",
-            "country": "country",
-            "user_properties": [
-                "stringUserProperty": "value",
-                "intUserProperty": 100,
-                "doubleUserProperty": 3.14159,
-                "boolUserProperty": true,
-                "stringArrayUserProperty": ["zero", "one", "two", "three"],
-                "intArrayUserProperty": [0, 1, 2, 3],
-                "anyArrayUserProperty": [0, "one", true, 3.0]
-            ]
+            "stringUserProperty": "value",
+            "intUserProperty": 100,
+            "doubleUserProperty": 3.14159,
+            "boolUserProperty": true,
+            "stringArrayUserProperty": ["zero", "one", "two", "three"],
+            "intArrayUserProperty": [0, 1, 2, 3],
+            "anyArrayUserProperty": [0, "one", true, 3.0]
         ])
         .build()
     
-    func testExperimentUserJSONSerialization() {
-        
-        let expectedDictionary: [String : Any] = [
-            "user_id": "user_id",
-            "device_id": "device_id",
-            "country": "country",
-            "user_properties": [
-                "stringUserProperty": "value",
-                "intUserProperty": 100,
-                "doubleUserProperty": 3.14159,
-                "boolUserProperty": true,
-                "stringArrayUserProperty": ["zero", "one", "two", "three"],
-                "intArrayUserProperty": [0, 1, 2, 3],
-                "anyArrayUserProperty": [0, "one", true, 3.0]
-            ]
+    let expectedUserProperties: [String : Any] = [
+        "stringUserProperty": "value",
+        "intUserProperty": 100,
+        "doubleUserProperty": 3.14159,
+        "boolUserProperty": true,
+        "stringArrayUserProperty": ["zero", "one", "two", "three"],
+        "intArrayUserProperty": [0, 1, 2, 3],
+        "anyArrayUserProperty": [0, "one", true, 3.0]
+    ]
+    
+    let expectedUser: [String : Any] = [
+        "user_id": "user_id",
+        "device_id": "device_id",
+        "country": "country",
+        "user_properties": [
+            "stringUserProperty": "value",
+            "intUserProperty": 100,
+            "doubleUserProperty": 3.14159,
+            "boolUserProperty": true,
+            "stringArrayUserProperty": ["zero", "one", "two", "three"],
+            "intArrayUserProperty": [0, 1, 2, 3],
+            "anyArrayUserProperty": [0, "one", true, 3.0]
         ]
-
+    ]
+    
+    func testExperimentUserUserProperties() {
+        XCTAssertEqual(user, userBulkUserProperties)
+        XCTAssert(NSDictionary(dictionary: user.getUserProperties()!).isEqual(to: expectedUserProperties))
+        XCTAssert(NSDictionary(dictionary: userBulkUserProperties.getUserProperties()!).isEqual(to: expectedUserProperties))
+    }
+    
+    func testExperimentUserJSONSerialization() {
         let userData = try! JSONSerialization.data(withJSONObject: user.toDictionary(), options: [])
         let bulkUserData = try! JSONSerialization.data(withJSONObject: user.toDictionary(), options: [])
-        let expectedData = try! JSONSerialization.data(withJSONObject: expectedDictionary, options: [])
+        let expectedData = try! JSONSerialization.data(withJSONObject: expectedUser, options: [])
 
         let userAnyObject = try! JSONSerialization.jsonObject(with: userData, options: [])
         let bulkUserAnyObject = try! JSONSerialization.jsonObject(with: bulkUserData, options: [])
@@ -93,6 +103,8 @@ class ExperimentUserTests: XCTestCase {
         print(user)
         print(user2)
         XCTAssert(user != user2)
+        print(user)
+        print(user3)
         XCTAssert(user == user3)
     }
 
