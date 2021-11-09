@@ -65,10 +65,18 @@ class ExperimentUserTests: XCTestCase {
         ]
     ]
     
-    func testExperimentUserUserProperties() {
+    func testUserPropertiesEquals() {
         XCTAssertEqual(user, userBulkUserProperties)
         XCTAssert(NSDictionary(dictionary: user.getUserProperties()!).isEqual(to: expectedUserProperties))
         XCTAssert(NSDictionary(dictionary: userBulkUserProperties.getUserProperties()!).isEqual(to: expectedUserProperties))
+    }
+    
+    func testSetNilEmptyUserPropertiesEquals() {
+        let newUser1 = user.copyToBuilder().userProperties(nil).build()
+        let newUser2 = userBulkUserProperties.copyToBuilder().userProperties(nil).build()
+        let otherUser = ExperimentUserBuilder().userId("user_id").deviceId("device_id").country("country").build()
+        XCTAssertEqual(newUser1, newUser2)
+        XCTAssertEqual(newUser1, otherUser)
     }
     
     func testExperimentUserJSONSerialization() {
@@ -100,11 +108,7 @@ class ExperimentUserTests: XCTestCase {
             .userProperty("userPropertyKey", value: "different value")
             .build()
         let user3 = user.copyToBuilder().build()
-        print(user)
-        print(user2)
         XCTAssert(user != user2)
-        print(user)
-        print(user3)
         XCTAssert(user == user3)
     }
 
