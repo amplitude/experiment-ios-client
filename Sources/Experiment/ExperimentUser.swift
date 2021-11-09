@@ -23,7 +23,9 @@ import Foundation
     @objc public let deviceModel: String?
     @objc public let carrier: String?
     @objc public let library: String?
+    @available(*, deprecated, message: "Support for non-string values added. Use the `getUserProperties()` function instead to access all user properties.")
     @objc public let userProperties: [String: String]?
+    @objc private let userPropertiesAnyValue: [String: Any]?
     
     @objc public override init() {
         self.deviceId = nil
@@ -41,6 +43,7 @@ import Foundation
         self.carrier = nil
         self.library = nil
         self.userProperties = nil
+        self.userPropertiesAnyValue = nil
     }
     
     internal init(builder: ExperimentUserBuilder) {
@@ -59,6 +62,7 @@ import Foundation
         self.carrier = builder.carrier
         self.library = builder.library
         self.userProperties = builder.userProperties
+        self.userPropertiesAnyValue = builder.userPropertiesAnyValue
     }
     
     internal init(builder: ExperimentUser.Builder) {
@@ -77,6 +81,7 @@ import Foundation
         self.carrier = builder.carrier
         self.library = builder.library
         self.userProperties = builder.userProperties
+        self.userPropertiesAnyValue = builder.userPropertiesAnyValue
     }
     
     @objc public func copyToBuilder() -> ExperimentUserBuilder {
@@ -95,12 +100,29 @@ import Foundation
             .deviceModel(self.deviceModel)
             .carrier(self.carrier)
             .library(self.library)
-            .userProperties(self.userProperties)
+            .userProperties(self.userPropertiesAnyValue)
+    }
+    
+    func getUserProperties() -> [String: Any]? {
+        return userPropertiesAnyValue
     }
     
     @objc public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ExperimentUser else {
             return false
+        }
+        
+        // Check the equality of [String: Any] dictionary by json encoding the object and comparing the data
+        var userPropertiesAnyValueEqual: Bool = false
+        if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
+            do {
+                let userPropertiesData = try JSONSerialization.data(withJSONObject: userPropertiesAnyValue, options: [])
+                let otherUserPropertiesData = try JSONSerialization.data(withJSONObject: otherUserPropertiesAnyValue, options: [])
+                userPropertiesAnyValueEqual = userPropertiesData == otherUserPropertiesData
+            } catch {
+                // Invalid data should not be equal
+                userPropertiesAnyValueEqual = false
+            }
         }
         
         return self.deviceId == other.deviceId &&
@@ -117,7 +139,7 @@ import Foundation
             self.deviceModel == other.deviceModel &&
             self.carrier == other.carrier &&
             self.library == other.library &&
-            self.userProperties == other.userProperties
+            userPropertiesAnyValueEqual
     }
     
     @available(*, deprecated, message: "Use ExperimentUserBuilder instead")
@@ -138,6 +160,8 @@ import Foundation
         internal var carrier: String?
         internal var library: String?
         internal var userProperties: [String: String]?
+        internal var userPropertiesAnyValue: [String: Any]?
+
         
         public init() {
             // public init
@@ -213,18 +237,28 @@ import Foundation
             return self
         }
 
-        public func userProperties(_ userProperties: [String: String]?) -> Builder {
-            self.userProperties = userProperties
+        public func userProperties(_ userProperties: [String: Any]?) -> Builder {
+            if let userPropertiesStringValue = userProperties as? [String: String]? {
+                self.userProperties = userPropertiesStringValue
+            }
+            self.userPropertiesAnyValue = userProperties
             return self
         }
 
-        public func userProperty(_ property: String, value: String) -> Builder {
-            guard var userProperties = self.userProperties else {
-                self.userProperties = [property: value]
+        public func userProperty(_ property: String, value: Any) -> Builder {
+            guard var userProperties = self.userProperties, var userPropertiesAnyValue = self.userPropertiesAnyValue else {
+                if let stringValue = value as? String {
+                    self.userProperties = [property: stringValue]
+                }
+                self.userPropertiesAnyValue = [property: value]
                 return self
             }
-            userProperties[property] = value
-            self.userProperties = userProperties
+            if let stringValue = value as? String {
+                userProperties[property] = stringValue
+                self.userProperties = userProperties
+            }
+            userPropertiesAnyValue[property] = value
+            self.userPropertiesAnyValue = userPropertiesAnyValue
             return self
         }
 
@@ -251,6 +285,7 @@ import Foundation
     internal var carrier: String?
     internal var library: String?
     internal var userProperties: [String: String]?
+    internal var userPropertiesAnyValue: [String: Any]?
 
     @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
         self.userId = userId
@@ -322,18 +357,28 @@ import Foundation
         return self
     }
 
-    @objc public func userProperties(_ userProperties: [String: String]?) -> ExperimentUserBuilder {
-        self.userProperties = userProperties
+    @objc public func userProperties(_ userProperties: [String: Any]?) -> ExperimentUserBuilder {
+        if let userPropertiesStringValue = userProperties as? [String: String]? {
+            self.userProperties = userPropertiesStringValue
+        }
+        self.userPropertiesAnyValue = userProperties
         return self
     }
 
-    @objc public func userProperty(_ property: String, value: String) -> ExperimentUserBuilder {
-        guard var userProperties = self.userProperties else {
-            self.userProperties = [property: value]
+    @objc public func userProperty(_ property: String, value: Any) -> ExperimentUserBuilder {
+        guard var userProperties = self.userProperties, var userPropertiesAnyValue = self.userPropertiesAnyValue else {
+            if let stringValue = value as? String {
+                self.userProperties = [property: stringValue]
+            }
+            self.userPropertiesAnyValue = [property: value]
             return self
         }
-        userProperties[property] = value
-        self.userProperties = userProperties
+        if let stringValue = value as? String {
+            userProperties[property] = stringValue
+            self.userProperties = userProperties
+        }
+        userPropertiesAnyValue[property] = value
+        self.userPropertiesAnyValue = userPropertiesAnyValue
         return self
     }
 
@@ -360,7 +405,7 @@ internal extension ExperimentUser {
         data["device_model"] = self.deviceModel
         data["carrier"] = self.carrier
         data["library"] = self.library
-        data["user_properties"] = self.userProperties
+        data["user_properties"] = self.userPropertiesAnyValue
         return data
     }
     
