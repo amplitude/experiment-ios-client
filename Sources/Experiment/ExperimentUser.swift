@@ -244,19 +244,18 @@ import Foundation
         }
 
         public func userProperty(_ property: String, value: Any) -> Builder {
-            guard var userProperties = self.userProperties, var userPropertiesAnyValue = self.userPropertiesAnyValue else {
-                if let stringValue = value as? String {
-                    self.userProperties = [property: stringValue]
-                }
-                self.userPropertiesAnyValue = [property: value]
-                return self
-            }
             if let stringValue = value as? String {
-                userProperties[property] = stringValue
-                self.userProperties = userProperties
+                if self.userProperties == nil {
+                    self.userProperties = [property: stringValue]
+                } else {
+                    self.userProperties![property] = stringValue
+                }
             }
-            userPropertiesAnyValue[property] = value
-            self.userPropertiesAnyValue = userPropertiesAnyValue
+            if self.userPropertiesAnyValue == nil {
+                self.userPropertiesAnyValue = [property: value]
+            } else {
+                self.userPropertiesAnyValue![property] = value
+            }
             return self
         }
 
