@@ -113,8 +113,8 @@ import Foundation
         }
         
         var userPropertiesAnyValueEqual = false
-        if let userPropertiesAnyValue = self.userPropertiesAnyValue {
-            userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: other.userPropertiesAnyValue)
+        if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
+            userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: otherUserPropertiesAnyValue)
         } else {
             userPropertiesAnyValueEqual = other.userPropertiesAnyValue == nil
         }
