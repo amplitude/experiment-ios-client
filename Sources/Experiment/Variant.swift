@@ -80,6 +80,6 @@ import Foundation
     }
     
     @objc override public var debugDescription: String {
-        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription)}"
+        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription ?? "nil")}"
     }
 }
