@@ -74,4 +74,12 @@ import Foundation
         let rhsData = try? JSONEncoder().encode(other)
         return lhsData == rhsData
     }
+    
+    @objc override public var description: String {
+        return "Variant{value=\(value ?? "nil"), payload=\(payload ?? "nil")}"
+    }
+    
+    @objc override public var debugDescription: String {
+        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription)}"
+    }
 }

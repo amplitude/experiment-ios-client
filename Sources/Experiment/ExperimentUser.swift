@@ -84,6 +84,14 @@ import Foundation
         self.userPropertiesAnyValue = builder.userPropertiesAnyValue
     }
     
+    @objc override public var description: String {
+        return self.toDictionary().description
+    }
+    
+    @objc override public var debugDescription: String {
+        return self.toDictionary().debugDescription
+    }
+    
     @objc public func copyToBuilder() -> ExperimentUserBuilder {
         return ExperimentUserBuilder()
             .deviceId(self.deviceId)
