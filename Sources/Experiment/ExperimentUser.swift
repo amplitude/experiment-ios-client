@@ -23,7 +23,9 @@ import Foundation
     @objc public let deviceModel: String?
     @objc public let carrier: String?
     @objc public let library: String?
+    @available(*, deprecated, message: "Support for non-string values added. Use the `getUserProperties()` function instead to access all user properties.")
     @objc public let userProperties: [String: String]?
+    @objc private let userPropertiesAnyValue: [String: Any]?
     
     @objc public override init() {
         self.deviceId = nil
@@ -41,6 +43,7 @@ import Foundation
         self.carrier = nil
         self.library = nil
         self.userProperties = nil
+        self.userPropertiesAnyValue = nil
     }
     
     internal init(builder: ExperimentUserBuilder) {
@@ -59,6 +62,7 @@ import Foundation
         self.carrier = builder.carrier
         self.library = builder.library
         self.userProperties = builder.userProperties
+        self.userPropertiesAnyValue = builder.userPropertiesAnyValue
     }
     
     internal init(builder: ExperimentUser.Builder) {
@@ -77,6 +81,7 @@ import Foundation
         self.carrier = builder.carrier
         self.library = builder.library
         self.userProperties = builder.userProperties
+        self.userPropertiesAnyValue = builder.userPropertiesAnyValue
     }
     
     @objc public func copyToBuilder() -> ExperimentUserBuilder {
@@ -95,12 +100,23 @@ import Foundation
             .deviceModel(self.deviceModel)
             .carrier(self.carrier)
             .library(self.library)
-            .userProperties(self.userProperties)
+            .userProperties(self.userPropertiesAnyValue)
+    }
+    
+    func getUserProperties() -> [String: Any]? {
+        return userPropertiesAnyValue
     }
     
     @objc public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ExperimentUser else {
             return false
+        }
+        
+        var userPropertiesAnyValueEqual = false
+        if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
+            userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: otherUserPropertiesAnyValue)
+        } else {
+            userPropertiesAnyValueEqual = other.userPropertiesAnyValue == nil
         }
         
         return self.deviceId == other.deviceId &&
@@ -117,7 +133,7 @@ import Foundation
             self.deviceModel == other.deviceModel &&
             self.carrier == other.carrier &&
             self.library == other.library &&
-            self.userProperties == other.userProperties
+            userPropertiesAnyValueEqual
     }
     
     @available(*, deprecated, message: "Use ExperimentUserBuilder instead")
@@ -138,6 +154,8 @@ import Foundation
         internal var carrier: String?
         internal var library: String?
         internal var userProperties: [String: String]?
+        internal var userPropertiesAnyValue: [String: Any]?
+
         
         public init() {
             // public init
@@ -213,18 +231,31 @@ import Foundation
             return self
         }
 
-        public func userProperties(_ userProperties: [String: String]?) -> Builder {
-            self.userProperties = userProperties
+        public func userProperties(_ userProperties: [String: Any]?) -> Builder {
+            guard let userProperties = userProperties else {
+                self.userProperties = nil
+                self.userPropertiesAnyValue = nil
+                return self
+            }
+            for (k, v) in userProperties {
+                _ = self.userProperty(k, value: v)
+            }
             return self
         }
 
-        public func userProperty(_ property: String, value: String) -> Builder {
-            guard var userProperties = self.userProperties else {
-                self.userProperties = [property: value]
-                return self
+        public func userProperty(_ property: String, value: Any) -> Builder {
+            if let stringValue = value as? String {
+                if self.userProperties == nil {
+                    self.userProperties = [property: stringValue]
+                } else {
+                    self.userProperties![property] = stringValue
+                }
             }
-            userProperties[property] = value
-            self.userProperties = userProperties
+            if self.userPropertiesAnyValue == nil {
+                self.userPropertiesAnyValue = [property: value]
+            } else {
+                self.userPropertiesAnyValue![property] = value
+            }
             return self
         }
 
@@ -251,6 +282,7 @@ import Foundation
     internal var carrier: String?
     internal var library: String?
     internal var userProperties: [String: String]?
+    internal var userPropertiesAnyValue: [String: Any]?
 
     @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
         self.userId = userId
@@ -322,18 +354,31 @@ import Foundation
         return self
     }
 
-    @objc public func userProperties(_ userProperties: [String: String]?) -> ExperimentUserBuilder {
-        self.userProperties = userProperties
+    @objc public func userProperties(_ userProperties: [String: Any]?) -> ExperimentUserBuilder {
+        guard let userProperties = userProperties else {
+            self.userProperties = nil
+            self.userPropertiesAnyValue = nil
+            return self
+        }
+        for (k, v) in userProperties {
+            _ = self.userProperty(k, value: v)
+        }
         return self
     }
 
-    @objc public func userProperty(_ property: String, value: String) -> ExperimentUserBuilder {
-        guard var userProperties = self.userProperties else {
-            self.userProperties = [property: value]
-            return self
+    @objc public func userProperty(_ property: String, value: Any) -> ExperimentUserBuilder {
+        if let stringValue = value as? String {
+            if self.userProperties == nil {
+                self.userProperties = [property: stringValue]
+            } else {
+                self.userProperties![property] = stringValue
+            }
         }
-        userProperties[property] = value
-        self.userProperties = userProperties
+        if self.userPropertiesAnyValue == nil {
+            self.userPropertiesAnyValue = [property: value]
+        } else {
+            self.userPropertiesAnyValue![property] = value
+        }
         return self
     }
 
@@ -360,7 +405,7 @@ internal extension ExperimentUser {
         data["device_model"] = self.deviceModel
         data["carrier"] = self.carrier
         data["library"] = self.library
-        data["user_properties"] = self.userProperties
+        data["user_properties"] = self.userPropertiesAnyValue
         return data
     }
     
