@@ -433,7 +433,7 @@ internal extension ExperimentUser {
             .deviceModel(takeOrOverwrite(self.deviceModel, user?.deviceModel))
             .carrier(takeOrOverwrite(self.carrier, user?.carrier))
             .library(takeOrOverwrite(self.library, user?.library))
-            .userProperties(takeOrOverwrite(self.userProperties, user?.userProperties))
+            .userProperties(takeOrOverwrite(self.getUserProperties(), user?.getUserProperties()))
             .build()
     }
 }
