@@ -17,7 +17,7 @@ internal class Backoff {
 
     // Dispatch
     private let lock = DispatchSemaphore(value: 1)
-    private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.fetch.backoff", qos: .background)
+    private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.fetch.backoff", qos: .default)
 
     // State
     private var started: Bool = false
