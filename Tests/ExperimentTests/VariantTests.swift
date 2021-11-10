@@ -13,7 +13,7 @@ let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 
 let payloadObjectJson = """
-{"testing":123}
+{"testing":123,"repeat":[1,2,3],"ok":true}
 """
 let payloadObject = try! JSONSerialization.jsonObject(with: payloadObjectJson.data(using: .utf8)!, options: [])
 
@@ -105,7 +105,7 @@ class VariantTests: XCTestCase {
         XCTAssertEqual(decoded, original)
         let originalPayload = original.payload as! [String:Any]
         let decodedPayload = decoded.payload as! [String:Any]
-        XCTAssertEqual(decodedPayload.debugDescription, originalPayload.debugDescription)
+        XCTAssertEqual(NSDictionary(dictionary: originalPayload), NSDictionary(dictionary: decodedPayload))
     }
     
     func testVariantArrayPayload() {

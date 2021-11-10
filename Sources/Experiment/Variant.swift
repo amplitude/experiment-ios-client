@@ -67,6 +67,9 @@ import Foundation
         guard self.payload != nil, other.payload != nil else {
             return false
         }
+        if let objectPayload = self.payload as? [String: Any], let otherObjectPayload = self.payload as? [String: Any] {
+            return NSDictionary(dictionary: objectPayload).isEqual(to: otherObjectPayload)
+        }
         let lhsData = try? JSONEncoder().encode(self)
         let rhsData = try? JSONEncoder().encode(other)
         return lhsData == rhsData
