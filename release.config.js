@@ -54,7 +54,7 @@ module.exports = {
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }],
     ["@semantic-release/exec", {
-      "publishCmd": "pod trunk push AmplitudeExperiment.podspec",
+      "publishCmd": "pod trunk push AmplitudeExperiment.podspec --allow-warnings",
     }],
   ],
 }

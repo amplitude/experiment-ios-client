@@ -63,7 +63,7 @@ jobs:
             test
 
       - name: Validate Podfile
-        run: pod lib lint
+        run: pod lib lint --allow-warnings
 
       - name: Cache Swift Doc
         id: cache-swift-doc
