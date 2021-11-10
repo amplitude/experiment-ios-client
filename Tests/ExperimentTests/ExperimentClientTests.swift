@@ -23,55 +23,15 @@ let initialVariants: [String: Variant] = [
 
 class ExperimentClientTests: XCTestCase {
     
-    let client = DefaultExperimentClient(
-        apiKey: API_KEY,
-        config: ExperimentConfigBuilder()
-            .debug(true)
-            .fallbackVariant(fallbackVariant)
-            .initialVariants(initialVariants)
-            .build(),
-        storage: InMemoryStorage()
-    )
-    
-    let timeoutClient = DefaultExperimentClient(
-        apiKey: API_KEY,
-        config: ExperimentConfigBuilder()
-            .debug(true)
-            .fallbackVariant(fallbackVariant)
-            .initialVariants(initialVariants)
-            .fetchTimeoutMillis(1)
-            .fetchRetryOnFailure(false)
-            .build(),
-        storage: InMemoryStorage()
-    )
-
-    let timeoutRetryClient = DefaultExperimentClient(
-        apiKey: API_KEY,
-        config: ExperimentConfigBuilder()
-            .debug(true)
-            .fallbackVariant(fallbackVariant)
-            .initialVariants(initialVariants)
-            .fetchTimeoutMillis(1)
-            .fetchRetryOnFailure(true)
-            .build(),
-        storage: InMemoryStorage()
-    )
-    
-    let initialVariantSourceClient = DefaultExperimentClient(
-        apiKey: API_KEY,
-        config: ExperimentConfigBuilder()
-            .debug(true)
-            .initialVariants(initialVariants)
-            .source(.InitialVariants)
-            .build(),
-        storage: InMemoryStorage()
-    )
-    
-    override class func setUp() {
-    }
-    
     func testFetch() {
         let s = DispatchSemaphore(value: 0)
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
         client.fetch(user: testUser) { (client, error) in
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
@@ -82,36 +42,62 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testFetchTimeout() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fetchTimeoutMillis(1)
+                .fetchRetryOnFailure(false)
+                .build(),
+            storage: InMemoryStorage()
+        )
         let s = DispatchSemaphore(value: 0)
-        timeoutClient.fetch(user: testUser) { (client, error) in
+        client.fetch(user: testUser) { (client, error) in
             XCTAssertNotNil(error)
             let variant = client.variant(KEY)
-            XCTAssertEqual("off", variant.value)
+            XCTAssertEqual(nil, variant.value)
             s.signal()
         }
         s.wait()
-        // Wait for retry to succeed
         _ = s.wait(timeout: .now() + .seconds(1))
-        let variant = timeoutClient.variant(KEY, fallback: nil)
-        XCTAssertEqual("off", variant.value)
+        let variant = client.variant(KEY, fallback: nil)
+        XCTAssertEqual(nil, variant.value)
     }
 
     func testFetchTimeoutAndRetrySuccess() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fetchTimeoutMillis(1)
+                .fetchRetryOnFailure(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
         let s = DispatchSemaphore(value: 0)
-        timeoutRetryClient.fetch(user: testUser) { (client, error) in
+        client.fetch(user: testUser) { (client, error) in
             XCTAssertNotNil(error)
             let variant = client.variant(KEY)
-            XCTAssertEqual("off", variant.value)
+            XCTAssertEqual(nil, variant.value)
             s.signal()
         }
         s.wait()
         // Wait for retry to succeed
         _ = s.wait(timeout: .now() + .seconds(2))
-        let variant = timeoutRetryClient.variant(KEY, fallback: nil)
+        let variant = client.variant(KEY, fallback: nil)
         XCTAssertEqual(serverVariant, variant)
     }
     
     func testFallbackVariantReturnedInCorrectOrder() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fallbackVariant(fallbackVariant)
+                .initialVariants(initialVariants)
+                .build(),
+            storage: InMemoryStorage()
+        )
         let firstFallback = Variant("first")
         var variant = client.variant("asdf", fallback: firstFallback)
         XCTAssertEqual(firstFallback, variant)
@@ -124,11 +110,29 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testInitialVariantsReturned() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fallbackVariant(fallbackVariant)
+                .initialVariants(initialVariants)
+                .build(),
+            storage: InMemoryStorage()
+        )
         let variants = client.all()
         XCTAssertEqual(initialVariants, variants)
     }
     
     func testMergeUserWithProvider() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fallbackVariant(fallbackVariant)
+                .initialVariants(initialVariants)
+                .build(),
+            storage: InMemoryStorage()
+        )
         _ = client.setUserProvider(TestUserProvider())
         let user = ExperimentUserBuilder()
             .deviceId("device_id")
@@ -174,6 +178,15 @@ class ExperimentClientTests: XCTestCase {
     
     
     func testInitialVariantsSourceOverridesFetch() {
+        let initialVariantSourceClient = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .initialVariants(initialVariants)
+                .source(.InitialVariants)
+                .build(),
+            storage: InMemoryStorage()
+        )
         var variant = initialVariantSourceClient.variant(KEY, fallback: nil)
         XCTAssertNotNil(variant)
         let s = DispatchSemaphore(value: 0)
@@ -188,6 +201,16 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testFetchSetsUserAndsetUserOverwrites() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .fallbackVariant(fallbackVariant)
+                .initialVariants(initialVariants)
+                .build(),
+            storage: InMemoryStorage()
+        )
+
         client.fetch(user: testUser)
         XCTAssertEqual(testUser, client.getUser())
         let newUser = testUser.copyToBuilder().userId("different_user").build()
@@ -304,6 +327,13 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testEmptyUserDoesNotOverwriteCurrentUser() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
         let user = ExperimentUserBuilder()
             .deviceId("device_id")
             .userId(nil)
