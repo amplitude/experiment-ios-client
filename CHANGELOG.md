@@ -1,3 +1,21 @@
+# [1.5.0](https://github.com/amplitude/experiment-ios-client/compare/v1.4.1...v1.5.0) (2021-11-11)
+
+
+### Bug Fixes
+
+* dont overwrite stored user with empty user on fetch ([#14](https://github.com/amplitude/experiment-ios-client/issues/14)) ([9649662](https://github.com/amplitude/experiment-ios-client/commit/9649662926cbc6456f1fa781fab76d64e22e9d1f))
+* fix tests once and for all ([4317be6](https://github.com/amplitude/experiment-ios-client/commit/4317be68ed3582db0d286ba00d493a63d8eef212))
+* fix variant equality for object payloads ([#16](https://github.com/amplitude/experiment-ios-client/issues/16)) ([e2471b6](https://github.com/amplitude/experiment-ios-client/commit/e2471b691ca72778114d88fdf8a6b2270634e5fb))
+* override description in user and variant objects ([2de4dfd](https://github.com/amplitude/experiment-ios-client/commit/2de4dfd619a1f8db75b5310b745ba8ef437bd8a5))
+* unwrap optional when printing variant payload ([0146310](https://github.com/amplitude/experiment-ios-client/commit/014631096a2e436d7f5373342ac4030805b4ec3a))
+* update user merge function to use new user props ([45806e2](https://github.com/amplitude/experiment-ios-client/commit/45806e26570f517db22b288cf1c8906c1630d5bf))
+
+
+### Features
+
+* allow for non-string user property values ([#15](https://github.com/amplitude/experiment-ios-client/issues/15)) ([9879df1](https://github.com/amplitude/experiment-ios-client/commit/9879df1cbdcfbef5095eed48254756a517168a8c))
+* Support Objective-C  ([#7](https://github.com/amplitude/experiment-ios-client/issues/7)) ([7f0084a](https://github.com/amplitude/experiment-ios-client/commit/7f0084ae98f37d9fe45f4f72c68ed364d7dbae0b))
+
 ## [1.4.1](https://github.com/amplitude/experiment-ios-client/compare/v1.4.0...v1.4.1) (2021-10-27)
 
 
