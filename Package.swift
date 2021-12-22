@@ -16,6 +16,10 @@ let package = Package(
         .library(
             name: "Experiment",
             targets: ["Experiment"]),
+        .library(
+            name: "AmplitudeCore",
+            targets: ["AmplitudeCore"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -31,6 +35,15 @@ let package = Package(
             name: "ExperimentTests",
             dependencies: ["Experiment"],
             path: "Tests/ExperimentTests",
+            exclude: ["Info.plist"]),
+        .target(
+            name: "AmplitudeCore",
+            path: "Sources/Core",
+            exclude: ["Info.plist"]),
+        .testTarget(
+            name: "AmplitudeCoreTests",
+            dependencies: ["AmplitudeCore"],
+            path: "Tests/AmplitudeCoreTests",
             exclude: ["Info.plist"]),
     ]
 )

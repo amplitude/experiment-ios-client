@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2001748F2771569E001C341D /* Experiment.h in Headers */ = {isa = PBXBuildFile; fileRef = E914961225796DA800C64B38 /* Experiment.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		200174B7277156AB001C341D /* Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E914960F25796DA800C64B38 /* Experiment.framework */; };
+		2001753427728A4D001C341D /* AmplitudeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20866C9C2771491B003D1705 /* AmplitudeCore.swift */; };
+		2001755D27728AD9001C341D /* AmplitudeCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001755C27728AD9001C341D /* AmplitudeCoreTests.swift */; };
+		2001756327728E0A001C341D /* AnalyticsConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001756227728E0A001C341D /* AnalyticsConnector.swift */; };
+		2001756927728E16001C341D /* IdentityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001756827728E16001C341D /* IdentityStore.swift */; };
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
 		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
 		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
@@ -31,6 +37,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		200174AF277156AB001C341D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E914960625796DA800C64B38 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E914960E25796DA800C64B38;
+			remoteInfo = Experiment;
+		};
 		E914961A25796DA800C64B38 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E914960625796DA800C64B38 /* Project object */;
@@ -41,15 +54,25 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		200174A52771569E001C341D /* AmplitudeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmplitudeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		200174BC277156AB001C341D /* AmplitudeCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmplitudeCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2001754E27728AB9001C341D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2001755C27728AD9001C341D /* AmplitudeCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmplitudeCoreTests.swift; sourceTree = "<group>"; };
+		2001756227728E0A001C341D /* AnalyticsConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsConnector.swift; sourceTree = "<group>"; };
+		2001756827728E16001C341D /* IdentityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityStore.swift; sourceTree = "<group>"; };
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
 		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
 		207CBB9726AB8C9800A0029D /* ExposureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureEvent.swift; sourceTree = "<group>"; };
+		20866C9A2771454C003D1705 /* info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = info.plist; sourceTree = "<group>"; };
+		20866C9B27714900003D1705 /* AmplitudeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeCore.h; sourceTree = "<group>"; };
+		20866C9C2771491B003D1705 /* AmplitudeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmplitudeCore.swift; sourceTree = "<group>"; };
 		2093E39E26A7690D0036A930 /* ExperimentTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ExperimentTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		2093E39F26A7690D0036A930 /* ObjectiveCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectiveCTest.m; sourceTree = "<group>"; };
 		20B1BB8D2683CC2A003A960F /* Backoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backoff.swift; sourceTree = "<group>"; };
 		20B1BF20268BBDA4003A960F /* VariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantTests.swift; sourceTree = "<group>"; };
 		20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
+		A4F361AFAC0798821791DC78 /* libPods-Experiment.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Experiment.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9030DB425B8AFC600BA1BA8 /* Variant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variant.swift; sourceTree = "<group>"; };
 		E914960F25796DA800C64B38 /* Experiment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Experiment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E914961225796DA800C64B38 /* Experiment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Experiment.h; sourceTree = "<group>"; };
@@ -70,6 +93,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2001749F2771569E001C341D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		200174B6277156AB001C341D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				200174B7277156AB001C341D /* Experiment.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E914960C25796DA800C64B38 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -88,11 +126,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2001754D27728A8C001C341D /* AmplitudeCoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				2001754E27728AB9001C341D /* Info.plist */,
+				2001755C27728AD9001C341D /* AmplitudeCoreTests.swift */,
+			);
+			path = AmplitudeCoreTests;
+			sourceTree = "<group>";
+		};
 		201A78522641D0EC00663DCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A4F361AFAC0798821791DC78 /* libPods-Experiment.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		20866C99277144F1003D1705 /* AmplitudeCore */ = {
+			isa = PBXGroup;
+			children = (
+				20866C9A2771454C003D1705 /* info.plist */,
+				20866C9B27714900003D1705 /* AmplitudeCore.h */,
+				20866C9C2771491B003D1705 /* AmplitudeCore.swift */,
+				2001756227728E0A001C341D /* AnalyticsConnector.swift */,
+				2001756827728E16001C341D /* IdentityStore.swift */,
+			);
+			path = AmplitudeCore;
 			sourceTree = "<group>";
 		};
 		E914960525796DA800C64B38 = {
@@ -111,6 +171,8 @@
 			children = (
 				E914960F25796DA800C64B38 /* Experiment.framework */,
 				E914961825796DA800C64B38 /* ExperimentTests.xctest */,
+				200174A52771569E001C341D /* AmplitudeCore.framework */,
+				200174BC277156AB001C341D /* AmplitudeCoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,6 +217,7 @@
 		E9C5D928257971B900867574 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				20866C99277144F1003D1705 /* AmplitudeCore */,
 				E914961125796DA800C64B38 /* Experiment */,
 			);
 			path = Sources;
@@ -163,6 +226,7 @@
 		E9C5D929257971BE00867574 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2001754D27728A8C001C341D /* AmplitudeCoreTests */,
 				E914961C25796DA800C64B38 /* ExperimentTests */,
 			);
 			path = Tests;
@@ -171,6 +235,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2001748E2771569E001C341D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2001748F2771569E001C341D /* Experiment.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E914960A25796DA800C64B38 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,6 +254,42 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2001748C2771569E001C341D /* AmplitudeCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 200174A22771569E001C341D /* Build configuration list for PBXNativeTarget "AmplitudeCore" */;
+			buildPhases = (
+				2001748E2771569E001C341D /* Headers */,
+				200174902771569E001C341D /* Sources */,
+				2001749F2771569E001C341D /* Frameworks */,
+				200174A12771569E001C341D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AmplitudeCore;
+			productName = Experiment;
+			productReference = 200174A52771569E001C341D /* AmplitudeCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		200174AD277156AB001C341D /* AmplitudeCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 200174B9277156AB001C341D /* Build configuration list for PBXNativeTarget "AmplitudeCoreTests" */;
+			buildPhases = (
+				200174B0277156AB001C341D /* Sources */,
+				200174B6277156AB001C341D /* Frameworks */,
+				200174B8277156AB001C341D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				200174AE277156AB001C341D /* PBXTargetDependency */,
+			);
+			name = AmplitudeCoreTests;
+			productName = ExperimentTests;
+			productReference = 200174BC277156AB001C341D /* AmplitudeCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E914960E25796DA800C64B38 /* Experiment */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E914962325796DA800C64B38 /* Build configuration list for PBXNativeTarget "Experiment" */;
@@ -196,8 +304,6 @@
 			dependencies = (
 			);
 			name = Experiment;
-			packageProductDependencies = (
-			);
 			productName = Experiment;
 			productReference = E914960F25796DA800C64B38 /* Experiment.framework */;
 			productType = "com.apple.product-type.framework";
@@ -248,19 +354,33 @@
 				Base,
 			);
 			mainGroup = E914960525796DA800C64B38;
-			packageReferences = (
-			);
 			productRefGroup = E914961025796DA800C64B38 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				E914960E25796DA800C64B38 /* Experiment */,
 				E914961725796DA800C64B38 /* ExperimentTests */,
+				2001748C2771569E001C341D /* AmplitudeCore */,
+				200174AD277156AB001C341D /* AmplitudeCoreTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		200174A12771569E001C341D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		200174B8277156AB001C341D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E914960D25796DA800C64B38 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -278,6 +398,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		200174902771569E001C341D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2001756327728E0A001C341D /* AnalyticsConnector.swift in Sources */,
+				2001753427728A4D001C341D /* AmplitudeCore.swift in Sources */,
+				2001756927728E16001C341D /* IdentityStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		200174B0277156AB001C341D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2001755D27728AD9001C341D /* AmplitudeCoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E914960B25796DA800C64B38 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -314,6 +452,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		200174AE277156AB001C341D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E914960E25796DA800C64B38 /* Experiment */;
+			targetProxy = 200174AF277156AB001C341D /* PBXContainerItemProxy */;
+		};
 		E914961B25796DA800C64B38 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E914960E25796DA800C64B38 /* Experiment */;
@@ -322,6 +465,120 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		200174A32771569E001C341D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/AmplitudeCore/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.Experiment;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchos watchsimulator appletvos appletvsimulator macosx";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Debug;
+		};
+		200174A42771569E001C341D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Sources/AmplitudeCore/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.Experiment;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchos watchsimulator appletvos appletvsimulator macosx";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Release;
+		};
+		200174BA277156AB001C341D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Tests/AmplitudeCoreTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.ExperimentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/ExperimentTests/ExperimentTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		200174BB277156AB001C341D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Tests/AmplitudeCoreTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.ExperimentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/ExperimentTests/ExperimentTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 		E914962125796DA800C64B38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -565,6 +822,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		200174A22771569E001C341D /* Build configuration list for PBXNativeTarget "AmplitudeCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				200174A32771569E001C341D /* Debug */,
+				200174A42771569E001C341D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		200174B9277156AB001C341D /* Build configuration list for PBXNativeTarget "AmplitudeCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				200174BA277156AB001C341D /* Debug */,
+				200174BB277156AB001C341D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E914960925796DA800C64B38 /* Build configuration list for PBXProject "Experiment" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
