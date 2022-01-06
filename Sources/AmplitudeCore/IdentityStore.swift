@@ -69,8 +69,9 @@ internal let ID_OP_CLEAR_ALL = "$clearAll"
         identityLock.signal()
         if identityChanged {
             listenersLock.wait()
-            defer { listenersLock.signal() }
-            for listener in listeners.values {
+            let safeListeners = listeners.values
+            listenersLock.signal()
+            for listener in safeListeners {
                 listener(identity)
             }
         }
