@@ -15,6 +15,7 @@ import Foundation
 @objc public class ExperimentConfig : NSObject {
 
     @objc public let debug: Bool
+    @objc public let instanceName: String
     @objc public let fallbackVariant: Variant
     @objc public let initialVariants: [String: Variant]
     @objc public let source: Source
@@ -26,6 +27,7 @@ import Foundation
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
+        self.instanceName = ExperimentConfig.Defaults.instanceName
         self.fallbackVariant = ExperimentConfig.Defaults.fallbackVariant
         self.initialVariants = ExperimentConfig.Defaults.initialVariants
         self.source = ExperimentConfig.Defaults.source
@@ -38,6 +40,7 @@ import Foundation
     
     internal init(builder: ExperimentConfigBuilder) {
         self.debug = builder.debug
+        self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialVariants = builder.initialVariants
         self.source = builder.source
@@ -50,6 +53,7 @@ import Foundation
     
     internal init(builder: ExperimentConfig.Builder) {
         self.debug = builder.debug
+        self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialVariants = builder.initialVariants
         self.source = builder.source
@@ -62,6 +66,7 @@ import Foundation
 
     internal struct Defaults {
         static let debug: Bool = false
+        static let instanceName: String = "$default_instance"
         static let fallbackVariant: Variant = Variant()
         static let initialVariants: [String: Variant] = [:]
         static let source: Source = Source.LocalStorage
@@ -76,6 +81,7 @@ import Foundation
     public class Builder {
             
         internal var debug: Bool = ExperimentConfig.Defaults.debug
+        internal var instanceName = ExperimentConfig.Defaults.instanceName
         internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
         internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
         internal var source: Source = ExperimentConfig.Defaults.source
@@ -91,6 +97,11 @@ import Foundation
         
         public func debug(_ debug: Bool) -> Builder {
             self.debug = debug
+            return self
+        }
+        
+        public func instanceName(_ instanceName: String) -> Builder {
+            self.instanceName = instanceName
             return self
         }
         
@@ -145,11 +156,26 @@ import Foundation
         internal static let Version: String = "1.5.0"
         internal static let Library: String = "experiment-ios-client"
     }
+    
+    internal func copyToBuilder() -> ExperimentConfigBuilder {
+        return ExperimentConfigBuilder()
+            .debug(self.debug)
+            .instanceName(self.instanceName)
+            .fallbackVariant(self.fallbackVariant)
+            .initialVariants(self.initialVariants)
+            .source(self.source)
+            .serverUrl(self.serverUrl)
+            .fetchTimeoutMillis(self.fetchTimeoutMillis)
+            .fetchRetryOnFailure(self.retryFetchOnFailure)
+            .userProvider(self.userProvider)
+            .analyticsProvider(self.analyticsProvider)
+    }
 }
 
 @objc public class ExperimentConfigBuilder : NSObject {
     
     internal var debug: Bool = ExperimentConfig.Defaults.debug
+    internal var instanceName: String = ExperimentConfig.Defaults.instanceName
     internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
     internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
     internal var source: Source = ExperimentConfig.Defaults.source
@@ -161,6 +187,11 @@ import Foundation
 
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
+        return self
+    }
+    
+    @objc public func instanceName(_ instanceName: String) -> ExperimentConfigBuilder {
+        self.instanceName = instanceName
         return self
     }
     

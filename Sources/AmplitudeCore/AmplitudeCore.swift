@@ -12,20 +12,25 @@ import Foundation
     private static let instancesLock: DispatchSemaphore = DispatchSemaphore(value: 1)
     private static var instances: [String:AmplitudeCore] = [:]
     
-    @objc static func getInstance(_ instanceName: String) -> AmplitudeCore {
+    @objc public static func getInstance(_ instanceName: String) -> AmplitudeCore {
         instancesLock.wait()
         defer { instancesLock.signal() }
         if let instance = instances[instanceName] {
             return instance
         } else {
-            instances[instanceName] = AmplitudeCore()
+            instances[instanceName] = AmplitudeCore(
+                analyticsConnector: AnalyticsConnectorImpl(),
+                identityStore: IdentityStoreImpl()
+            )
             return instances[instanceName]!
         }
     }
     
-//    public init(analyticsConnector: AnalyticsConnector, identityStore: IdentityStore) {
-//
-//    }
-//    public let analyticsConnector: AnalyticsConnector
-//    public let identityStore: IdentityStore
+    @objc public let analyticsConnector: AnalyticsConnector
+    @objc public let identityStore: IdentityStore
+    
+    private init(analyticsConnector: AnalyticsConnector, identityStore: IdentityStore) {
+        self.analyticsConnector = analyticsConnector
+        self.identityStore = identityStore
+    }
 }
