@@ -57,19 +57,6 @@ import AmplitudeCore
         )
         instances[instanceKey] = newInstance
         core.identityStore.addIdentityListener(key: "init") { (identity) in
-//            guard let newUserProperties = identity.userProperties as? [String: Any] else {
-//                return
-//            }
-//            let currentUser = newInstance.getUser() ?? ExperimentUser()
-//            let userBuilder = currentUser.copyToBuilder()
-//                .userId(identity.userId)
-//                .deviceId(identity.deviceId)
-//            if let currentUserProperties = currentUser.getUserProperties() {
-//                let mergedUserProperties = newUserProperties.merging(currentUserProperties) { (new, _) in new }
-//                userBuilder.userProperties(mergedUserProperties)
-//            } else {
-//                userBuilder.userProperties(newUserProperties)
-//            }
             newInstance.fetch(user: ExperimentUser(), completion: nil)
         }
         return newInstance
