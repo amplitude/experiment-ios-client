@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "amplitude-ios-core",
+        "repositoryURL": "https://github.com/amplitude/amplitude-ios-core",
+        "state": {
+          "branch": null,
+          "revision": "3a6c234d6ce1946fa74ed1280643c9af4559d980",
+          "version": "1.0.0-alpha.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
