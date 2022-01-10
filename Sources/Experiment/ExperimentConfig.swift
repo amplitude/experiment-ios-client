@@ -95,51 +95,61 @@ import Foundation
             // public init
         }
         
+        @discardableResult
         public func debug(_ debug: Bool) -> Builder {
             self.debug = debug
             return self
         }
         
+        @discardableResult
         public func instanceName(_ instanceName: String) -> Builder {
             self.instanceName = instanceName
             return self
         }
         
+        @discardableResult
         public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
             self.fallbackVariant = fallbackVariant
             return self
         }
         
+        @discardableResult
         public func initialVariants(_ initialVariants: [String: Variant]) -> Builder {
             self.initialVariants = initialVariants
             return self
         }
         
+        @discardableResult
         public func source(_ source: Source) -> Builder {
             self.source = source
             return self
         }
         
+        @discardableResult
         public func serverUrl(_ serverUrl: String) -> Builder {
             self.serverUrl = serverUrl
             return self
         }
         
+        @discardableResult
         public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> Builder {
             self.fetchTimeoutMillis = fetchTimeoutMillis
             return self
         }
         
+        @discardableResult
         public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> Builder {
             self.retryFetchOnFailure = fetchRetryOnFailure
             return self
         }
         
+        @discardableResult
         public func userProvider(_ userProvider: ExperimentUserProvider?) -> Builder {
             self.userProvider = userProvider
             return self
         }
         
+        @discardableResult
         public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> Builder {
             self.analyticsProvider = analyticsProvider
             return self
@@ -185,51 +195,61 @@ import Foundation
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
 
+    @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
         return self
     }
     
+    @discardableResult
     @objc public func instanceName(_ instanceName: String) -> ExperimentConfigBuilder {
         self.instanceName = instanceName
         return self
     }
     
+    @discardableResult
     @objc public func fallbackVariant(_ fallbackVariant: Variant) -> ExperimentConfigBuilder {
         self.fallbackVariant = fallbackVariant
         return self
     }
     
+    @discardableResult
     @objc public func initialVariants(_ initialVariants: [String: Variant]) -> ExperimentConfigBuilder {
         self.initialVariants = initialVariants
         return self
     }
     
+    @discardableResult
     @objc public func source(_ source: Source) -> ExperimentConfigBuilder {
         self.source = source
         return self
     }
     
+    @discardableResult
     @objc public func serverUrl(_ serverUrl: String) -> ExperimentConfigBuilder {
         self.serverUrl = serverUrl
         return self
     }
     
+    @discardableResult
     @objc public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> ExperimentConfigBuilder {
         self.fetchTimeoutMillis = fetchTimeoutMillis
         return self
     }
     
+    @discardableResult
     @objc public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> ExperimentConfigBuilder {
         self.retryFetchOnFailure = fetchRetryOnFailure
         return self
     }
 
+    @discardableResult
     @objc public func userProvider(_ userProvider: ExperimentUserProvider?) -> ExperimentConfigBuilder {
         self.userProvider = userProvider
         return self
     }
     
+    @discardableResult
     @objc public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> ExperimentConfigBuilder {
         self.analyticsProvider = analyticsProvider
         return self

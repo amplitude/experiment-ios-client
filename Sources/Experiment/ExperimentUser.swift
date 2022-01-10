@@ -169,76 +169,91 @@ import Foundation
             // public init
         }
 
+        @discardableResult
         public func userId(_ userId: String?) -> Builder {
             self.userId = userId
             return self
         }
 
+        @discardableResult
         public func deviceId(_ deviceId: String?) -> Builder {
             self.deviceId = deviceId
             return self
         }
 
+        @discardableResult
         public func country(_ country: String?) -> Builder {
             self.country = country
             return self
         }
 
+        @discardableResult
         public func region(_ region: String?) -> Builder {
             self.region = region
             return self
         }
 
+        @discardableResult
         public func city(_ city: String?) -> Builder {
             self.city = city
             return self
         }
 
+        @discardableResult
         public func language(_ language: String?) -> Builder {
             self.language = language
             return self
         }
 
+        @discardableResult
         public func platform(_ platform: String?) -> Builder {
             self.platform = platform
             return self
         }
 
+        @discardableResult
         public func version(_ version: String?) -> Builder {
             self.version = version
             return self
         }
 
+        @discardableResult
         public func dma(_ dma: String?) -> Builder {
             self.dma = dma
             return self
         }
 
+        @discardableResult
         public func os(_ os: String?) -> Builder {
             self.os = os
             return self
         }
 
+        @discardableResult
         public func deviceManufacturer(_ deviceManufacturer: String?) -> Builder {
             self.deviceManufacturer = deviceManufacturer
             return self
         }
 
+        @discardableResult
         public func deviceModel(_ deviceModel: String?) -> Builder {
             self.deviceModel = deviceModel
             return self
         }
 
+        @discardableResult
         public func carrier(_ carrier: String?) -> Builder {
             self.carrier = carrier
             return self
         }
 
+        @discardableResult
         public func library(_ library: String?) -> Builder {
             self.library = library
             return self
         }
 
+        @discardableResult
         public func userProperties(_ userProperties: [String: Any]?) -> Builder {
             guard let userProperties = userProperties else {
                 self.userProperties = nil
@@ -251,6 +266,7 @@ import Foundation
             return self
         }
 
+        @discardableResult
         public func userProperty(_ property: String, value: Any) -> Builder {
             if let stringValue = value as? String {
                 if self.userProperties == nil {
@@ -292,76 +308,91 @@ import Foundation
     internal var userProperties: [String: String]?
     internal var userPropertiesAnyValue: [String: Any]?
 
+    @discardableResult
     @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
         self.userId = userId
         return self
     }
 
+    @discardableResult
     @objc public func deviceId(_ deviceId: String?) -> ExperimentUserBuilder {
         self.deviceId = deviceId
         return self
     }
 
+    @discardableResult
     @objc public func country(_ country: String?) -> ExperimentUserBuilder {
         self.country = country
         return self
     }
 
+    @discardableResult
     @objc public func region(_ region: String?) -> ExperimentUserBuilder {
         self.region = region
         return self
     }
 
+    @discardableResult
     @objc public func city(_ city: String?) -> ExperimentUserBuilder {
         self.city = city
         return self
     }
 
+    @discardableResult
     @objc public func language(_ language: String?) -> ExperimentUserBuilder {
         self.language = language
         return self
     }
 
+    @discardableResult
     @objc public func platform(_ platform: String?) -> ExperimentUserBuilder {
         self.platform = platform
         return self
     }
 
+    @discardableResult
     @objc public func version(_ version: String?) -> ExperimentUserBuilder {
         self.version = version
         return self
     }
 
+    @discardableResult
     @objc public func dma(_ dma: String?) -> ExperimentUserBuilder {
         self.dma = dma
         return self
     }
 
+    @discardableResult
     @objc public func os(_ os: String?) -> ExperimentUserBuilder {
         self.os = os
         return self
     }
 
+    @discardableResult
     @objc public func deviceManufacturer(_ deviceManufacturer: String?) -> ExperimentUserBuilder {
         self.deviceManufacturer = deviceManufacturer
         return self
     }
 
+    @discardableResult
     @objc public func deviceModel(_ deviceModel: String?) -> ExperimentUserBuilder {
         self.deviceModel = deviceModel
         return self
     }
 
+    @discardableResult
     @objc public func carrier(_ carrier: String?) -> ExperimentUserBuilder {
         self.carrier = carrier
         return self
     }
 
+    @discardableResult
     @objc public func library(_ library: String?) -> ExperimentUserBuilder {
         self.library = library
         return self
     }
 
+    @discardableResult
     @objc public func userProperties(_ userProperties: [String: Any]?) -> ExperimentUserBuilder {
         guard let userProperties = userProperties else {
             self.userProperties = nil
@@ -374,6 +405,7 @@ import Foundation
         return self
     }
 
+    @discardableResult
     @objc public func userProperty(_ property: String, value: Any) -> ExperimentUserBuilder {
         if let stringValue = value as? String {
             if self.userProperties == nil {
@@ -418,6 +450,12 @@ internal extension ExperimentUser {
     }
     
     func merge(_ user: ExperimentUser?) -> ExperimentUser {
+        var mergedUserProperties: [String:Any]?
+        if let currentUserProperties = self.getUserProperties(), let mergingUserProperties = user?.getUserProperties() {
+            mergedUserProperties = currentUserProperties.merging(mergingUserProperties) { (new, _) in new }
+        } else {
+            mergedUserProperties = self.getUserProperties() ?? user?.getUserProperties()
+        }
         return self.copyToBuilder()
             .deviceId(takeOrOverwrite(self.deviceId, user?.deviceId))
             .userId(takeOrOverwrite(self.userId, user?.userId))
@@ -433,7 +471,7 @@ internal extension ExperimentUser {
             .deviceModel(takeOrOverwrite(self.deviceModel, user?.deviceModel))
             .carrier(takeOrOverwrite(self.carrier, user?.carrier))
             .library(takeOrOverwrite(self.library, user?.library))
-            .userProperties(takeOrOverwrite(self.getUserProperties(), user?.getUserProperties()))
+            .userProperties(mergedUserProperties)
             .build()
     }
 }
