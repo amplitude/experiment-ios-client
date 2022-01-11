@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,10 +15,10 @@
 		20B1BB8E2683CC2A003A960F /* Backoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BB8D2683CC2A003A960F /* Backoff.swift */; };
 		20B1BF21268BBDA4003A960F /* VariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF20268BBDA4003A960F /* VariantTests.swift */; };
 		20B1BF2B268BFFD7003A960F /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */; };
-		20C6BEB0278CEA1C00B39CBE /* AmplitudeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 20C6BEAF278CEA1C00B39CBE /* AmplitudeCore */; };
 		20C9FA382787621100A4D530 /* CoreAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA372787621100A4D530 /* CoreAnalyticsProvider.swift */; };
 		20C9FA3E2787621B00A4D530 /* CoreUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA3D2787621B00A4D530 /* CoreUserProvider.swift */; };
 		20C9FA44278791E400A4D530 /* CoreIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA43278791E400A4D530 /* CoreIntegrationTests.swift */; };
+		CE7B872702D0472ADE7ADC8D /* Pods_Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BED1EC781ECEB9B9565C1F5 /* Pods_Experiment.framework */; };
 		E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9030DB425B8AFC600BA1BA8 /* Variant.swift */; };
 		E914961925796DA800C64B38 /* Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E914960F25796DA800C64B38 /* Experiment.framework */; };
 		E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914961D25796DA800C64B38 /* ExperimentClientTests.swift */; };
@@ -45,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1BED1EC781ECEB9B9565C1F5 /* Pods_Experiment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Experiment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
 		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
@@ -54,10 +55,13 @@
 		20B1BB8D2683CC2A003A960F /* Backoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backoff.swift; sourceTree = "<group>"; };
 		20B1BF20268BBDA4003A960F /* VariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariantTests.swift; sourceTree = "<group>"; };
 		20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
+		20C6C001278D045E00B39CBE /* AmplitudeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AmplitudeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		20C6C00A278D062E00B39CBE /* AmplitudeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AmplitudeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C9FA372787621100A4D530 /* CoreAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAnalyticsProvider.swift; sourceTree = "<group>"; };
 		20C9FA3D2787621B00A4D530 /* CoreUserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUserProvider.swift; sourceTree = "<group>"; };
 		20C9FA43278791E400A4D530 /* CoreIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreIntegrationTests.swift; sourceTree = "<group>"; };
-		A4F361AFAC0798821791DC78 /* libPods-Experiment.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Experiment.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		71C1B44C8AD0DDB10D22A2AC /* Pods-Experiment.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Experiment.debug.xcconfig"; path = "Target Support Files/Pods-Experiment/Pods-Experiment.debug.xcconfig"; sourceTree = "<group>"; };
+		72D22105452A88838E507AC3 /* Pods-Experiment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Experiment.release.xcconfig"; path = "Target Support Files/Pods-Experiment/Pods-Experiment.release.xcconfig"; sourceTree = "<group>"; };
 		E9030DB425B8AFC600BA1BA8 /* Variant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variant.swift; sourceTree = "<group>"; };
 		E914960F25796DA800C64B38 /* Experiment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Experiment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E914961225796DA800C64B38 /* Experiment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Experiment.h; sourceTree = "<group>"; };
@@ -82,7 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20C6BEB0278CEA1C00B39CBE /* AmplitudeCore in Frameworks */,
+				CE7B872702D0472ADE7ADC8D /* Pods_Experiment.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,9 +104,20 @@
 		201A78522641D0EC00663DCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A4F361AFAC0798821791DC78 /* libPods-Experiment.a */,
+				20C6C00A278D062E00B39CBE /* AmplitudeCore.framework */,
+				20C6C001278D045E00B39CBE /* AmplitudeCore.framework */,
+				1BED1EC781ECEB9B9565C1F5 /* Pods_Experiment.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		896D1BE18575D968736252F1 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				71C1B44C8AD0DDB10D22A2AC /* Pods-Experiment.debug.xcconfig */,
+				72D22105452A88838E507AC3 /* Pods-Experiment.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		E914960525796DA800C64B38 = {
@@ -113,6 +128,7 @@
 				E9C5D929257971BE00867574 /* Tests */,
 				E914961025796DA800C64B38 /* Products */,
 				201A78522641D0EC00663DCB /* Frameworks */,
+				896D1BE18575D968736252F1 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -199,6 +215,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E914962325796DA800C64B38 /* Build configuration list for PBXNativeTarget "Experiment" */;
 			buildPhases = (
+				604A04B2AFF2089B7BCC0F96 /* [CP] Check Pods Manifest.lock */,
 				E914960A25796DA800C64B38 /* Headers */,
 				E914960B25796DA800C64B38 /* Sources */,
 				E914960C25796DA800C64B38 /* Frameworks */,
@@ -209,9 +226,6 @@
 			dependencies = (
 			);
 			name = Experiment;
-			packageProductDependencies = (
-				20C6BEAF278CEA1C00B39CBE /* AmplitudeCore */,
-			);
 			productName = Experiment;
 			productReference = E914960F25796DA800C64B38 /* Experiment.framework */;
 			productType = "com.apple.product-type.framework";
@@ -262,9 +276,6 @@
 				Base,
 			);
 			mainGroup = E914960525796DA800C64B38;
-			packageReferences = (
-				20C6BEAE278CEA1C00B39CBE /* XCRemoteSwiftPackageReference "amplitude-ios-core" */,
-			);
 			productRefGroup = E914961025796DA800C64B38 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -291,6 +302,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		604A04B2AFF2089B7BCC0F96 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Experiment-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E914960B25796DA800C64B38 /* Sources */ = {
@@ -468,6 +504,7 @@
 		};
 		E914962425796DA800C64B38 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 71C1B44C8AD0DDB10D22A2AC /* Pods-Experiment.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -500,6 +537,7 @@
 		};
 		E914962525796DA800C64B38 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 72D22105452A88838E507AC3 /* Pods-Experiment.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -611,25 +649,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		20C6BEAE278CEA1C00B39CBE /* XCRemoteSwiftPackageReference "amplitude-ios-core" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/amplitude/amplitude-ios-core";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-alpha.1";
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		20C6BEAF278CEA1C00B39CBE /* AmplitudeCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 20C6BEAE278CEA1C00B39CBE /* XCRemoteSwiftPackageReference "amplitude-ios-core" */;
-			productName = AmplitudeCore;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E914960625796DA800C64B38 /* Project object */;
 }
