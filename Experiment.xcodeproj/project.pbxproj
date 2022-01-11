@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
+		207326CC278E228D002BBD43 /* AmplitudeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 207326CB278E228D002BBD43 /* AmplitudeCore */; };
 		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
 		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
 		207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9726AB8C9800A0029D /* ExposureEvent.swift */; };
@@ -82,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				207326CC278E228D002BBD43 /* AmplitudeCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +219,9 @@
 			dependencies = (
 			);
 			name = Experiment;
+			packageProductDependencies = (
+				207326CB278E228D002BBD43 /* AmplitudeCore */,
+			);
 			productName = Experiment;
 			productReference = E914960F25796DA800C64B38 /* Experiment.framework */;
 			productType = "com.apple.product-type.framework";
@@ -267,6 +272,9 @@
 				Base,
 			);
 			mainGroup = E914960525796DA800C64B38;
+			packageReferences = (
+				207326CA278E228D002BBD43 /* XCRemoteSwiftPackageReference "amplitude-ios-core" */,
+			);
 			productRefGroup = E914961025796DA800C64B38 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -613,6 +621,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		207326CA278E228D002BBD43 /* XCRemoteSwiftPackageReference "amplitude-ios-core" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/amplitude/amplitude-ios-core";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-alpha.1";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		207326CB278E228D002BBD43 /* AmplitudeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 207326CA278E228D002BBD43 /* XCRemoteSwiftPackageReference "amplitude-ios-core" */;
+			productName = AmplitudeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E914960625796DA800C64B38 /* Project object */;
 }
