@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
 		207326CC278E228D002BBD43 /* AmplitudeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 207326CB278E228D002BBD43 /* AmplitudeCore */; };
+		2073275A278E42B0002BBD43 /* SessionAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */; };
 		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
 		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
 		207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9726AB8C9800A0029D /* ExposureEvent.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
+		20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
 		207CBB9726AB8C9800A0029D /* ExposureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureEvent.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				207CBB9726AB8C9800A0029D /* ExposureEvent.swift */,
 				20C9FA372787621100A4D530 /* CoreAnalyticsProvider.swift */,
 				20C9FA3D2787621B00A4D530 /* CoreUserProvider.swift */,
+				20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */,
 			);
 			path = Experiment;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				E9C5D91E2579718E00867574 /* ExperimentConfig.swift in Sources */,
 				20C9FA382787621100A4D530 /* CoreAnalyticsProvider.swift in Sources */,
 				E9C5D9202579718E00867574 /* Experiment.swift in Sources */,
+				2073275A278E42B0002BBD43 /* SessionAnalyticsProvider.swift in Sources */,
 				E9C5D91D2579718E00867574 /* UserDefaultsStorage.swift in Sources */,
 				207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */,
 				E9C5D9222579718E00867574 /* Storage.swift in Sources */,

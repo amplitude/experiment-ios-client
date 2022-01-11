@@ -11,23 +11,12 @@ import AmplitudeCore
 internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
     
     private let analyticsConnector: AnalyticsConnector
-    private var setProperties: [String: String] = [:]
-    private var unsetProperties: [String: String] = [:]
     
     internal init(analyticsConnector: AnalyticsConnector) {
         self.analyticsConnector = analyticsConnector
     }
     
     func track(_ event: ExperimentAnalyticsEvent) {
-        guard let variant = event.variant.value else {
-            return
-        }
-        if setProperties[event.key] == variant {
-            return
-        } else {
-            setProperties[event.key] = variant
-            unsetProperties.removeValue(forKey: event.key)
-        }
         let analyticsEvent = AnalyticsEvent(
             eventType: event.name,
             eventProperties: NSDictionary(dictionary: event.properties),
@@ -40,9 +29,6 @@ internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
         guard let variant = event.variant.value else {
             return
         }
-        if setProperties[event.key] == variant {
-            return
-        }
         let analyticsEvent = AnalyticsEvent(
             eventType: "$identify",
             eventProperties: nil,
@@ -52,12 +38,6 @@ internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
     }
     
     func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
-        if unsetProperties[event.key] != nil {
-            return
-        } else {
-            unsetProperties[event.key] = "-"
-            setProperties.removeValue(forKey: event.key)
-        }
         let analyticsEvent = AnalyticsEvent(
             eventType: "$identify",
             eventProperties: nil,

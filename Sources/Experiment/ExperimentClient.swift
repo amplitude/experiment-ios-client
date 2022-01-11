@@ -36,7 +36,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     private var user: ExperimentUser? = nil
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
-
+    
+    private var analyticsProvider: SessionAnalyticsProvider?
+    
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
 
@@ -45,6 +47,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.config = config
         if config.userProvider != nil {
             self.userProvider = config.userProvider
+        }
+        // Wrap the analytics provider in a session wrapper avoid unecessary exposure events.
+        if let analyticsProvider = config.analyticsProvider {
+            self.analyticsProvider = SessionAnalyticsProvider(analyticsProvider: analyticsProvider)
+        } else {
+            self.analyticsProvider = nil
         }
         self.storage = storage
         self.storage.load()
@@ -78,15 +86,17 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let variantAndSource = resolveVariantAndSource(key: key, fallback: fallback)
         let variant = variantAndSource.variant;
         let source = variantAndSource.source;
-        // Track the exposure event if an analytics provider is set
-        if (source.isFallback() || variant.value == nil) {
-            let exposedUser = mergeUserWithProvider()
-            config.analyticsProvider?.unsetUserProperty(ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue))
-        } else if (variant.value != nil) {
-            let exposedUser = mergeUserWithProvider()
-            let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
-            config.analyticsProvider?.setUserProperty(event)
-            config.analyticsProvider?.track(event)
+        if (config.automaticClientSideExposureTracking) {
+            // Track the exposure event if an analytics provider is set
+            if (source.isFallback() || variant.value == nil) {
+                let exposedUser = mergeUserWithProvider()
+                self.analyticsProvider?.unsetUserProperty(ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue))
+            } else if (variant.value != nil) {
+                let exposedUser = mergeUserWithProvider()
+                let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
+                self.analyticsProvider?.setUserProperty(event)
+                self.analyticsProvider?.track(event)
+            }
         }
         return variant
     }
@@ -101,7 +111,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
             let sourceVariant = sourceVariants()[key];
             if let variant = sourceVariant {
-                print(variant)
                 return VariantAndSource(variant: variant, source: VariantSource.InitialVariants)
             }
             let secondaryVariant = secondaryVariants()[key]
