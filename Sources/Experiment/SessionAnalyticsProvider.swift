@@ -19,7 +19,7 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
         self.analyticsProvider = analyticsProvider
     }
     
-    @objc public func track(_ event: ExperimentAnalyticsEvent) {
+    func track(_ event: ExperimentAnalyticsEvent) {
         guard let variant = event.variant.value else {
             return
         }
@@ -32,7 +32,7 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
         analyticsProvider.track(event)
     }
     
-    @objc public func setUserProperty(_ event: ExperimentAnalyticsEvent) {
+    func setUserProperty(_ event: ExperimentAnalyticsEvent) {
         guard let variant = event.variant.value else {
             return
         }
@@ -42,7 +42,7 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
         analyticsProvider.setUserProperty(event)
     }
     
-    @objc public func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
+    func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
         if unsetProperties[event.key] != nil {
             return
         } else {
