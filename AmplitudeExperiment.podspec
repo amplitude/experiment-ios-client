@@ -26,6 +26,6 @@ Pod::Spec.new do |spec|
 
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
-  spec.dependency 'AmplitudeCore', '1.0.0-alpha.1'
+  spec.dependency 'AmplitudeCore', '~> 1.0.0'
 
 end
