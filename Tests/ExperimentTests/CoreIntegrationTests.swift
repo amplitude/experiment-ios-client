@@ -7,8 +7,8 @@
 
 import XCTest
 import Foundation
+import AmplitudeCore
 @testable import Experiment
-@testable import AmplitudeCore
 
 class CoreIntegrationTests : XCTestCase {
     
