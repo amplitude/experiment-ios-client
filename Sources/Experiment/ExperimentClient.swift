@@ -41,6 +41,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
+    
+    private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.FetchQueue")
 
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
@@ -63,16 +65,22 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if user != ExperimentUser() {
             self.user = user
         }
-        let fetchUser = self.mergeUserWithProvider()
-        _ = fetchInternal(
-            user: fetchUser,
-            timeoutMillis: config.fetchTimeoutMillis,
-            retry: config.retryFetchOnFailure
-        ) { result in
-            switch result {
-            case .success:
-                completion?(self, nil)
-            case .failure(let error):
+        fetchQueue.async {
+            do {
+                let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(1))
+                _ = self.fetchInternal(
+                    user: fetchUser,
+                    timeoutMillis: self.config.fetchTimeoutMillis,
+                    retry: self.config.retryFetchOnFailure
+                ) { result in
+                    switch result {
+                    case .success:
+                        completion?(self, nil)
+                    case .failure(let error):
+                        completion?(self, error)
+                    }
+                }
+            } catch {
                 completion?(self, error)
             }
         }
@@ -286,6 +294,21 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             libraryUser = libraryUser.copyToBuilder().library(library).build()
         }
         return libraryUser.merge(userProvider?.getUser())
+    }
+    
+    internal func mergeUserWithProviderOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
+        var providedUser: ExperimentUser?
+        if let coreUserProvider = self.userProvider as? CoreUserProvider {
+            providedUser = try coreUserProvider.getUserOrWait(timeout: timeout)
+        } else {
+            providedUser = self.userProvider?.getUser()
+        }
+        var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
+        if self.user?.library == nil {
+            let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
+            libraryUser = libraryUser.copyToBuilder().library(library).build()
+        }
+        return libraryUser.merge(providedUser)
     }
 
     private func parseResponseData(_ data: Data?) throws -> [String: Variant] {

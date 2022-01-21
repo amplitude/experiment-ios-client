@@ -18,7 +18,7 @@ internal class CoreUserProvider : ExperimentUserProvider {
     }
     
     func getUser() -> ExperimentUser {
-        let identity = getIdentityOrWait()
+        let identity = self.identityStore.getIdentity()
         return baseUserProvider.getUser().copyToBuilder()
             .userId(identity.userId)
             .deviceId(identity.deviceId)
@@ -26,10 +26,19 @@ internal class CoreUserProvider : ExperimentUserProvider {
             .build()
     }
     
-    private func getIdentityOrWait() -> Identity {
-        let listenerId = randomString(length: 16)
-        let lock = DispatchSemaphore(value: 1)
-        var listenerIdentity: Identity? = nil
+    func getUserOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
+        let identity = try getIdentityOrWait(timeout: timeout)
+        return baseUserProvider.getUser().copyToBuilder()
+            .userId(identity.userId)
+            .deviceId(identity.deviceId)
+            .userProperties(identity.userProperties as? [String:Any])
+            .build()
+    }
+    
+    private func getIdentityOrWait(timeout: DispatchTimeInterval) throws -> Identity {
+        let listenerId = self.randomString(length: 16)
+        let lock = DispatchSemaphore(value: 0)
+        var listenerIdentity = Identity()
         identityStore.addIdentityListener(key: listenerId) { (identity) in
             listenerIdentity = identity
             lock.signal()
@@ -37,8 +46,11 @@ internal class CoreUserProvider : ExperimentUserProvider {
         defer { identityStore.removeIdentityListener(key: listenerId) }
         let immediateIdentity = identityStore.getIdentity()
         if immediateIdentity.userId == nil && immediateIdentity.deviceId == nil {
-            lock.wait()
-            return listenerIdentity ?? immediateIdentity
+            let result = lock.wait(timeout: .now() + timeout)
+            if result == .timedOut {
+                throw ExperimentError("Timed out waiting for Amplitude Analytics SDK to initialize. You must ensure that the analytics SDK is initialized prior to calling fetch().")
+            }
+            return listenerIdentity
         } else {
             return immediateIdentity
         }
