@@ -56,8 +56,10 @@ import AmplitudeCore
             storage: storage
         )
         instances[instanceKey] = newInstance
-        core.identityStore.addIdentityListener(key: "init") { (identity) in
-            newInstance.fetch(user: ExperimentUser(), completion: nil)
+        if config.automaticFetchOnAmplitudeIdentityChange {
+            core.identityStore.addIdentityListener(key: "init") { (identity) in
+                newInstance.fetch(user: ExperimentUser(), completion: nil)
+            }
         }
         return newInstance
     }

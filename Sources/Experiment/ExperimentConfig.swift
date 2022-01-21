@@ -23,6 +23,7 @@ import Foundation
     @objc public let fetchTimeoutMillis: Int
     @objc public let retryFetchOnFailure: Bool
     @objc public let automaticClientSideExposureTracking: Bool
+    @objc public let automaticFetchOnAmplitudeIdentityChange: Bool
     @objc public let userProvider: ExperimentUserProvider?
     @objc public let analyticsProvider: ExperimentAnalyticsProvider?
     
@@ -36,6 +37,7 @@ import Foundation
         self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
         self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
         self.automaticClientSideExposureTracking = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
     }
@@ -50,6 +52,7 @@ import Foundation
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
         self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
     }
@@ -64,6 +67,7 @@ import Foundation
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
         self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
     }
@@ -78,6 +82,7 @@ import Foundation
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
         static let automaticClientSideExposureTracking: Bool = true
+        static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
     }
@@ -94,6 +99,7 @@ import Foundation
         internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
         internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
         internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
             
@@ -156,6 +162,12 @@ import Foundation
         }
         
         @discardableResult
+        public func automaticFetchOnAmplitudeIdentityChange(_ automaticFetchOnAmplitudeIdentityChange: Bool) -> Builder {
+            self.automaticFetchOnAmplitudeIdentityChange = automaticFetchOnAmplitudeIdentityChange
+            return self
+        }
+        
+        @discardableResult
         public func userProvider(_ userProvider: ExperimentUserProvider?) -> Builder {
             self.userProvider = userProvider
             return self
@@ -189,6 +201,8 @@ import Foundation
             .serverUrl(self.serverUrl)
             .fetchTimeoutMillis(self.fetchTimeoutMillis)
             .fetchRetryOnFailure(self.retryFetchOnFailure)
+            .automaticClientSideExposureTracking(self.automaticClientSideExposureTracking)
+            .automaticFetchOnAmplitudeIdentityChange(self.automaticFetchOnAmplitudeIdentityChange)
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
     }
@@ -205,6 +219,7 @@ import Foundation
     internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
     internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+    internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
 
@@ -259,6 +274,12 @@ import Foundation
     @discardableResult
     @objc public func automaticClientSideExposureTracking(_ automaticClientSideExposureTracking: Bool) -> ExperimentConfigBuilder {
         self.automaticClientSideExposureTracking = automaticClientSideExposureTracking
+        return self
+    }
+    
+    @discardableResult
+    @objc public func automaticFetchOnAmplitudeIdentityChange(_ automaticFetchOnAmplitudeIdentityChange: Bool) -> ExperimentConfigBuilder {
+        self.automaticFetchOnAmplitudeIdentityChange = automaticFetchOnAmplitudeIdentityChange
         return self
     }
 
