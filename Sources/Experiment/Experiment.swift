@@ -32,6 +32,9 @@ import AmplitudeCore
         return newInstance
     }
     
+    /// Initialize experiment with a built in integration with your Amplitude Analytics SDK.
+    ///
+    /// You *must* use Amplitude-iOS version v8.8.0+ for this integration to work.
     @objc public static func initializeWithAmplitudeAnalytics(apiKey: String, config: ExperimentConfig = ExperimentConfig()) -> ExperimentClient {
         instancesLock.wait()
         defer { instancesLock.signal() }
