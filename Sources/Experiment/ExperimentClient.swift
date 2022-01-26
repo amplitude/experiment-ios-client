@@ -95,13 +95,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let variant = variantAndSource.variant;
         let source = variantAndSource.source;
         if (config.automaticClientSideExposureTracking) {
+            let exposedUser = mergeUserWithProvider()
+            let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
             // Track the exposure event if an analytics provider is set
             if (source.isFallback() || variant.value == nil) {
-                let exposedUser = mergeUserWithProvider()
-                self.analyticsProvider?.unsetUserProperty(ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue))
+                self.analyticsProvider?.unsetUserProperty(event)
             } else if (variant.value != nil) {
-                let exposedUser = mergeUserWithProvider()
-                let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
                 self.analyticsProvider?.setUserProperty(event)
                 self.analyticsProvider?.track(event)
             }
