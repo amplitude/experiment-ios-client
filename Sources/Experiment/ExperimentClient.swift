@@ -8,10 +8,11 @@
 import Foundation
 
 @objc public protocol ExperimentClient {
-    @objc func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)?)
+    @objc func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)?)
     @objc func variant(_ key: String) -> Variant
     @objc func variant(_ key: String, fallback: Variant?) -> Variant
     @objc func all() -> [String:Variant]
+    @objc func exposure(key: String)
     @objc func setUser(_ user: ExperimentUser?)
     @objc func getUser() -> ExperimentUser?
 
@@ -36,9 +37,13 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     private var user: ExperimentUser? = nil
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
-
+    
+    private var analyticsProvider: SessionAnalyticsProvider?
+    
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
+    
+    private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.FetchQueue")
 
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
@@ -46,25 +51,36 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if config.userProvider != nil {
             self.userProvider = config.userProvider
         }
+        // Wrap the analytics provider in a session wrapper avoid unecessary exposure events.
+        if let analyticsProvider = config.analyticsProvider {
+            self.analyticsProvider = SessionAnalyticsProvider(analyticsProvider: analyticsProvider)
+        } else {
+            self.analyticsProvider = nil
+        }
         self.storage = storage
         self.storage.load()
     }
 
-    // TODO: allow for user to be null / missing
-    public func fetch(user: ExperimentUser, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
-        if user != ExperimentUser() {
+    public func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
+        if user != nil && user != ExperimentUser() {
             self.user = user
         }
-        let fetchUser = self.mergeUserWithProvider()
-        _ = fetchInternal(
-            user: fetchUser,
-            timeoutMillis: config.fetchTimeoutMillis,
-            retry: config.retryFetchOnFailure
-        ) { result in
-            switch result {
-            case .success:
-                completion?(self, nil)
-            case .failure(let error):
+        fetchQueue.async {
+            do {
+                let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(1))
+                _ = self.fetchInternal(
+                    user: fetchUser,
+                    timeoutMillis: self.config.fetchTimeoutMillis,
+                    retry: self.config.retryFetchOnFailure
+                ) { result in
+                    switch result {
+                    case .success:
+                        completion?(self, nil)
+                    case .failure(let error):
+                        completion?(self, error)
+                    }
+                }
+            } catch {
                 completion?(self, error)
             }
         }
@@ -78,17 +94,38 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let variantAndSource = resolveVariantAndSource(key: key, fallback: fallback)
         let variant = variantAndSource.variant;
         let source = variantAndSource.source;
-        // Track the exposure event if an analytics provider is set
-        if (source.isFallback() || variant.value == nil) {
-            let exposedUser = mergeUserWithProvider()
-            config.analyticsProvider?.unsetUserProperty(ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue))
-        } else if (variant.value != nil) {
-            let exposedUser = mergeUserWithProvider()
-            let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
-            config.analyticsProvider?.setUserProperty(event)
-            config.analyticsProvider?.track(event)
+        if (config.automaticClientSideExposureTracking) {
+            exposureInternal(key: key, variant: variant, source: source)
         }
         return variant
+    }
+
+    public func all() -> [String: Variant] {
+        return sourceVariants().merging(secondaryVariants()) { (source, _) in source }
+    }
+
+    public func exposure(key: String) {
+        let variantAndSource = resolveVariantAndSource(key: key, fallback: nil)
+        exposureInternal(key: key, variant: variantAndSource.variant, source: variantAndSource.source)
+    }
+
+    public func getUser() -> ExperimentUser? {
+        return self.user
+    }
+
+    public func setUser(_ user: ExperimentUser?) {
+        self.user = user
+    }
+
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
+    public func getUserProvider() -> ExperimentUserProvider? {
+        return self.userProvider
+    }
+
+    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
+    public func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient {
+        self.userProvider = userProvider
+        return self
     }
 
     private func resolveVariantAndSource(key: String, fallback: Variant?) -> VariantAndSource {
@@ -101,7 +138,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
             let sourceVariant = sourceVariants()[key];
             if let variant = sourceVariant {
-                print(variant)
                 return VariantAndSource(variant: variant, source: VariantSource.InitialVariants)
             }
             let secondaryVariant = secondaryVariants()[key]
@@ -132,29 +168,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             }
             return VariantAndSource(variant: config.fallbackVariant, source: VariantSource.FallbackConfig)
         }
-    }
-
-    public func all() -> [String: Variant] {
-        return sourceVariants().merging(secondaryVariants()) { (source, _) in source }
-    }
-
-    public func getUser() -> ExperimentUser? {
-        return self.user
-    }
-    
-    public func setUser(_ user: ExperimentUser?) {
-        self.user = user
-    }
-    
-    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
-    public func getUserProvider() -> ExperimentUserProvider? {
-        return self.userProvider
-    }
-    
-    @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
-    public func setUserProvider(_ userProvider: ExperimentUserProvider) -> ExperimentClient {
-        self.userProvider = userProvider
-        return self
     }
 
     public func fetchInternal(
@@ -278,6 +291,21 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         return libraryUser.merge(userProvider?.getUser())
     }
+    
+    internal func mergeUserWithProviderOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
+        var providedUser: ExperimentUser?
+        if let coreUserProvider = self.userProvider as? CoreUserProvider {
+            providedUser = try coreUserProvider.getUserOrWait(timeout: timeout)
+        } else {
+            providedUser = self.userProvider?.getUser()
+        }
+        var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
+        if self.user?.library == nil {
+            let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
+            libraryUser = libraryUser.copyToBuilder().library(library).build()
+        }
+        return libraryUser.merge(providedUser)
+    }
 
     private func parseResponseData(_ data: Data?) throws -> [String: Variant] {
         guard let data = data else {
@@ -329,6 +357,18 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
     }
     
+    private func exposureInternal(key: String, variant: Variant, source: VariantSource) {
+        let exposedUser = mergeUserWithProvider()
+        let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
+        // Track the exposure event if an analytics provider is set
+        if (source.isFallback() || variant.value == nil) {
+            self.analyticsProvider?.unsetUserProperty(event)
+        } else if (variant.value != nil) {
+            self.analyticsProvider?.setUserProperty(event)
+            self.analyticsProvider?.track(event)
+        }
+    }
+
     private func debug(_ msg: String) {
         if self.config.debug {
             print("[Experiment] \(msg)")

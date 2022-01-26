@@ -15,59 +15,74 @@ import Foundation
 @objc public class ExperimentConfig : NSObject {
 
     @objc public let debug: Bool
+    @objc public let instanceName: String
     @objc public let fallbackVariant: Variant
     @objc public let initialVariants: [String: Variant]
     @objc public let source: Source
     @objc public let serverUrl: String
     @objc public let fetchTimeoutMillis: Int
     @objc public let retryFetchOnFailure: Bool
+    @objc public let automaticClientSideExposureTracking: Bool
+    @objc public let automaticFetchOnAmplitudeIdentityChange: Bool
     @objc public let userProvider: ExperimentUserProvider?
     @objc public let analyticsProvider: ExperimentAnalyticsProvider?
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
+        self.instanceName = ExperimentConfig.Defaults.instanceName
         self.fallbackVariant = ExperimentConfig.Defaults.fallbackVariant
         self.initialVariants = ExperimentConfig.Defaults.initialVariants
         self.source = ExperimentConfig.Defaults.source
         self.serverUrl = ExperimentConfig.Defaults.serverUrl
         self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
         self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
+        self.automaticClientSideExposureTracking = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
     }
     
     internal init(builder: ExperimentConfigBuilder) {
         self.debug = builder.debug
+        self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
+        self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
     }
     
     internal init(builder: ExperimentConfig.Builder) {
         self.debug = builder.debug
+        self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
+        self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
     }
 
     internal struct Defaults {
         static let debug: Bool = false
+        static let instanceName: String = "$default_instance"
         static let fallbackVariant: Variant = Variant()
         static let initialVariants: [String: Variant] = [:]
         static let source: Source = Source.LocalStorage
         static let serverUrl: String = "https://api.lab.amplitude.com"
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
+        static let automaticClientSideExposureTracking: Bool = true
+        static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
     }
@@ -76,12 +91,15 @@ import Foundation
     public class Builder {
             
         internal var debug: Bool = ExperimentConfig.Defaults.debug
+        internal var instanceName = ExperimentConfig.Defaults.instanceName
         internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
         internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
         internal var source: Source = ExperimentConfig.Defaults.source
         internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
         internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
         internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
+        internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
             
@@ -89,46 +107,73 @@ import Foundation
             // public init
         }
         
+        @discardableResult
         public func debug(_ debug: Bool) -> Builder {
             self.debug = debug
             return self
         }
         
+        @discardableResult
+        public func instanceName(_ instanceName: String) -> Builder {
+            self.instanceName = instanceName
+            return self
+        }
+        
+        @discardableResult
         public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
             self.fallbackVariant = fallbackVariant
             return self
         }
         
+        @discardableResult
         public func initialVariants(_ initialVariants: [String: Variant]) -> Builder {
             self.initialVariants = initialVariants
             return self
         }
         
+        @discardableResult
         public func source(_ source: Source) -> Builder {
             self.source = source
             return self
         }
         
+        @discardableResult
         public func serverUrl(_ serverUrl: String) -> Builder {
             self.serverUrl = serverUrl
             return self
         }
         
+        @discardableResult
         public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> Builder {
             self.fetchTimeoutMillis = fetchTimeoutMillis
             return self
         }
         
+        @discardableResult
         public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> Builder {
             self.retryFetchOnFailure = fetchRetryOnFailure
             return self
         }
         
+        @discardableResult
+        public func automaticClientSideExposureTracking(_ automaticClientSideExposureTracking: Bool) -> Builder {
+            self.automaticClientSideExposureTracking = automaticClientSideExposureTracking
+            return self
+        }
+        
+        @discardableResult
+        public func automaticFetchOnAmplitudeIdentityChange(_ automaticFetchOnAmplitudeIdentityChange: Bool) -> Builder {
+            self.automaticFetchOnAmplitudeIdentityChange = automaticFetchOnAmplitudeIdentityChange
+            return self
+        }
+        
+        @discardableResult
         public func userProvider(_ userProvider: ExperimentUserProvider?) -> Builder {
             self.userProvider = userProvider
             return self
         }
         
+        @discardableResult
         public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> Builder {
             self.analyticsProvider = analyticsProvider
             return self
@@ -145,60 +190,106 @@ import Foundation
         internal static let Version: String = "1.5.0"
         internal static let Library: String = "experiment-ios-client"
     }
+    
+    internal func copyToBuilder() -> ExperimentConfigBuilder {
+        return ExperimentConfigBuilder()
+            .debug(self.debug)
+            .instanceName(self.instanceName)
+            .fallbackVariant(self.fallbackVariant)
+            .initialVariants(self.initialVariants)
+            .source(self.source)
+            .serverUrl(self.serverUrl)
+            .fetchTimeoutMillis(self.fetchTimeoutMillis)
+            .fetchRetryOnFailure(self.retryFetchOnFailure)
+            .automaticClientSideExposureTracking(self.automaticClientSideExposureTracking)
+            .automaticFetchOnAmplitudeIdentityChange(self.automaticFetchOnAmplitudeIdentityChange)
+            .userProvider(self.userProvider)
+            .analyticsProvider(self.analyticsProvider)
+    }
 }
 
 @objc public class ExperimentConfigBuilder : NSObject {
     
     internal var debug: Bool = ExperimentConfig.Defaults.debug
+    internal var instanceName: String = ExperimentConfig.Defaults.instanceName
     internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
     internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
     internal var source: Source = ExperimentConfig.Defaults.source
     internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
     internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
+    internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+    internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
 
+    @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
         return self
     }
     
+    @discardableResult
+    @objc public func instanceName(_ instanceName: String) -> ExperimentConfigBuilder {
+        self.instanceName = instanceName
+        return self
+    }
+    
+    @discardableResult
     @objc public func fallbackVariant(_ fallbackVariant: Variant) -> ExperimentConfigBuilder {
         self.fallbackVariant = fallbackVariant
         return self
     }
     
+    @discardableResult
     @objc public func initialVariants(_ initialVariants: [String: Variant]) -> ExperimentConfigBuilder {
         self.initialVariants = initialVariants
         return self
     }
     
+    @discardableResult
     @objc public func source(_ source: Source) -> ExperimentConfigBuilder {
         self.source = source
         return self
     }
     
+    @discardableResult
     @objc public func serverUrl(_ serverUrl: String) -> ExperimentConfigBuilder {
         self.serverUrl = serverUrl
         return self
     }
     
+    @discardableResult
     @objc public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> ExperimentConfigBuilder {
         self.fetchTimeoutMillis = fetchTimeoutMillis
         return self
     }
     
+    @discardableResult
     @objc public func fetchRetryOnFailure(_ fetchRetryOnFailure: Bool) -> ExperimentConfigBuilder {
         self.retryFetchOnFailure = fetchRetryOnFailure
         return self
     }
+    
+    @discardableResult
+    @objc public func automaticClientSideExposureTracking(_ automaticClientSideExposureTracking: Bool) -> ExperimentConfigBuilder {
+        self.automaticClientSideExposureTracking = automaticClientSideExposureTracking
+        return self
+    }
+    
+    @discardableResult
+    @objc public func automaticFetchOnAmplitudeIdentityChange(_ automaticFetchOnAmplitudeIdentityChange: Bool) -> ExperimentConfigBuilder {
+        self.automaticFetchOnAmplitudeIdentityChange = automaticFetchOnAmplitudeIdentityChange
+        return self
+    }
 
+    @discardableResult
     @objc public func userProvider(_ userProvider: ExperimentUserProvider?) -> ExperimentConfigBuilder {
         self.userProvider = userProvider
         return self
     }
     
+    @discardableResult
     @objc public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> ExperimentConfigBuilder {
         self.analyticsProvider = analyticsProvider
         return self

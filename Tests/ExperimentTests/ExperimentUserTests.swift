@@ -132,6 +132,7 @@ class ExperimentUserTests: XCTestCase {
         let user2 = ExperimentUserBuilder()
             .country("newCountry")
             .version("newVersion")
+            .userProperty("userPropertyKey", value: "value2")
             .userProperty("userPropertyKey2", value: "value2")
             .build()
         
@@ -152,6 +153,7 @@ class ExperimentUserTests: XCTestCase {
             .deviceModel("test")
             .carrier("test")
             .userProperty("userPropertyKey2", value: "value2")
+            .userProperty("userPropertyKey", value: "value2")
             .build()
         XCTAssert(expected == mergedUser)
     }
