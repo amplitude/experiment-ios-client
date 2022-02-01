@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import AmplitudeCore
+import AnalyticsConnector
 
 @objc public class Experiment : NSObject {
     
@@ -40,17 +40,17 @@ import AmplitudeCore
         defer { instancesLock.signal() }
         let instanceName = config.instanceName
         let instanceKey = "\(instanceName).\(apiKey)"
-        let core = AmplitudeCore.getInstance(instanceName)
+        let connector = AnalyticsConnector.getInstance(instanceName)
         let instance = instances[instanceKey]
         if (instance != nil) {
             return instance!
         }
         let configBuilder = config.copyToBuilder()
         if config.userProvider == nil {
-            configBuilder.userProvider(CoreUserProvider(identityStore: core.identityStore))
+            configBuilder.userProvider(ConnectorUserProvider(identityStore: connector.identityStore))
         }
         if config.analyticsProvider == nil {
-            configBuilder.analyticsProvider(CoreAnalyticsProvider(analyticsConnector: core.analyticsConnector))
+            configBuilder.analyticsProvider(ConnectorAnalyticsProvider(eventBridge:  connector.eventBridge))
         }
         let storage = UserDefaultsStorage(instanceName: instanceName, apiKey: apiKey)
         let newInstance: ExperimentClient = DefaultExperimentClient(
@@ -60,7 +60,7 @@ import AmplitudeCore
         )
         instances[instanceKey] = newInstance
         if config.automaticFetchOnAmplitudeIdentityChange {
-            core.identityStore.addIdentityListener(key: "init") { (identity) in
+            connector.identityStore.addIdentityListener(key: "init") { (identity) in
                 newInstance.fetch(user: ExperimentUser(), completion: nil)
             }
         }

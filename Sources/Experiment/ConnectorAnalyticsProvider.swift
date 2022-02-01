@@ -1,19 +1,19 @@
 //
-//  CoreAnalyticsProvider.swift
+//  ConnectorAnalyticsProvider.swift
 //  Experiment
 //
 //  Created by Brian Giori on 1/6/22.
 //
 
 import Foundation
-import AmplitudeCore
+import AnalyticsConnector
 
-internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
+internal class ConnectorAnalyticsProvider : ExperimentAnalyticsProvider {
     
-    private let analyticsConnector: AnalyticsConnector
+    private let eventBridge: EventBridge
     
-    internal init(analyticsConnector: AnalyticsConnector) {
-        self.analyticsConnector = analyticsConnector
+    internal init(eventBridge: EventBridge) {
+        self.eventBridge = eventBridge
     }
     
     func track(_ event: ExperimentAnalyticsEvent) {
@@ -22,7 +22,7 @@ internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
             eventProperties: NSDictionary(dictionary: event.properties),
             userProperties: nil
         )
-        analyticsConnector.logEvent(event: analyticsEvent)
+        eventBridge.logEvent(event: analyticsEvent)
     }
     
     func setUserProperty(_ event: ExperimentAnalyticsEvent) {
@@ -34,7 +34,7 @@ internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
             eventProperties: nil,
             userProperties: NSDictionary(dictionary: ["$set": [event.userProperty: variant]])
         )
-        analyticsConnector.logEvent(event: analyticsEvent)
+        eventBridge.logEvent(event: analyticsEvent)
     }
     
     func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
@@ -43,6 +43,6 @@ internal class CoreAnalyticsProvider : ExperimentAnalyticsProvider {
             eventProperties: nil,
             userProperties: NSDictionary(dictionary: ["$unset": [event.userProperty: "-"]])
         )
-        analyticsConnector.logEvent(event: analyticsEvent)
+        eventBridge.logEvent(event: analyticsEvent)
     }
 }

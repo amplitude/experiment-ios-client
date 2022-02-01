@@ -1,14 +1,14 @@
 //
-//  CoreUserProvider.swift
+//  ConnectorUserProvider.swift
 //  Experiment
 //
 //  Created by Brian Giori on 1/6/22.
 //
 
 import Foundation
-import AmplitudeCore
+import AnalyticsConnector
 
-internal class CoreUserProvider : ExperimentUserProvider {
+internal class ConnectorUserProvider : ExperimentUserProvider {
     
     private let identityStore: IdentityStore
     private let baseUserProvider = DefaultUserProvider()
