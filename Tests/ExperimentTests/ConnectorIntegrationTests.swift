@@ -1,5 +1,5 @@
 //
-//  CoreIntegrationTests.swift
+//  ConnectorIntegrationTests.swift
 //  ExperimentTests
 //
 //  Created by Brian Giori on 1/6/22.
@@ -7,21 +7,21 @@
 
 import XCTest
 import Foundation
-import AmplitudeCore
+import AnalyticsConnector
 @testable import Experiment
 
-class CoreIntegrationTests : XCTestCase {
+class ConnectorIntegrationTests : XCTestCase {
     
     let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
     
     func testFetchCalledAndUserUpdatedOnUserIdentityChange() {
         let instanceName = "integration_test"
-        let core = AmplitudeCore.getInstance(instanceName)
+        let connector = AnalyticsConnector.getInstance(instanceName)
         let config = ExperimentConfigBuilder()
             .instanceName(instanceName)
             .build()
         let client = Experiment.initializeWithAmplitudeAnalytics(apiKey: API_KEY, config: config) as! DefaultExperimentClient
-        core.identityStore.editIdentity()
+        connector.identityStore.editIdentity()
             .setUserId("user_id")
             .setDeviceId("device_id")
             .updateUserProperties(NSDictionary(dictionary: [
@@ -40,17 +40,17 @@ class CoreIntegrationTests : XCTestCase {
 }
     
     func testUserPropertiesMergedOnUserIdentityChange() {
-        let core = AmplitudeCore.getInstance("integration_test")
+        let connector = AnalyticsConnector.getInstance("integration_test")
         let config = ExperimentConfigBuilder().instanceName("integration_test").build()
         let client = Experiment.initializeWithAmplitudeAnalytics(apiKey: API_KEY, config: config) as! DefaultExperimentClient
-        core.identityStore.editIdentity()
+        connector.identityStore.editIdentity()
             .setUserId("user_id")
             .setDeviceId("device_id")
             .updateUserProperties(NSDictionary(dictionary: [
                 "$set": ["key": "value"]
             ]))
             .commit()
-        core.identityStore.editIdentity()
+        connector.identityStore.editIdentity()
             .updateUserProperties(NSDictionary(dictionary: [
                 "$set": ["other": true]
             ]))

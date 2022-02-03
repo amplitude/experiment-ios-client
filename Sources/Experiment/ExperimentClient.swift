@@ -294,8 +294,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     internal func mergeUserWithProviderOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
         var providedUser: ExperimentUser?
-        if let coreUserProvider = self.userProvider as? CoreUserProvider {
-            providedUser = try coreUserProvider.getUserOrWait(timeout: timeout)
+        if let connectorUserProvider = self.userProvider as? ConnectorUserProvider {
+            providedUser = try connectorUserProvider.getUserOrWait(timeout: timeout)
         } else {
             providedUser = self.userProvider?.getUser()
         }
