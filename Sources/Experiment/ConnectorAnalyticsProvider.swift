@@ -17,9 +17,6 @@ internal class ConnectorAnalyticsProvider : ExperimentAnalyticsProvider {
     }
     
     func track(_ event: ExperimentAnalyticsEvent) {
-        guard let event = event as? ExposureEvent else {
-            return
-        }
         let source = VariantSource(rawValue: event.properties["source"] ?? "local-storage") ?? VariantSource.LocalStorage
         var eventProperties = [
             "flag_key": event.key,
