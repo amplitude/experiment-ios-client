@@ -13,8 +13,8 @@ import AnalyticsConnector
 class ConnectorIntegrationTests : XCTestCase {
     
     let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
-    
-    func testFetchCalledAndUserUpdatedOnUserIdentityChange() {
+        
+    func testUserUpdatedOnUserIdentityChange() {
         let instanceName = "integration_test"
         let connector = AnalyticsConnector.getInstance(instanceName)
         let config = ExperimentConfigBuilder()
