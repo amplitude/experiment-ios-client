@@ -15,7 +15,7 @@ class ConnectorIntegrationTests : XCTestCase {
     let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
         
     func testUserUpdatedOnUserIdentityChange() {
-        let instanceName = "integration_test"
+        let instanceName = "integration_test1"
         let connector = AnalyticsConnector.getInstance(instanceName)
         let config = ExperimentConfigBuilder()
             .instanceName(instanceName)
@@ -40,8 +40,8 @@ class ConnectorIntegrationTests : XCTestCase {
 }
     
     func testUserPropertiesMergedOnUserIdentityChange() {
-        let connector = AnalyticsConnector.getInstance("integration_test")
-        let config = ExperimentConfigBuilder().instanceName("integration_test").build()
+        let connector = AnalyticsConnector.getInstance("integration_test2")
+        let config = ExperimentConfigBuilder().instanceName("integration_test2").build()
         let client = Experiment.initializeWithAmplitudeAnalytics(apiKey: API_KEY, config: config) as! DefaultExperimentClient
         connector.identityStore.editIdentity()
             .setUserId("user_id")
