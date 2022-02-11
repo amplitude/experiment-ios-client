@@ -381,7 +381,7 @@ private struct VariantAndSource {
     public private(set) var source: VariantSource
 }
 
-internal enum VariantSource : String {
+private enum VariantSource : String {
     case LocalStorage = "storage"
     case InitialVariants = "initial"
     case SecondaryLocalStorage = "secondary-storage"
