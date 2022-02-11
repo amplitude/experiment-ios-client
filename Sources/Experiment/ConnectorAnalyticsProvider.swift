@@ -17,11 +17,10 @@ internal class ConnectorAnalyticsProvider : ExperimentAnalyticsProvider {
     }
     
     func track(_ event: ExperimentAnalyticsEvent) {
-        let source = VariantSource(rawValue: event.properties["source"] ?? "local-storage") ?? VariantSource.LocalStorage
         var eventProperties = [
-            "flag_key": event.key,
+            "flag_key": event.key
         ]
-        if let variant = source.isFallback() ? nil : event.variant.value {
+        if let variant = event.variant.value {
             eventProperties["variant"] = variant
         }
         let analyticsEvent = AnalyticsEvent(
@@ -36,6 +35,13 @@ internal class ConnectorAnalyticsProvider : ExperimentAnalyticsProvider {
     }
     
     func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
-        track(event)
+        let analyticsEvent = AnalyticsEvent(
+            eventType: "$exposure",
+            eventProperties: NSDictionary(dictionary: [
+                "flag_key": event.key
+            ]),
+            userProperties: nil
+        )
+        eventBridge.logEvent(event: analyticsEvent)
     }
 }
