@@ -10,6 +10,7 @@ import Foundation
 /// Analytics event for tracking events generated from the experiment SDK client.
 /// These events are sent to the implementation provided by an
 /// ``ExperimentAnalyticsProvider``.
+@available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
 @objc public protocol ExperimentAnalyticsEvent {
     
     /// The name of the event. Should be passed as the event tracking name to the

@@ -22,10 +22,12 @@ import Foundation
     @objc public let serverUrl: String
     @objc public let fetchTimeoutMillis: Int
     @objc public let retryFetchOnFailure: Bool
-    @objc public let automaticClientSideExposureTracking: Bool
+    @objc public let automaticExposureTracking: Bool
     @objc public let automaticFetchOnAmplitudeIdentityChange: Bool
     @objc public let userProvider: ExperimentUserProvider?
+    @available(*, deprecated, message: "Use exposureTrackingProvider instead.")
     @objc public let analyticsProvider: ExperimentAnalyticsProvider?
+    @objc public let exposureTrackingProvider: ExposureTrackingProvider?
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
@@ -36,10 +38,11 @@ import Foundation
         self.serverUrl = ExperimentConfig.Defaults.serverUrl
         self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
         self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
-        self.automaticClientSideExposureTracking = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        self.automaticExposureTracking = ExperimentConfig.Defaults.automaticExposureTracking
         self.automaticFetchOnAmplitudeIdentityChange = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
+        self.exposureTrackingProvider = ExperimentConfig.Defaults.exposureTrackingProvider
     }
     
     internal init(builder: ExperimentConfigBuilder) {
@@ -51,10 +54,11 @@ import Foundation
         self.serverUrl = builder.serverUrl
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
-        self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticExposureTracking = builder.automaticExposureTracking
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
+        self.exposureTrackingProvider = builder.exposureTrackingProvider
     }
     
     internal init(builder: ExperimentConfig.Builder) {
@@ -66,10 +70,11 @@ import Foundation
         self.serverUrl = builder.serverUrl
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
-        self.automaticClientSideExposureTracking = builder.automaticClientSideExposureTracking
+        self.automaticExposureTracking = builder.automaticExposureTracking
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
+        self.exposureTrackingProvider = builder.exposureTrackingProvider
     }
 
     internal struct Defaults {
@@ -81,10 +86,11 @@ import Foundation
         static let serverUrl: String = "https://api.lab.amplitude.com"
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
-        static let automaticClientSideExposureTracking: Bool = true
+        static let automaticExposureTracking: Bool = true
         static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
+        static let exposureTrackingProvider: ExposureTrackingProvider? = nil
     }
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
@@ -98,11 +104,12 @@ import Foundation
         internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
         internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
         internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
-        internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+        internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
         internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
-            
+        internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+        
         public init() {
             // public init
         }
@@ -156,8 +163,8 @@ import Foundation
         }
         
         @discardableResult
-        public func automaticClientSideExposureTracking(_ automaticClientSideExposureTracking: Bool) -> Builder {
-            self.automaticClientSideExposureTracking = automaticClientSideExposureTracking
+        public func automaticExposureTracking(_ automaticExposureTracking: Bool) -> Builder {
+            self.automaticExposureTracking = automaticExposureTracking
             return self
         }
         
@@ -176,6 +183,12 @@ import Foundation
         @discardableResult
         public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> Builder {
             self.analyticsProvider = analyticsProvider
+            return self
+        }
+        
+        @discardableResult
+        public func exposureTrackingProvider(_ exposureTrackingProvider: ExposureTrackingProvider?) -> Builder {
+            self.exposureTrackingProvider = exposureTrackingProvider
             return self
         }
 
@@ -201,10 +214,11 @@ import Foundation
             .serverUrl(self.serverUrl)
             .fetchTimeoutMillis(self.fetchTimeoutMillis)
             .fetchRetryOnFailure(self.retryFetchOnFailure)
-            .automaticClientSideExposureTracking(self.automaticClientSideExposureTracking)
+            .automaticExposureTracking(self.automaticExposureTracking)
             .automaticFetchOnAmplitudeIdentityChange(self.automaticFetchOnAmplitudeIdentityChange)
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
+            .exposureTrackingProvider(self.exposureTrackingProvider)
     }
 }
 
@@ -218,11 +232,12 @@ import Foundation
     internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
     internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
-    internal var automaticClientSideExposureTracking: Bool = ExperimentConfig.Defaults.automaticClientSideExposureTracking
+    internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
     internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
-
+    internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+    
     @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
@@ -272,8 +287,8 @@ import Foundation
     }
     
     @discardableResult
-    @objc public func automaticClientSideExposureTracking(_ automaticClientSideExposureTracking: Bool) -> ExperimentConfigBuilder {
-        self.automaticClientSideExposureTracking = automaticClientSideExposureTracking
+    @objc public func automaticExposureTracking(_ automaticExposureTracking: Bool) -> ExperimentConfigBuilder {
+        self.automaticExposureTracking = automaticExposureTracking
         return self
     }
     
@@ -292,6 +307,12 @@ import Foundation
     @discardableResult
     @objc public func analyticsProvider(_ analyticsProvider: ExperimentAnalyticsProvider?) -> ExperimentConfigBuilder {
         self.analyticsProvider = analyticsProvider
+        return self
+    }
+    
+    @discardableResult
+    @objc public func exposureTrackingProvider(_ exposureTrackingProvider: ExposureTrackingProvider?) -> ExperimentConfigBuilder {
+        self.exposureTrackingProvider = exposureTrackingProvider
         return self
     }
     
