@@ -49,8 +49,8 @@ import AnalyticsConnector
         if config.userProvider == nil {
             configBuilder.userProvider(ConnectorUserProvider(identityStore: connector.identityStore))
         }
-        if config.analyticsProvider == nil {
-            configBuilder.analyticsProvider(ConnectorAnalyticsProvider(eventBridge:  connector.eventBridge))
+        if config.exposureTrackingProvider == nil {
+            configBuilder.exposureTrackingProvider(ConnectorExposureTrackingProvider(eventBridge:  connector.eventBridge))
         }
         let storage = UserDefaultsStorage(instanceName: instanceName, apiKey: apiKey)
         let newInstance: ExperimentClient = DefaultExperimentClient(

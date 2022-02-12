@@ -9,6 +9,7 @@ import Foundation
 
 /// Event for tracking a user's exposure to a variant. This event will not count
 /// towards your analytics event volume.
+@available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
 @objc public class ExposureEvent : NSObject, ExperimentAnalyticsEvent {
 
     @objc public let name: String = "[Experiment] Exposure"

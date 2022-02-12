@@ -39,6 +39,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
     
     private var analyticsProvider: SessionAnalyticsProvider?
+    private var exposureTrackingProvider: ExposureTrackingProvider?
     
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
@@ -56,6 +57,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             self.analyticsProvider = SessionAnalyticsProvider(analyticsProvider: analyticsProvider)
         } else {
             self.analyticsProvider = nil
+        }
+        if let exposureTrackingProvider = config.exposureTrackingProvider {
+            self.exposureTrackingProvider = SessionExposureTrackingProvider(exposureTrackingProvider: exposureTrackingProvider)
+        } else {
+            self.exposureTrackingProvider = nil
         }
         self.storage = storage
         self.storage.load()
@@ -94,7 +100,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let variantAndSource = resolveVariantAndSource(key: key, fallback: fallback)
         let variant = variantAndSource.variant;
         let source = variantAndSource.source;
-        if (config.automaticClientSideExposureTracking) {
+        if (config.automaticExposureTracking) {
             exposureInternal(key: key, variant: variant, source: source)
         }
         return variant
@@ -362,8 +368,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
         // Track the exposure event if an analytics provider is set
         if (source.isFallback() || variant.value == nil) {
+            self.exposureTrackingProvider?.track(exposure: Exposure(flagKey: key, variant: nil))
             self.analyticsProvider?.unsetUserProperty(event)
         } else if (variant.value != nil) {
+            self.exposureTrackingProvider?.track(exposure: Exposure(flagKey: key, variant: variant.value))
             self.analyticsProvider?.setUserProperty(event)
             self.analyticsProvider?.track(event)
         }

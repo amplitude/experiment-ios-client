@@ -10,6 +10,9 @@
 		201A78DF2643AB6100663DCB /* ExperimentUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */; };
 		2073275A278E42B0002BBD43 /* SessionAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */; };
 		207C95FA27A9F0A4008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C95F927A9F0A4008EE143 /* AnalyticsConnector.xcframework */; };
+		207C96E627B71262008EE143 /* ExposureTrackingProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207C96E527B71262008EE143 /* ExposureTrackingProvider.swift */; };
+		207C96EC27B71770008EE143 /* Exposure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207C96EB27B71770008EE143 /* Exposure.swift */; };
+		207C96F027B719F2008EE143 /* SessionExposureTrackingProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207C96EF27B719F2008EE143 /* SessionExposureTrackingProvider.swift */; };
 		207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */; };
 		207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */; };
 		207CBB9826AB8C9800A0029D /* ExposureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CBB9726AB8C9800A0029D /* ExposureEvent.swift */; };
@@ -17,7 +20,7 @@
 		20B1BB8E2683CC2A003A960F /* Backoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BB8D2683CC2A003A960F /* Backoff.swift */; };
 		20B1BF21268BBDA4003A960F /* VariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF20268BBDA4003A960F /* VariantTests.swift */; };
 		20B1BF2B268BFFD7003A960F /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */; };
-		20C9FA382787621100A4D530 /* ConnectorAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA372787621100A4D530 /* ConnectorAnalyticsProvider.swift */; };
+		20C9FA382787621100A4D530 /* ConnectorExposureTrackingProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA372787621100A4D530 /* ConnectorExposureTrackingProvider.swift */; };
 		20C9FA3E2787621B00A4D530 /* ConnectorUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA3D2787621B00A4D530 /* ConnectorUserProvider.swift */; };
 		20C9FA44278791E400A4D530 /* ConnectorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C9FA43278791E400A4D530 /* ConnectorIntegrationTests.swift */; };
 		E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9030DB425B8AFC600BA1BA8 /* Variant.swift */; };
@@ -49,6 +52,9 @@
 		201A78DE2643AB6100663DCB /* ExperimentUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentUserTests.swift; sourceTree = "<group>"; };
 		20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207C95F927A9F0A4008EE143 /* AnalyticsConnector.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AnalyticsConnector.xcframework; path = Carthage/Build/AnalyticsConnector.xcframework; sourceTree = "<group>"; };
+		207C96E527B71262008EE143 /* ExposureTrackingProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureTrackingProvider.swift; sourceTree = "<group>"; };
+		207C96EB27B71770008EE143 /* Exposure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exposure.swift; sourceTree = "<group>"; };
+		207C96EF27B719F2008EE143 /* SessionExposureTrackingProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExposureTrackingProvider.swift; sourceTree = "<group>"; };
 		207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsProvider.swift; sourceTree = "<group>"; };
 		207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentAnalyticsEvent.swift; sourceTree = "<group>"; };
 		207CBB9726AB8C9800A0029D /* ExposureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExposureEvent.swift; sourceTree = "<group>"; };
@@ -59,7 +65,7 @@
 		20B1BF2A268BFFD7003A960F /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
 		20C6C001278D045E00B39CBE /* AmplitudeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AmplitudeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C6C00A278D062E00B39CBE /* AmplitudeCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AmplitudeCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		20C9FA372787621100A4D530 /* ConnectorAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectorAnalyticsProvider.swift; sourceTree = "<group>"; };
+		20C9FA372787621100A4D530 /* ConnectorExposureTrackingProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectorExposureTrackingProvider.swift; sourceTree = "<group>"; };
 		20C9FA3D2787621B00A4D530 /* ConnectorUserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectorUserProvider.swift; sourceTree = "<group>"; };
 		20C9FA43278791E400A4D530 /* ConnectorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectorIntegrationTests.swift; sourceTree = "<group>"; };
 		20D7EDB62790B62D006DB118 /* AmplitudeCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AmplitudeCore.xcframework; path = Carthage/Build/AmplitudeCore.xcframework; sourceTree = "<group>"; };
@@ -152,9 +158,12 @@
 				207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */,
 				207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */,
 				207CBB9726AB8C9800A0029D /* ExposureEvent.swift */,
-				20C9FA372787621100A4D530 /* ConnectorAnalyticsProvider.swift */,
+				20C9FA372787621100A4D530 /* ConnectorExposureTrackingProvider.swift */,
 				20C9FA3D2787621B00A4D530 /* ConnectorUserProvider.swift */,
 				20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */,
+				207C96E527B71262008EE143 /* ExposureTrackingProvider.swift */,
+				207C96EB27B71770008EE143 /* Exposure.swift */,
+				207C96EF27B719F2008EE143 /* SessionExposureTrackingProvider.swift */,
 			);
 			path = Experiment;
 			sourceTree = "<group>";
@@ -304,15 +313,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				207C96E627B71262008EE143 /* ExposureTrackingProvider.swift in Sources */,
+				207C96F027B719F2008EE143 /* SessionExposureTrackingProvider.swift in Sources */,
 				E9C5D9232579718E00867574 /* ExperimentUserProvider.swift in Sources */,
 				E9C5D91F2579718E00867574 /* ExperimentUser.swift in Sources */,
 				E9C5D91C2579718E00867574 /* ExperimentClient.swift in Sources */,
 				E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */,
 				20C9FA3E2787621B00A4D530 /* ConnectorUserProvider.swift in Sources */,
+				207C96EC27B71770008EE143 /* Exposure.swift in Sources */,
 				207CBB9026AB8B9900A0029D /* ExperimentAnalyticsProvider.swift in Sources */,
 				207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */,
 				E9C5D91E2579718E00867574 /* ExperimentConfig.swift in Sources */,
-				20C9FA382787621100A4D530 /* ConnectorAnalyticsProvider.swift in Sources */,
+				20C9FA382787621100A4D530 /* ConnectorExposureTrackingProvider.swift in Sources */,
 				E9C5D9202579718E00867574 /* Experiment.swift in Sources */,
 				2073275A278E42B0002BBD43 /* SessionAnalyticsProvider.swift in Sources */,
 				E9C5D91D2579718E00867574 /* UserDefaultsStorage.swift in Sources */,
