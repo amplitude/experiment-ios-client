@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/amplitude/experiment-ios-client/compare/v1.5.0...v1.6.0) (2022-02-12)
+
+
+### Bug Fixes
+
+* update spm package definition with connector pkg ([#20](https://github.com/amplitude/experiment-ios-client/issues/20)) ([96946ae](https://github.com/amplitude/experiment-ios-client/commit/96946aee175577f9dc231d75838969df6b2bd5a8))
+
+
+### Features
+
+* add exposure tracking provider interface ([#21](https://github.com/amplitude/experiment-ios-client/issues/21)) ([dca2b10](https://github.com/amplitude/experiment-ios-client/commit/dca2b10125faba9014d89482f7a47406c7534605))
+* core package integration into experiment sdk ([#17](https://github.com/amplitude/experiment-ios-client/issues/17)) ([caa8dac](https://github.com/amplitude/experiment-ios-client/commit/caa8dac38338c20945716d85a4149a2a6ab29073))
+* use renamed connector package instead of core ([#18](https://github.com/amplitude/experiment-ios-client/issues/18)) ([7d90816](https://github.com/amplitude/experiment-ios-client/commit/7d90816082b5b7c0316469c427e3c3894f8a5a1b))
+
 # [1.5.0](https://github.com/amplitude/experiment-ios-client/compare/v1.4.1...v1.5.0) (2021-11-11)
 
 
