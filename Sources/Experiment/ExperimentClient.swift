@@ -39,7 +39,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
     
     private var analyticsProvider: SessionAnalyticsProvider?
-    private var exposureTrackingProvider: ExposureTrackingProvider?
+    private var userSessionExposureTracker: UserSessionExposureTracker?
     
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
@@ -59,9 +59,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             self.analyticsProvider = nil
         }
         if let exposureTrackingProvider = config.exposureTrackingProvider {
-            self.exposureTrackingProvider = SessionExposureTrackingProvider(exposureTrackingProvider: exposureTrackingProvider)
+            self.userSessionExposureTracker = UserSessionExposureTracker(exposureTrackingProvider: exposureTrackingProvider)
         } else {
-            self.exposureTrackingProvider = nil
+            self.userSessionExposureTracker = nil
         }
         self.storage = storage
         self.storage.load()
@@ -368,10 +368,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
         // Track the exposure event if an analytics provider is set
         if (source.isFallback() || variant.value == nil) {
-            self.exposureTrackingProvider?.track(exposure: Exposure(flagKey: key, variant: nil))
+            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: nil), user: exposedUser)
             self.analyticsProvider?.unsetUserProperty(event)
         } else if (variant.value != nil) {
-            self.exposureTrackingProvider?.track(exposure: Exposure(flagKey: key, variant: variant.value))
+            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: variant.value), user: exposedUser)
             self.analyticsProvider?.setUserProperty(event)
             self.analyticsProvider?.track(event)
         }
