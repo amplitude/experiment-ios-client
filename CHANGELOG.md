@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/amplitude/experiment-ios-client/compare/v1.6.0...v1.7.0) (2022-04-15)
+
+
+### Features
+
+* invalidate exposure cache on user identity change ([#22](https://github.com/amplitude/experiment-ios-client/issues/22)) ([f45d3f4](https://github.com/amplitude/experiment-ios-client/commit/f45d3f4bbab63d3d69fb4d7eec464020da432355))
+
 # [1.6.0](https://github.com/amplitude/experiment-ios-client/compare/v1.5.0...v1.6.0) (2022-02-12)
 
 
