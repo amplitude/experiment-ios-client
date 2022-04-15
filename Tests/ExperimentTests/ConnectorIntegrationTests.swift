@@ -68,7 +68,7 @@ class ConnectorIntegrationTests : XCTestCase {
     
     func testTrackCalledOnceEachPerVariantForDifferentFlagKeys() {
         let eventBridge = TestEventBridge()
-        let connectorExposureTrackingProvider = SessionExposureTrackingProvider(exposureTrackingProvider: ConnectorExposureTrackingProvider(eventBridge: eventBridge))
+        let connectorExposureTrackingProvider = UserSessionExposureTracker(exposureTrackingProvider: ConnectorExposureTrackingProvider(eventBridge: eventBridge))
         
         // Track event with variant
         
@@ -103,7 +103,7 @@ class ConnectorIntegrationTests : XCTestCase {
     
     func testTrackCalledOncePerVariantForTheSameFlagKey() {
         let eventBridge = TestEventBridge()
-        let connectorExposureTrackingProvider = SessionExposureTrackingProvider(exposureTrackingProvider: ConnectorExposureTrackingProvider(eventBridge: eventBridge))
+        let connectorExposureTrackingProvider = UserSessionExposureTracker(exposureTrackingProvider: ConnectorExposureTrackingProvider(eventBridge: eventBridge))
         
         // Track event with variant
         
