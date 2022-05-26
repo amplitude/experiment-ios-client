@@ -25,11 +25,11 @@ jobs:
           project: ${{ secrets.JIRA_PROJECT }}
           issuetype: Task
           summary: |
-            [SDK - experiment-ios-server] ${{ github.event.issue.title }}
+            [SDK - experiment-ios-client] ${{ github.event.issue.title }}
           description: |
             ${{ github.event.issue.html_url }}
           fields: '{
-            "labels": ["experiment-ios-server"]
+            "labels": ["experiment-ios-client"]
           }'
 
       - name: Log created issue
