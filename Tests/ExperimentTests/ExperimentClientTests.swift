@@ -271,7 +271,7 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertTrue(analyticsProvider.didUserPropertyGetUnset)
     }
 
-    func testExposureEventTrackedOnSecondaryAndUnsetNotCalled() {
+    func testExposureEventNotTrackedOnSecondaryAndUnsetNotCalled() {
         let analyticsProvider = TestAnalyticsProvider(track: { event in
             XCTAssertEqual("[Experiment] Exposure", event.name)
             let exposureEvent = event as! ExposureEvent
@@ -283,9 +283,9 @@ class ExperimentClientTests: XCTestCase {
             XCTAssertEqual(INITIAL_KEY, exposureEvent.key)
             XCTAssertEqual(initialVariants[INITIAL_KEY], exposureEvent.variant)
         }, setUserProperty: { event in
-            XCTAssertEqual("[Experiment] \(INITIAL_KEY)", event.userProperty)
-        }, unsetUserProperty: { _ in
             XCTFail()
+        }, unsetUserProperty: { event in
+            XCTAssertEqual("[Experiment] \(INITIAL_KEY)", event.userProperty)
         })
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
@@ -297,8 +297,8 @@ class ExperimentClientTests: XCTestCase {
             storage: InMemoryStorage()
         )
         _ = client.variant(INITIAL_KEY)
-        XCTAssertTrue(analyticsProvider.didExposureGetTracked)
-        XCTAssertTrue(analyticsProvider.didUserPropertyGetSet)
+        XCTAssertFalse(analyticsProvider.didExposureGetTracked)
+        XCTAssertFalse(analyticsProvider.didUserPropertyGetSet)
     }
     
     func testExposureEventThroughAnalyticsProviderWithUserProperties() {
