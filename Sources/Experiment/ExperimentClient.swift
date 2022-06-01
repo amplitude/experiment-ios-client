@@ -399,7 +399,7 @@ private enum VariantSource : String {
 
     func isFallback() -> Bool {
         switch self {
-        case .FallbackInline, .FallbackConfig:
+        case .FallbackInline, .FallbackConfig, .SecondaryInitialVariants:
             return true
         default:
             return false
