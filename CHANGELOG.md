@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/amplitude/experiment-ios-client/compare/v1.7.0...v1.7.1) (2022-06-02)
+
+
+### Bug Fixes
+
+* add secondary initial variants as a fallback ([5ff93a6](https://github.com/amplitude/experiment-ios-client/commit/5ff93a6ed0b5bb328f2e7f0ff3698b1e9a4cc9f6))
+
 # [1.7.0](https://github.com/amplitude/experiment-ios-client/compare/v1.6.0...v1.7.0) (2022-04-15)
 
 
