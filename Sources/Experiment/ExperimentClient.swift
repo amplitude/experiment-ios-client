@@ -73,7 +73,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         fetchQueue.async {
             do {
-                let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(1))
+                let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(10))
                 _ = self.fetchInternal(
                     user: fetchUser,
                     timeoutMillis: self.config.fetchTimeoutMillis,
