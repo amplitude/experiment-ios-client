@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/amplitude/experiment-ios-client/compare/v1.7.1...v1.7.2) (2022-08-03)
+
+
+### Bug Fixes
+
+* increase integration timeout to 10 seconds ([#23](https://github.com/amplitude/experiment-ios-client/issues/23)) ([5f70203](https://github.com/amplitude/experiment-ios-client/commit/5f70203cfef5adb7a704992818c546652ad7052e))
+
 ## [1.7.1](https://github.com/amplitude/experiment-ios-client/compare/v1.7.0...v1.7.1) (2022-06-02)
 
 
