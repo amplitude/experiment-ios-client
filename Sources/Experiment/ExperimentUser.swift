@@ -124,7 +124,7 @@ import Foundation
         if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
             userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: otherUserPropertiesAnyValue)
         } else {
-            userPropertiesAnyValueEqual = other.userPropertiesAnyValue == nil
+            userPropertiesAnyValueEqual = userProperties == nil && other.userProperties == nil
         }
         
         return self.deviceId == other.deviceId &&

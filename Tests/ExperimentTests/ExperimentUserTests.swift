@@ -77,6 +77,15 @@ class ExperimentUserTests: XCTestCase {
         let otherUser = ExperimentUserBuilder().userId("user_id").deviceId("device_id").country("country").build()
         XCTAssertEqual(newUser1, newUser2)
         XCTAssertEqual(newUser1, otherUser)
+        XCTAssertEqual(otherUser, newUser1)
+    }
+
+    func testNonNilUserPropertiesAreNotEqualToEmpty() {
+        let defaultUser = ExperimentUser()
+        let customUser = ExperimentUserBuilder().userProperty("some", value: "foo").build()
+
+        XCTAssertNotEqual(defaultUser, customUser)
+        XCTAssertNotEqual(customUser, defaultUser)
     }
     
     func testExperimentUserJSONSerialization() {
