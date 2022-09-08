@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/amplitude/experiment-ios-client/compare/v1.7.2...v1.7.3) (2022-09-08)
+
+
+### Bug Fixes
+
+* properly compare ExperimentUser properties ([#24](https://github.com/amplitude/experiment-ios-client/issues/24)) ([9b76fa4](https://github.com/amplitude/experiment-ios-client/commit/9b76fa412d81e0765ea41336aa8aced3bb6b250d))
+
 ## [1.7.2](https://github.com/amplitude/experiment-ios-client/compare/v1.7.1...v1.7.2) (2022-08-03)
 
 

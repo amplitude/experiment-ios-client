@@ -1,4 +1,4 @@
-experiment_version = "1.7.2" # Version is managed automatically by semantic-release, please dont change it manually
+experiment_version = "1.7.3" # Version is managed automatically by semantic-release, please dont change it manually
 
 Pod::Spec.new do |spec|
 
