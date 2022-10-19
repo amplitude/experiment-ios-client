@@ -110,6 +110,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return sourceVariants().merging(secondaryVariants()) { (source, _) in source }
     }
 
+    // Clear all variants in the cache and storage.
+    public func clear() {
+        self.storage.clear();
+        self.storage.save();
+    }
+
     public func exposure(key: String) {
         let variantAndSource = resolveVariantAndSource(key: key, fallback: nil)
         exposureInternal(key: key, variant: variantAndSource.variant, source: variantAndSource.source)

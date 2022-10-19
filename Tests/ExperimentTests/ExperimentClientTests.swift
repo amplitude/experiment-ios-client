@@ -123,6 +123,29 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(initialVariants, variants)
     }
     
+    func testClearFlagConfig() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let s = DispatchSemaphore(value: 0)
+
+        client.fetch(user: testUser) { (client, error) in
+            let variant = client.variant("sdk-ci-test")
+            XCTAssertNotNil(variant)
+            XCTAssertEqual(serverVariant, variant)
+            s.signal()
+        }
+        s.wait()
+
+        client.clear()
+        let clearedVariants = client.all()
+        XCTAssertTrue(clearedVariants.isEmpty)
+    }
+
     func testMergeUserWithProvider() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
