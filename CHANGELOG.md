@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/amplitude/experiment-ios-client/compare/v1.7.3...v1.8.0) (2022-10-22)
+
+
+### Features
+
+* add the flag config Clear method ([#25](https://github.com/amplitude/experiment-ios-client/issues/25)) ([df1c147](https://github.com/amplitude/experiment-ios-client/commit/df1c147f7ba5d7dadd3bf016c370755240e91ffb))
+
 ## [1.7.3](https://github.com/amplitude/experiment-ios-client/compare/v1.7.2...v1.7.3) (2022-09-08)
 
 
