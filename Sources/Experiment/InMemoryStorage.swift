@@ -22,6 +22,10 @@ internal class InMemoryStorage: Storage {
     func clear() {
         map = [:]
     }
+    
+    func remove(key: String) {
+        map.removeValue(forKey: key)
+    }
 
     func getAll() -> [String:Variant] {
         let copy = map
