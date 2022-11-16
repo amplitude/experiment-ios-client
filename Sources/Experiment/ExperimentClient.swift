@@ -243,9 +243,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
-        if (options != nil && options.flagKeys != nil) {
-            guard let base64EncodeFlagKeys = try? JSONSerialization.data(withJSONObject: options.flagKeys, options: []) else {
-                completion(Result.failure(ExperimentError("json encode failed from flag keys: \(options.flagKeys)")))
+        if (options?.flagKeys != nil) {
+            guard let base64EncodeFlagKeys = try? JSONSerialization.data(withJSONObject: options?.flagKeys! as Any, options: []) else {
+                completion(Result.failure(ExperimentError("json encode failed from flag keys: \(String(describing: options?.flagKeys!))")))
                 return nil
             }
             let flagKeysB64EncodedUrl = base64EncodeFlagKeys.base64EncodedString().replacingOccurrences(of: "+", with: "-")
@@ -354,15 +354,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return variants
     }
     
-    private func storeVariants(_ variants: [String: Variant], options: FetchOptions?) {
+    private func storeVariants(_ variants: [String: Variant], _ options: FetchOptions?) {
         storageLock.wait()
         defer { storageLock.signal() }
-        if (options == nil || options.flagKeys == nil) {
+        if (options?.flagKeys == nil) {
             storage.clear()
         }
         var failedKeys: [String] = options?.flagKeys ?? []
         for (key, variant) in variants {
-            failedKeys.filter { $0 != key }
+            failedKeys.removeAll { $0 == key }
             self.storage.put(key: key, value: variant)
         }
         for (key) in failedKeys {

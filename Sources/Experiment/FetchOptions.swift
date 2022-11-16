@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public class Variant : NSObject {
+@objc public class FetchOptions : NSObject {
     @objc public let flagKeys: [String]?
 
     @objc public init(_ flagKeys: [String]? = nil) {
