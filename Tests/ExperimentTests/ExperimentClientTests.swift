@@ -20,7 +20,7 @@ let initialVariants: [String: Variant] = [
     INITIAL_KEY: initialVariant,
     KEY: Variant("off")
 ]
-let KEY2 = "sdk-ci-test2"
+let KEY2 = "sdk-ci-test-2"
 let serverVariant2 = Variant("on")
 
 class ExperimentClientTests: XCTestCase {
@@ -145,7 +145,7 @@ class ExperimentClientTests: XCTestCase {
         client.fetch(user: testUser, options: options) { (client, error) in
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
-            XCTAssertNil(variant)
+            XCTAssertNil(variant.value)
             let variant2 = client.variant(KEY2, fallback: nil)
             XCTAssertEqual(serverVariant2, variant2)
             s.signal()

@@ -244,11 +244,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
         if (options?.flagKeys != nil) {
-            guard let base64EncodeFlagKeys = try? JSONSerialization.data(withJSONObject: options?.flagKeys! as Any, options: []) else {
+            guard let jsonFlagKeys = try? JSONSerialization.data(withJSONObject: options?.flagKeys! as Any, options: []) else {
                 completion(Result.failure(ExperimentError("json encode failed from flag keys: \(String(describing: options?.flagKeys!))")))
                 return nil
             }
-            let flagKeysB64EncodedUrl = base64EncodeFlagKeys.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            let flagKeysB64EncodedUrl = jsonFlagKeys.base64EncodedString().replacingOccurrences(of: "+", with: "-")
                 .replacingOccurrences(of: "/", with: "_")
                 .replacingOccurrences(of: "=", with: "")
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
