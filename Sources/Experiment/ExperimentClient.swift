@@ -67,7 +67,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.storage = storage
         self.storage.load()
     }
-    
+
     public func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
         self.fetch(user: user, options: nil, completion: completion)
     }
@@ -235,22 +235,18 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
             return nil
         }
-        let userB64EncodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
+        let userB64EncodedUrl = base64EncodeData(requestData)
         let url = URL(string: "\(self.config.serverUrl)/sdk/vardata")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
-        if (options?.flagKeys != nil) {
-            guard let jsonFlagKeys = try? JSONSerialization.data(withJSONObject: options?.flagKeys! as Any, options: []) else {
-                completion(Result.failure(ExperimentError("json encode failed from flag keys: \(String(describing: options?.flagKeys!))")))
+        if let flagKeys = options?.flagKeys {
+            guard let jsonFlagKeys = try? JSONSerialization.data(withJSONObject: flagKeys, options: []) else {
+                completion(Result.failure(ExperimentError("json encode failed from flag keys: \(String(describing: flagKeys))")))
                 return nil
             }
-            let flagKeysB64EncodedUrl = jsonFlagKeys.base64EncodedString().replacingOccurrences(of: "+", with: "-")
-                .replacingOccurrences(of: "/", with: "_")
-                .replacingOccurrences(of: "=", with: "")
+            let flagKeysB64EncodedUrl = base64EncodeData(jsonFlagKeys)
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
@@ -304,6 +300,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 }
             }
         }
+    }
+
+    private func base64EncodeData(_ key: Data) -> String {
+        return key.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
     }
 
     private func stopRetries() {
