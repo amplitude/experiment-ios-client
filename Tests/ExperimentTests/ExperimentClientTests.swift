@@ -20,6 +20,8 @@ let initialVariants: [String: Variant] = [
     INITIAL_KEY: initialVariant,
     KEY: Variant("off")
 ]
+let KEY2 = "sdk-ci-test-2"
+let serverVariant2 = Variant("on")
 
 class ExperimentClientTests: XCTestCase {
     
@@ -107,6 +109,48 @@ class ExperimentClientTests: XCTestCase {
         
         variant = client.variant("asdf")
         XCTAssertEqual(fallbackVariant, variant)
+    }
+    
+    func testFetchWithFlags() {
+        let s = DispatchSemaphore(value: 0)
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let options = FetchOptions([KEY, KEY2])
+        client.fetch(user: testUser, options: options) { (client, error) in
+            XCTAssertNil(error)
+            let variant = client.variant(KEY, fallback: nil)
+            XCTAssertEqual(serverVariant, variant)
+            let variant2 = client.variant(KEY2, fallback: nil)
+            XCTAssertEqual(serverVariant2, variant2)
+            s.signal()
+        }
+        s.wait()
+    }
+    
+    func testFetchWithPartialFlags() {
+        let s = DispatchSemaphore(value: 0)
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let options = FetchOptions([KEY2])
+        client.fetch(user: testUser, options: options) { (client, error) in
+            XCTAssertNil(error)
+            let variant = client.variant(KEY, fallback: nil)
+            XCTAssertNil(variant.value)
+            let variant2 = client.variant(KEY2, fallback: nil)
+            XCTAssertEqual(serverVariant2, variant2)
+            s.signal()
+        }
+        s.wait()
     }
     
     func testInitialVariantsReturned() {

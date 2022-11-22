@@ -9,6 +9,7 @@ import Foundation
 
 @objc public protocol ExperimentClient {
     @objc func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)?)
+    @objc func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)?)
     @objc func variant(_ key: String) -> Variant
     @objc func variant(_ key: String, fallback: Variant?) -> Variant
     @objc func all() -> [String:Variant]
@@ -68,6 +69,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
 
     public func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
+        self.fetch(user: user, options: nil, completion: completion)
+    }
+
+    public func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
         if user != nil && user != ExperimentUser() {
             self.user = user
         }
@@ -77,7 +82,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 _ = self.fetchInternal(
                     user: fetchUser,
                     timeoutMillis: self.config.fetchTimeoutMillis,
-                    retry: self.config.retryFetchOnFailure
+                    retry: self.config.retryFetchOnFailure,
+                    options: options
                 ) { result in
                     switch result {
                     case .success:
@@ -186,6 +192,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         user: ExperimentUser,
         timeoutMillis: Int,
         retry: Bool,
+        options: FetchOptions?,
         completion: @escaping ((Result<[String: Variant], Error>) -> Void)
     ) -> URLSessionTask? {
         // Proactively cancel retries if active in order to avoid unecessary API
@@ -193,15 +200,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if retry {
             self.stopRetries()
         }
-        return self.doFetch(user: user, timeoutMillis: timeoutMillis) { result in
+        return self.doFetch(user: user, timeoutMillis: timeoutMillis, options: options) { result in
             switch result {
             case .success(let variants):
-                self.storeVariants(variants)
+                self.storeVariants(variants, options)
                 completion(result)
             case .failure:
                 completion(result)
                 if retry {
-                    self.startRetries(user: user)
+                    self.startRetries(user: user, options: options)
                 }
             }
         }
@@ -211,6 +218,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     public func doFetch(
         user: ExperimentUser,
         timeoutMillis: Int,
+        options: FetchOptions?,
         completion: @escaping ((Result<[String: Variant], Error>) -> Void)
     ) -> URLSessionTask? {
         let start = CFAbsoluteTimeGetCurrent()
@@ -227,14 +235,20 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             completion(Result.failure(ExperimentError("json encode failed from dictionary: \(userDictionary)")))
             return nil
         }
-        let userB64EncodedUrl = requestData.base64EncodedString().replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
+        let userB64EncodedUrl = base64EncodeData(requestData)
         let url = URL(string: "\(self.config.serverUrl)/sdk/vardata")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Api-Key \(self.apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue(userB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-User")
+        if let flagKeys = options?.flagKeys {
+            guard let jsonFlagKeys = try? JSONSerialization.data(withJSONObject: flagKeys, options: []) else {
+                completion(Result.failure(ExperimentError("json encode failed from flag keys: \(String(describing: flagKeys))")))
+                return nil
+            }
+            let flagKeysB64EncodedUrl = base64EncodeData(jsonFlagKeys)
+            request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
+        }
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
         // Do fetch request
@@ -266,7 +280,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return task
     }
 
-    private func startRetries(user: ExperimentUser) {
+    private func startRetries(user: ExperimentUser, options: FetchOptions?) {
         backoffLock.wait()
         defer { backoffLock.signal() }
         self.backoff?.cancel()
@@ -277,7 +291,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             scalar: fetchBackoffScalar
         )
         self.backoff?.start() { completion in
-            return self.fetchInternal(user: user, timeoutMillis: fetchBackoffTimeout, retry: false) { result in
+            return self.fetchInternal(user: user, timeoutMillis: fetchBackoffTimeout, retry: false, options: options) { result in
                 switch result {
                 case .success:
                     completion(nil)
@@ -286,6 +300,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 }
             }
         }
+    }
+
+    private func base64EncodeData(_ key: Data) -> String {
+        return key.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
     }
 
     private func stopRetries() {
@@ -336,12 +356,19 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return variants
     }
     
-    private func storeVariants(_ variants: [String: Variant]) {
+    private func storeVariants(_ variants: [String: Variant], _ options: FetchOptions?) {
         storageLock.wait()
         defer { storageLock.signal() }
-        storage.clear()
+        if (options?.flagKeys == nil) {
+            storage.clear()
+        }
+        var failedKeys: [String] = options?.flagKeys ?? []
         for (key, variant) in variants {
+            failedKeys.removeAll { $0 == key }
             self.storage.put(key: key, value: variant)
+        }
+        for (key) in failedKeys {
+            self.storage.remove(key: key)
         }
         storage.save()
         self.debug("Stored variants: \(variants)")
