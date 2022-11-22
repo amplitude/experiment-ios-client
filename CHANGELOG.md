@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/amplitude/experiment-ios-client/compare/v1.8.0...v1.9.0) (2022-11-22)
+
+
+### Features
+
+* add subflag support ([#26](https://github.com/amplitude/experiment-ios-client/issues/26)) ([da12290](https://github.com/amplitude/experiment-ios-client/commit/da122906e19e004252a98c722990777513a884b2))
+
 # [1.8.0](https://github.com/amplitude/experiment-ios-client/compare/v1.7.3...v1.8.0) (2022-10-22)
 
 
