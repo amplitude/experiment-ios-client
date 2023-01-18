@@ -16,6 +16,7 @@ import Foundation
     @objc func exposure(key: String)
     @objc func setUser(_ user: ExperimentUser?)
     @objc func getUser() -> ExperimentUser?
+    @objc func clear()
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
