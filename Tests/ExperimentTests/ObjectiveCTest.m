@@ -17,11 +17,17 @@
 
 - (void)testObjectiveCBasic {
     Variant *expectedVariant = [[Variant alloc] init:@"on" payload:@"payload"];
-    ExperimentConfig *conf = [ExperimentConfig new];
+    
+    ExperimentConfigBuilder *confBuilder = [ExperimentConfigBuilder new];
+    confBuilder = [confBuilder debug:YES];
+    ExperimentConfig *conf = [confBuilder build];
+    
     ExperimentUserBuilder *builder = [ExperimentUserBuilder new];
     builder = [builder userId:@"test"];
     ExperimentUser *user = [builder build];
+    
     id<ExperimentClient> client = [Experiment initializeWithApiKey:@"client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3" config:conf];
+    
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     [client fetchWithUser:user completion:^(id<ExperimentClient> _Nonnull client, NSError * _Nullable error) {
         Variant *variant = [client variant:@"sdk-ci-test"];

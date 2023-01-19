@@ -32,9 +32,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set Xcode 12.4
+      - name: Set Xcode 14.2
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.4.app
+          sudo xcode-select -switch /Applications/Xcode_14.2.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -45,7 +45,7 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.4'
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
 
       - name: macOS Tests
         run: |
