@@ -32,9 +32,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set Xcode 12.4
+      - name: Set Xcode 14.2
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.4.app
+          sudo xcode-select -switch /Applications/Xcode_14.2.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
