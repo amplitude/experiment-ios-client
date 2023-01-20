@@ -45,7 +45,7 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=15.5'
+            -destination 'platform=iOS Simulator,name=iPhone 13,OS=15.5'
 
       - name: macOS Tests
         run: |
