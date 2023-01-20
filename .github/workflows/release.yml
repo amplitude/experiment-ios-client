@@ -68,32 +68,6 @@ jobs:
       - name: Validate Podfile
         run: pod lib lint --allow-warnings
 
-      - name: Cache Swift Doc
-        id: cache-swift-doc
-        uses: actions/cache@v2
-        with:
-          path: /usr/local/bin/swift-doc
-          key: ${{ runner.os }}-swift-doc-${{ env.SWIFT_DOC_VERSION }}
-
-      # Swift Doc requires graphviz as a dependency. 
-      # TODO Look into either caching graphviz or using a separate linux job 
-      #      in order to use the pre-built SwiftDoc github action.
-      - name: Install Graphviz
-        run: brew install graphviz
-
-      - name: Install Swift Doc
-        if: steps.cache-swift-doc.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/SwiftDocOrg/swift-doc
-          cd swift-doc
-          git checkout ${{ env.SWIFT_DOC_VERSION }}
-          make install
-          cd ..
-          rm -rf swift-doc
-
-      - name: Generate Swift Doc
-        run: swift doc generate Sources/Experiment/ --module-name Experiment --output docs --format html --base-url /${{ github.event.repository.name }}
-
       - name: Semantic Release --dry-run
         if: ${{ github.event.inputs.dryRun == 'true'}}
         env:
