@@ -26,6 +26,6 @@ Pod::Spec.new do |spec|
 
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
-  spec.dependency 'AnalyticsConnector', '~> 1.0.0'
+  spec.dependency 'AnalyticsConnector', '~> 1.0.1'
 
 end

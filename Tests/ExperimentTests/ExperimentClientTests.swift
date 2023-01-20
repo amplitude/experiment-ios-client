@@ -168,25 +168,24 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testClearFlagConfig() {
+        let storage = InMemoryStorage()
+        storage.put(key: "sdk-ci-test", value: serverVariant)
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
             config: ExperimentConfigBuilder()
                 .debug(true)
                 .build(),
-            storage: InMemoryStorage()
+            storage: storage
         )
-        let s = DispatchSemaphore(value: 0)
 
-        client.fetch(user: testUser) { (client, error) in
-            let variant = client.variant("sdk-ci-test")
-            XCTAssertNotNil(variant)
-            XCTAssertEqual(serverVariant, variant)
-            s.signal()
-        }
-        s.wait()
+        let variant = client.variant("sdk-ci-test")
+        XCTAssertNotNil(variant)
+        XCTAssertEqual(serverVariant, variant)
 
         client.clear()
         let clearedVariants = client.all()
+        let clearedVariant = client.variant("sdk-ci-test")
+        XCTAssertNil(clearedVariant.value)
         XCTAssertTrue(clearedVariants.isEmpty)
     }
 
