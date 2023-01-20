@@ -1,3 +1,11 @@
+## [1.9.1](https://github.com/amplitude/experiment-ios-client/compare/v1.9.0...v1.9.1) (2023-01-20)
+
+
+### Bug Fixes
+
+* make clear() method public ([#28](https://github.com/amplitude/experiment-ios-client/issues/28)) ([062692d](https://github.com/amplitude/experiment-ios-client/commit/062692d47a9486887cc0285f2880b4d5fc43ec4d))
+* update analytics-connector; distribution mode; fix test ([3e8fc62](https://github.com/amplitude/experiment-ios-client/commit/3e8fc6254863aabc5add25229705cfdebd4837b6))
+
 # [1.9.0](https://github.com/amplitude/experiment-ios-client/compare/v1.8.0...v1.9.0) (2022-11-22)
 
 
