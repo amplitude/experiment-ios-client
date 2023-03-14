@@ -14,6 +14,25 @@ class ConnectorIntegrationTests : XCTestCase {
     
     let API_KEY = "client-DvWljIjiiuqLbyjqdvBaLFfEBrAvGuA3"
     
+    func testConnectorUserProviderConcurrency() {
+        let connector = AnalyticsConnector.getInstance("test")
+        let userProvider = ConnectorUserProvider(identityStore: connector.identityStore)
+        DispatchQueue.global().async {
+            var i = 0
+            repeat {
+                i += 1
+                connector.identityStore.setIdentity(Identity(userId: "\(i)"))
+                connector.identityStore.setIdentity(Identity(userId: nil))
+                connector.identityStore.setIdentity(Identity(userId: "\(i)"))
+            } while i < 10000
+        }
+        var i = 0
+        repeat {
+            _ = try? userProvider.getUserOrWait(timeout: .seconds(1))
+            i += 1
+        } while i < 10000
+    }
+    
     func testUserUpdatedOnUserIdentityChange() {
         let instanceName = "integration_test1"
         let connector = AnalyticsConnector.getInstance(instanceName)
