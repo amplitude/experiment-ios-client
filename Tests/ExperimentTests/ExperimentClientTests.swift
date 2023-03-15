@@ -300,18 +300,15 @@ class ExperimentClientTests: XCTestCase {
         }, unsetUserProperty: { _ in
             XCTFail()
         })
+        let storage = InMemoryStorage()
+        storage.put(key: KEY, value: serverVariant)
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
             config: ExperimentConfigBuilder()
                 .analyticsProvider(analyticsProvider)
                 .build(),
-            storage: InMemoryStorage()
+            storage: storage
         )
-        let s = DispatchSemaphore(value: 0)
-        client.fetch(user: testUser) { (_, _) in
-            s.signal()
-        }
-        s.wait()
         _ = client.variant(KEY)
         XCTAssertTrue(analyticsProvider.didExposureGetTracked)
     }
