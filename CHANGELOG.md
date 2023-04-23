@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/amplitude/experiment-ios-client/compare/v1.9.1...v1.9.2) (2023-03-15)
+
+
+### Bug Fixes
+
+* connector user provider concurrency ([#30](https://github.com/amplitude/experiment-ios-client/issues/30)) ([113fcdc](https://github.com/amplitude/experiment-ios-client/commit/113fcdcf187924f5607da96920dddbe7d91450d9))
+
 ## [1.9.1](https://github.com/amplitude/experiment-ios-client/compare/v1.9.0...v1.9.1) (2023-01-20)
 
 
