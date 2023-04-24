@@ -12,50 +12,50 @@ func copyId(_ identity: Identity) -> Identity {
     return Identity(userId: identity.userId, deviceId: identity.deviceId, userProperties: identity.userProperties)
 }
 
+// TODO This class needs a rewrite.
 internal class ConnectorUserProvider : ExperimentUserProvider {
     
     private let identityStore: IdentityStore
     private let baseUserProvider = DefaultUserProvider()
-    private var identity: Identity? = nil
-    private let identityLock = DispatchSemaphore(value: 1)
-    
-    private let id: String = randomString(length: 16)
-    
+    private var initialized: Bool = false
+    private let initializedLock = DispatchSemaphore(value: 1)
+        
     init(identityStore: IdentityStore) {
         self.identityStore = identityStore
+        let id: String = randomString(length: 16)
         self.identityStore.addIdentityListener(key: id) { (updatedId) in
-            self.identityLock.wait()
-            defer { self.identityLock.signal() }
-            self.identity = copyId(updatedId)
+            self.initializedLock.wait()
+            defer { self.initializedLock.signal() }
+            self.initialized = true
+            self.identityStore.removeIdentityListener(key: id)
         }
-        self.identityLock.wait()
-        defer { self.identityLock.signal() }
-        self.identity = self.identityStore.getIdentity()
     }
     
     
     func getUser() -> ExperimentUser {
-        self.identityLock.wait()
-        defer { self.identityLock.signal() }
+        self.initializedLock.wait()
+        defer { self.initializedLock.signal() }
+        let identity = copyId(identityStore.getIdentity())
         return baseUserProvider.getUser().copyToBuilder()
-            .userId(identity?.userId)
-            .deviceId(identity?.deviceId)
-            .userProperties(identity?.userProperties as? [String:Any])
+            .userId(identity.userId)
+            .deviceId(identity.deviceId)
+            .userProperties(identity.userProperties as? [String:Any])
             .build()
     }
     
     func getUserOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
-        self.identityLock.wait()
-        if identity == nil {
-            self.identityLock.signal()
+        self.initializedLock.wait()
+        if !initialized {
+            self.initializedLock.signal()
             try waitForIdentity(timeout: timeout)
-            self.identityLock.wait()
+            self.initializedLock.wait()
         }
-        defer { self.identityLock.signal() }
+        defer { self.initializedLock.signal() }
+        let identity = copyId(identityStore.getIdentity())
         return baseUserProvider.getUser().copyToBuilder()
-            .userId(identity?.userId)
-            .deviceId(identity?.deviceId)
-            .userProperties(identity?.userProperties as? [String:Any])
+            .userId(identity.userId)
+            .deviceId(identity.deviceId)
+            .userProperties(identity.userProperties as? [String:Any])
             .build()
     }
     
