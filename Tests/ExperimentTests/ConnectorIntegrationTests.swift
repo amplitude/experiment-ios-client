@@ -33,6 +33,27 @@ class ConnectorIntegrationTests : XCTestCase {
         } while i < 10000
     }
     
+    func testUserIdUpdatePropogates() {
+        let instanceName = "integration_test_update"
+        let connector = AnalyticsConnector.getInstance(instanceName)
+        connector.identityStore.editIdentity()
+            .setUserId("user_id")
+            .setDeviceId("device_id")
+            .commit()
+        
+        let config = ExperimentConfigBuilder()
+            .instanceName(instanceName)
+            .build()
+        let client = Experiment.initializeWithAmplitudeAnalytics(apiKey: API_KEY, config: config) as! DefaultExperimentClient
+        let user = try! client.mergeUserWithProviderOrWait(timeout: .milliseconds(5000))
+        let expectedUser = ExperimentUserBuilder()
+            .userId("user_id")
+            .deviceId("device_id")
+            .build()
+        XCTAssertEqual(user.userId, expectedUser.userId)
+        XCTAssertEqual(user.deviceId, expectedUser.deviceId)
+    }
+    
     func testUserUpdatedOnUserIdentityChange() {
         let instanceName = "integration_test1"
         let connector = AnalyticsConnector.getInstance(instanceName)
