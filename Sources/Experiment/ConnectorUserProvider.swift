@@ -28,6 +28,9 @@ internal class ConnectorUserProvider : ExperimentUserProvider {
             defer { self.identityLock.signal() }
             self.identity = copyId(updatedId)
         }
+        self.identityLock.wait()
+        defer { self.identityLock.signal() }
+        self.identity = self.identityStore.getIdentity()
     }
     
     
