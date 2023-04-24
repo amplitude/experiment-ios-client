@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/amplitude/experiment-ios-client/compare/v1.9.2...v1.10.0) (2023-04-24)
+
+
+### Bug Fixes
+
+* fix the connector user provider when id is set prior to provider init ([#33](https://github.com/amplitude/experiment-ios-client/issues/33)) ([c7a99ef](https://github.com/amplitude/experiment-ios-client/commit/c7a99efd9ceb5bd741102fb122a3b9a0a623143a))
+
+
+### Features
+
+* add group and group property support to user ([#32](https://github.com/amplitude/experiment-ios-client/issues/32)) ([2ac2330](https://github.com/amplitude/experiment-ios-client/commit/2ac2330c7c833d54510bb5062be37515497fc8fd))
+
 ## [1.9.2](https://github.com/amplitude/experiment-ios-client/compare/v1.9.1...v1.9.2) (2023-03-15)
 
 
