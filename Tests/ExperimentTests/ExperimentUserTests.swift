@@ -22,6 +22,8 @@ class ExperimentUserTests: XCTestCase {
         .userProperty("stringArrayUserProperty", value: ["zero", "one", "two", "three"])
         .userProperty("intArrayUserProperty", value: [0, 1, 2, 3])
         .userProperty("anyArrayUserProperty", value: [0, "one", true, 3.0])
+        .group("groupType", "groupName")
+        .groupProperty("groupType", "groupName", "key", "value")
         .build()
     
     let userBulkUserProperties = ExperimentUserBuilder()
@@ -38,6 +40,8 @@ class ExperimentUserTests: XCTestCase {
             "intArrayUserProperty": [0, 1, 2, 3],
             "anyArrayUserProperty": [0, "one", true, 3.0]
         ])
+        .groups(["groupType": ["groupName"]])
+        .groupProperties(["groupType":["groupName":["key":"value"]]])
         .build()
     
     let expectedUserProperties: [String : Any] = [
@@ -62,7 +66,9 @@ class ExperimentUserTests: XCTestCase {
             "stringArrayUserProperty": ["zero", "one", "two", "three"],
             "intArrayUserProperty": [0, 1, 2, 3],
             "anyArrayUserProperty": [0, "one", true, 3.0]
-        ]
+        ],
+        "groups": ["groupType": ["groupName"]],
+        "group_properties": ["groupType": ["groupName": ["key": "value"]]]
     ]
     
     func testUserPropertiesEquals() {
@@ -71,9 +77,9 @@ class ExperimentUserTests: XCTestCase {
         XCTAssert(NSDictionary(dictionary: userBulkUserProperties.getUserProperties()!).isEqual(to: expectedUserProperties))
     }
     
-    func testSetNilEmptyUserPropertiesEquals() {
-        let newUser1 = user.copyToBuilder().userProperties(nil).build()
-        let newUser2 = userBulkUserProperties.copyToBuilder().userProperties(nil).build()
+    func testSetNilEmptyGroupsAndUserAndGroupPropertiesEquals() {
+        let newUser1 = user.copyToBuilder().userProperties(nil).groups(nil).groupProperties(nil).build()
+        let newUser2 = userBulkUserProperties.copyToBuilder().userProperties(nil).groups(nil).groupProperties(nil).build()
         let otherUser = ExperimentUserBuilder().userId("user_id").deviceId("device_id").country("country").build()
         XCTAssertEqual(newUser1, newUser2)
         XCTAssertEqual(newUser1, otherUser)
@@ -143,6 +149,8 @@ class ExperimentUserTests: XCTestCase {
             .version("newVersion")
             .userProperty("userPropertyKey", value: "value2")
             .userProperty("userPropertyKey2", value: "value2")
+            .group("groupType", "groupName")
+            .groupProperty("groupType", "groupName", "key", "value")
             .build()
         
         let mergedUser = user2.merge(user1)
@@ -163,6 +171,8 @@ class ExperimentUserTests: XCTestCase {
             .carrier("test")
             .userProperty("userPropertyKey2", value: "value2")
             .userProperty("userPropertyKey", value: "value2")
+            .group("groupType", "groupName")
+            .groupProperty("groupType", "groupName", "key", "value")
             .build()
         XCTAssert(expected == mergedUser)
     }

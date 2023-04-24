@@ -26,6 +26,8 @@ import Foundation
     @available(*, deprecated, message: "Support for non-string values added. Use the `getUserProperties()` function instead to access all user properties.")
     @objc public let userProperties: [String: String]?
     @objc private let userPropertiesAnyValue: [String: Any]?
+    @objc public let groups: [String: [String]]?
+    @objc public let groupProperties: [String: [String: [String: Any]]]?
     
     @objc public override init() {
         self.deviceId = nil
@@ -44,6 +46,8 @@ import Foundation
         self.library = nil
         self.userProperties = nil
         self.userPropertiesAnyValue = nil
+        self.groups = nil
+        self.groupProperties = nil
     }
     
     internal init(builder: ExperimentUserBuilder) {
@@ -63,6 +67,8 @@ import Foundation
         self.library = builder.library
         self.userProperties = builder.userProperties
         self.userPropertiesAnyValue = builder.userPropertiesAnyValue
+        self.groups = builder.groups
+        self.groupProperties = builder.groupProperties
     }
     
     internal init(builder: ExperimentUser.Builder) {
@@ -82,6 +88,8 @@ import Foundation
         self.library = builder.library
         self.userProperties = builder.userProperties
         self.userPropertiesAnyValue = builder.userPropertiesAnyValue
+        self.groups = builder.groups
+        self.groupProperties = builder.groupProperties
     }
     
     @objc override public var description: String {
@@ -109,6 +117,8 @@ import Foundation
             .carrier(self.carrier)
             .library(self.library)
             .userProperties(self.userPropertiesAnyValue)
+            .groups(self.groups)
+            .groupProperties(self.groupProperties)
     }
     
     func getUserProperties() -> [String: Any]? {
@@ -127,6 +137,13 @@ import Foundation
             userPropertiesAnyValueEqual = userProperties == nil && other.userProperties == nil
         }
         
+        var groupPropertiesEqual = false
+        if let selfGroupProperties = self.groupProperties, let otherGroupProperties = other.groupProperties {
+            groupPropertiesEqual = NSDictionary(dictionary: selfGroupProperties).isEqual(to: otherGroupProperties)
+        } else {
+            groupPropertiesEqual = self.groupProperties == nil && other.groupProperties == nil
+        }
+
         return self.deviceId == other.deviceId &&
             self.userId == other.userId &&
             self.version == other.version &&
@@ -141,7 +158,9 @@ import Foundation
             self.deviceModel == other.deviceModel &&
             self.carrier == other.carrier &&
             self.library == other.library &&
-            userPropertiesAnyValueEqual
+            userPropertiesAnyValueEqual &&
+            self.groups == other.groups &&
+            groupPropertiesEqual
     }
     
     @available(*, deprecated, message: "Use ExperimentUserBuilder instead")
@@ -163,7 +182,8 @@ import Foundation
         internal var library: String?
         internal var userProperties: [String: String]?
         internal var userPropertiesAnyValue: [String: Any]?
-
+        internal var groups: [String: [String]]?
+        internal var groupProperties: [String: [String: [String: Any]]]?
         
         public init() {
             // public init
@@ -283,6 +303,40 @@ import Foundation
             return self
         }
 
+        @discardableResult
+        public func groups(_ groups: [String: [String]]?) -> Builder {
+            self.groups = groups
+            return self
+        }
+        
+        @discardableResult
+        public func group(type: String, name: String) -> Builder {
+            var groups = self.groups ?? [:]
+            groups[type] = [name]
+            self.groups = groups
+            return self
+        }
+        
+        @discardableResult
+        public func groupProperties(_ groupProperties: [String: [String: [String: Any]]]?) -> Builder {
+            self.groupProperties = groupProperties
+            return self
+        }
+        
+        @discardableResult
+        public func groupProperty(type: String, name: String, key: String, value: String) -> Builder {
+            guard self.groupProperties?[type] != nil else {
+                self.groupProperties = [type:[name:[key:value]]]
+                return self
+            }
+            guard self.groupProperties?[type]?[name] != nil else {
+                self.groupProperties?[type] = [name:[key:value]]
+                return self
+            }
+            self.groupProperties?[type]?[name]?[key] = value
+            return self
+        }
+
         public func build() -> ExperimentUser {
             return ExperimentUser(builder: self)
         }
@@ -307,6 +361,8 @@ import Foundation
     internal var library: String?
     internal var userProperties: [String: String]?
     internal var userPropertiesAnyValue: [String: Any]?
+    internal var groups: [String: [String]]?
+    internal var groupProperties: [String: [String: [String: Any]]]?
 
     @discardableResult
     @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
@@ -421,6 +477,40 @@ import Foundation
         }
         return self
     }
+    
+    @discardableResult
+    public func groups(_ groups: [String: [String]]?) -> ExperimentUserBuilder {
+        self.groups = groups
+        return self
+    }
+
+    @discardableResult
+    public func group(_ groupType: String, _ groupName: String) -> ExperimentUserBuilder {
+        var groups = self.groups ?? [:]
+        groups[groupType] = [groupName]
+        self.groups = groups
+        return self
+    }
+   
+    @discardableResult
+    public func groupProperties(_ groupProperties: [String: [String: [String: Any]]]?) -> ExperimentUserBuilder {
+        self.groupProperties = groupProperties
+        return self
+    }
+  
+    @discardableResult
+    public func groupProperty(_ groupType: String, _ groupName: String, _ key: String, _ value: String) -> ExperimentUserBuilder {
+        guard self.groupProperties?[groupType] != nil else {
+            self.groupProperties = [groupType:[groupName:[key:value]]]
+            return self
+        }
+        guard self.groupProperties?[groupType]?[groupName] != nil else {
+            self.groupProperties?[groupType] = [groupName:[key:value]]
+            return self
+        }
+        self.groupProperties?[groupType]?[groupName]?[key] = value
+        return self
+    }
 
     @objc public func build() -> ExperimentUser {
         return ExperimentUser(builder: self)
@@ -446,44 +536,47 @@ internal extension ExperimentUser {
         data["carrier"] = self.carrier
         data["library"] = self.library
         data["user_properties"] = self.userPropertiesAnyValue
+        data["groups"] = self.groups
+        data["group_properties"] = self.groupProperties
         return data
     }
     
     func merge(_ user: ExperimentUser?) -> ExperimentUser {
-        var mergedUserProperties: [String:Any]?
-        if let currentUserProperties = self.getUserProperties(), let mergingUserProperties = user?.getUserProperties() {
-            mergedUserProperties = currentUserProperties.merging(mergingUserProperties) { (new, _) in new }
-        } else {
-            mergedUserProperties = self.getUserProperties() ?? user?.getUserProperties()
+        let mergedUserProperties = takeOrMerge(self.getUserProperties(), user?.getUserProperties()) { t, o in
+            return t.merging(o) { (new, _) in new }
         }
         return self.copyToBuilder()
-            .deviceId(takeOrOverwrite(self.deviceId, user?.deviceId))
-            .userId(takeOrOverwrite(self.userId, user?.userId))
-            .version(takeOrOverwrite(self.version, user?.version))
-            .country(takeOrOverwrite(self.country, user?.country))
-            .region(takeOrOverwrite(self.region, user?.region))
-            .dma(takeOrOverwrite(self.dma, user?.dma))
-            .city(takeOrOverwrite(self.city, user?.city))
-            .language(takeOrOverwrite(self.language, user?.language))
-            .platform(takeOrOverwrite(self.platform, user?.platform))
-            .os(takeOrOverwrite(self.os, user?.os))
-            .deviceManufacturer(takeOrOverwrite(self.deviceManufacturer, user?.deviceManufacturer))
-            .deviceModel(takeOrOverwrite(self.deviceModel, user?.deviceModel))
-            .carrier(takeOrOverwrite(self.carrier, user?.carrier))
-            .library(takeOrOverwrite(self.library, user?.library))
+            .deviceId(takeOrMerge(self.deviceId, user?.deviceId))
+            .userId(takeOrMerge(self.userId, user?.userId))
+            .version(takeOrMerge(self.version, user?.version))
+            .country(takeOrMerge(self.country, user?.country))
+            .region(takeOrMerge(self.region, user?.region))
+            .dma(takeOrMerge(self.dma, user?.dma))
+            .city(takeOrMerge(self.city, user?.city))
+            .language(takeOrMerge(self.language, user?.language))
+            .platform(takeOrMerge(self.platform, user?.platform))
+            .os(takeOrMerge(self.os, user?.os))
+            .deviceManufacturer(takeOrMerge(self.deviceManufacturer, user?.deviceManufacturer))
+            .deviceModel(takeOrMerge(self.deviceModel, user?.deviceModel))
+            .carrier(takeOrMerge(self.carrier, user?.carrier))
+            .library(takeOrMerge(self.library, user?.library))
             .userProperties(mergedUserProperties)
+            // TODO: once groups are passed through integration, actually merge all groups.
+            .groups(takeOrMerge(self.groups, user?.groups))
+            // TODO: once groups are passed through integration, actually merge all group properties.
+            .groupProperties(takeOrMerge(self.groupProperties, user?.groupProperties))
             .build()
     }
 }
 
-private func takeOrOverwrite<T>(_ take: T?, _ or: T?, overwrite: Bool = false) -> T? {
-    if take == nil {
-        return or
-    } else if or == nil {
-        return take
-    } else if overwrite {
-        return or
+private func takeOrMerge<T>(_ this: T?, _ other: T?, _ merger: ((T, T) -> T)? = nil) -> T? {
+    if this == nil {
+        return other
+    } else if other == nil {
+        return this
+    } else if merger != nil {
+        return merger!(this!, other!)
     } else {
-        return take
+        return this
     }
 }
