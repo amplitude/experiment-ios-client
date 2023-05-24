@@ -16,7 +16,7 @@
 @implementation ObjectiveCTest
 
 - (void)testObjectiveCBasic {
-    Variant *expectedVariant = [[Variant alloc] init:@"on" payload:@"payload"];
+    Variant *expectedVariant = [[Variant alloc] init:@"on" payload:@"payload" expKey:nil];
     
     ExperimentConfigBuilder *confBuilder = [ExperimentConfigBuilder new];
     confBuilder = [confBuilder debug:YES];

@@ -11,10 +11,12 @@ import Foundation
     
     @objc public let value: String?
     @objc public let payload: Any?
+    @objc public let expKey: String?
 
-    @objc public init(_ value: String? = nil, payload: Any? = nil) {
+    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil) {
         self.value = value
         self.payload = payload
+        self.expKey = expKey
     }
 
     internal init?(json: [String: Any]) {
@@ -25,11 +27,13 @@ import Foundation
         }
         self.value = (value ?? key)!
         self.payload = json["payload"]
+        self.expKey = json["expKey"] as? String
     }
     
     enum CodingKeys: String, CodingKey {
         case value
         case payload
+        case expKey
     }
 
     required public init(from decoder: Decoder) throws {
@@ -41,6 +45,7 @@ import Foundation
         } else {
             self.payload = nil
         }
+        self.expKey = try? values.decode(String.self, forKey: .expKey)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -52,6 +57,7 @@ import Foundation
         } else {
             try container.encodeNil(forKey: .payload)
         }
+        try container.encode(expKey, forKey: .expKey)
     }
     
     @objc public override func isEqual(_ object: Any?) -> Bool {
@@ -59,6 +65,9 @@ import Foundation
             return false
         }
         guard self.value == other.value else {
+            return false
+        }
+        guard self.expKey == other.expKey else {
             return false
         }
         if self.payload == nil && other.payload == nil {
@@ -76,10 +85,10 @@ import Foundation
     }
     
     @objc override public var description: String {
-        return "Variant{value=\(value ?? "nil"), payload=\(payload ?? "nil")}"
+        return "Variant{value=\(value ?? "nil"), payload=\(payload ?? "nil"), expKey=\(expKey ?? "nil")}"
     }
     
     @objc override public var debugDescription: String {
-        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription)}"
+        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription), expKey=\(expKey ?? "nil")}"
     }
 }

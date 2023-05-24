@@ -112,7 +112,7 @@ class ConnectorIntegrationTests : XCTestCase {
         
         // Track event with variant
         
-        let exposureEvent1 = Exposure(flagKey: "test-key-1", variant: "test")
+        let exposureEvent1 = Exposure(flagKey: "test-key-1", variant: "test", experimentKey: nil)
         let expectedTrack1 = AnalyticsEvent(eventType: "$exposure", eventProperties: NSDictionary(dictionary: ["flag_key": "test-key-1", "variant": "test"]), userProperties: nil)
         
         connectorExposureTrackingProvider.track(exposure: exposureEvent1)
@@ -127,7 +127,7 @@ class ConnectorIntegrationTests : XCTestCase {
 
         // Track new flag key event with same variant
         
-        let exposureEvent2 = Exposure(flagKey: "test-key-2", variant: "test")
+        let exposureEvent2 = Exposure(flagKey: "test-key-2", variant: "test", experimentKey: nil)
         let expectedTrack2 = AnalyticsEvent(eventType: "$exposure", eventProperties: NSDictionary(dictionary: ["flag_key": "test-key-2", "variant": "test"]), userProperties: nil)
         
         connectorExposureTrackingProvider.track(exposure: exposureEvent2)
@@ -147,7 +147,7 @@ class ConnectorIntegrationTests : XCTestCase {
         
         // Track event with variant
         
-        let exposureEvent1 = Exposure(flagKey: "test-key", variant: "test")
+        let exposureEvent1 = Exposure(flagKey: "test-key", variant: "test", experimentKey: nil)
         let expectedTrack1 = AnalyticsEvent(eventType: "$exposure", eventProperties: NSDictionary(dictionary: ["flag_key": "test-key", "variant": "test"]), userProperties: nil)
         
         connectorExposureTrackingProvider.track(exposure: exposureEvent1)
@@ -162,7 +162,7 @@ class ConnectorIntegrationTests : XCTestCase {
 
         // Track new flag key event with same variant
         
-        let exposureEvent2 = Exposure(flagKey: "test-key", variant: "test2")
+        let exposureEvent2 = Exposure(flagKey: "test-key", variant: "test2", experimentKey: nil)
         let expectedTrack2 = AnalyticsEvent(eventType: "$exposure", eventProperties: NSDictionary(dictionary: ["flag_key": "test-key", "variant": "test2"]), userProperties: nil)
         
         connectorExposureTrackingProvider.track(exposure: exposureEvent2)
@@ -177,7 +177,7 @@ class ConnectorIntegrationTests : XCTestCase {
         
         // Track event with no variant
 
-        let exposureEvent3 = Exposure(flagKey: "test-key", variant: nil)
+        let exposureEvent3 = Exposure(flagKey: "test-key", variant: nil, experimentKey: nil)
         let expectedTrack3 = AnalyticsEvent(eventType: "$exposure", eventProperties: NSDictionary(dictionary: ["flag_key": "test-key"]), userProperties: nil)
         
         connectorExposureTrackingProvider.track(exposure: exposureEvent3)
