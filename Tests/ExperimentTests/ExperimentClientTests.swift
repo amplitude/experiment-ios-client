@@ -407,6 +407,22 @@ class ExperimentClientTests: XCTestCase {
         let storedUser = client.getUser()
         XCTAssertEqual(storedUser, user)
     }
+    
+    func testVariantWithExperimentKeyInExposure() {
+        let exposureTrackingProvider = TestExposureTrackingProvider()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .exposureTrackingProvider(exposureTrackingProvider)
+                .source(Source.InitialVariants)
+                .initialVariants(["flagKey": Variant("value", payload: nil, expKey: "expKey")])
+                .build(),
+            storage: InMemoryStorage()
+        )
+        _ = client.variant("flagKey")
+        XCTAssertEqual(exposureTrackingProvider.lastExposure, Exposure(flagKey: "flagKey", variant: "value", experimentKey: "expKey"))
+        XCTAssertEqual(exposureTrackingProvider.trackCount, 1)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
