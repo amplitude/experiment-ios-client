@@ -26,14 +26,14 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
         XCTAssertEqual(exposure, provider.lastExposure)
         XCTAssertEqual(1, provider.trackCount)
         
-        let exposure2 = Exposure(flagKey: "flag2", variant: "variant")
+        let exposure2 = Exposure(flagKey: "flag2", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure2)
         }
@@ -45,11 +45,11 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
-        let exposure2 = Exposure(flagKey: "flag", variant: nil)
+        let exposure2 = Exposure(flagKey: "flag", variant: nil, experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure2)
         }
@@ -62,11 +62,11 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
-        let exposure2 = Exposure(flagKey: "flag", variant: nil)
+        let exposure2 = Exposure(flagKey: "flag", variant: nil, experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure2)
         }
@@ -79,7 +79,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
@@ -95,7 +95,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
@@ -111,7 +111,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().userId("uid").build())
         }
@@ -127,7 +127,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().deviceId("did").build())
         }
@@ -143,7 +143,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().userId("uid").build())
         }
@@ -159,7 +159,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().deviceId("did").build())
         }
@@ -175,7 +175,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure)
         }
@@ -191,7 +191,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().userId("uid").deviceId("did").build())
         }
@@ -207,7 +207,7 @@ class UserSessionExposureTrackerTests : XCTestCase {
         let provider = TestExposureTrackingProvider()
         let tracker = UserSessionExposureTracker(exposureTrackingProvider: provider)
         
-        let exposure = Exposure(flagKey: "flag", variant: "variant")
+        let exposure = Exposure(flagKey: "flag", variant: "variant", experimentKey: nil)
         for _ in 0...10 {
             tracker.track(exposure: exposure, user: ExperimentUserBuilder().userId("uid").deviceId("did").build())
         }

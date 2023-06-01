@@ -120,4 +120,14 @@ class VariantTests: XCTestCase {
         let decodedPayload = decoded.payload as! [Any]
         XCTAssertEqual(decodedPayload.debugDescription, originalPayload.debugDescription)
     }
+    
+    func testVariantExpeirmentKey() {
+        let variantMap = ["value":"value","expKey":"expKey"]
+        let variantFromMap = Variant(json: variantMap)
+        let variant = Variant("value", payload: nil, expKey: "expKey")
+        XCTAssertEqual(variant, variantFromMap)
+        let encoded = try! encoder.encode(variant)
+        let decoded = try! decoder.decode(Variant.self, from: encoded)
+        XCTAssertEqual(decoded, variant)
+    }
 }

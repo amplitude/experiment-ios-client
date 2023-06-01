@@ -402,10 +402,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let event = ExposureEvent(user: exposedUser, key: key, variant: variant, source: source.rawValue)
         // Track the exposure event if an analytics provider is set
         if (source.isFallback() || variant.value == nil) {
-            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: nil), user: exposedUser)
+            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: nil, experimentKey: variant.expKey), user: exposedUser)
             self.analyticsProvider?.unsetUserProperty(event)
         } else if (variant.value != nil) {
-            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: variant.value), user: exposedUser)
+            self.userSessionExposureTracker?.track(exposure: Exposure(flagKey: key, variant: variant.value, experimentKey: variant.expKey), user: exposedUser)
             self.analyticsProvider?.setUserProperty(event)
             self.analyticsProvider?.track(event)
         }

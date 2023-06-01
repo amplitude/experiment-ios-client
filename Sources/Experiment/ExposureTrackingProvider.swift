@@ -25,7 +25,8 @@ import Foundation
  *   "event_type": "$exposure",
  *   "event_properties": {
  *     "flag_key": "<flagKey>",
- *     "variant": "<variant>"
+ *     "variant": "<variant>",
+ *     "experiment_key": "<expKey>"
  *   }
  * }
  * ```
@@ -35,7 +36,8 @@ import Foundation
  * ```
  * analytics.track(name: "$exposure", properties: [
  *   "flag_key": exposure.flagKey,
- *   "variant": exposure.variant
+ *   "variant": exposure.variant,
+ *   "experiment_key": exposure.experimentKey
  * ])
  * ```
  */
@@ -54,7 +56,8 @@ import Foundation
      *   "event_type": "$exposure",
      *   "event_properties": {
      *     "flag_key": "<flagKey>",
-     *     "variant": "<variant>"
+     *     "variant": "<variant>",
+     *     "experiment_key": "<expKey>"
      *   }
      * }
      * ```
@@ -64,7 +67,8 @@ import Foundation
      * ```
      * analytics.track(name: "$exposure", properties: [
      *   "flag_key": exposure.flagKey,
-     *   "variant": exposure.variant
+     *   "variant": exposure.variant,
+     *   "experiment_key": exposure.experimentKey
      * ])
      * ```
      */
