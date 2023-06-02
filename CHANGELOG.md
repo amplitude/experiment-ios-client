@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/amplitude/experiment-ios-client/compare/v1.10.0...v1.11.0) (2023-06-02)
+
+
+### Features
+
+* add experiment key to variant and exposure event ([#34](https://github.com/amplitude/experiment-ios-client/issues/34)) ([0a55ead](https://github.com/amplitude/experiment-ios-client/commit/0a55ead7292d5b6d6805b9b14cc236f21527d006))
+
 # [1.10.0](https://github.com/amplitude/experiment-ios-client/compare/v1.9.2...v1.10.0) (2023-04-24)
 
 
