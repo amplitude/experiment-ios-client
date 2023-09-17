@@ -7,7 +7,7 @@
 
 import Foundation
 
-func topologicalSort(flags: [String: EvaluationFlag], flagKeys: [String]? = nil, sorted: Bool = false) throws -> [EvaluationFlag] {
+internal func topologicalSort(flags: [String: EvaluationFlag], flagKeys: [String]? = nil, sorted: Bool = false) throws -> [EvaluationFlag] {
     var available: [String: EvaluationFlag] = flags
     var result: [EvaluationFlag] = []
     // For testing, we want an consistent iteration order.

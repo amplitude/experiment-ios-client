@@ -19,7 +19,7 @@ extension NSDictionary: Selectable {
 
 extension Dictionary: Selectable where Key == String {
     func select(selector: String) -> Any? {
-        return self[selector] ?? nil
+        return (self as NSDictionary).select(selector: selector)
     }
 }
 
@@ -45,6 +45,10 @@ internal extension Selectable {
         guard let lastSelector = selector[selector.count - 1] else {
             return nil
         }
-        return selectable.select(selector: lastSelector)
+        let result = selectable.select(selector: lastSelector)
+        switch result {
+        case is NSNull: return nil
+        default: return result
+        }
     }
 }

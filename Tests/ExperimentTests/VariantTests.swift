@@ -31,11 +31,6 @@ let variantObjectPayload = Variant("testObject", payload: payloadObject)
 let variantArrayPayload = Variant("testObject", payload: payloadArray)
 
 class VariantTests: XCTestCase {
-    
-    func test() {
-        let j = [1, 2, 3]
-        let s = try! JSONSerialization.data(withJSONObject: j, options: [.fragmentsAllowed])
-    }
 
     func testVariantNullPayload() {
         let original = variantNullPayload
