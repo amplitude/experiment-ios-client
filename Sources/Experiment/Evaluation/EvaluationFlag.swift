@@ -11,7 +11,7 @@ internal struct EvaluationFlag: Codable {
     let key: String
     let variants: [String: EvaluationVariant]
     let segments: [EvaluationSegment]
-    let dependencies: Set<String>?
+    let dependencies: [String]?
     let metadata: [String: Any?]?
 }
 
@@ -106,7 +106,7 @@ extension EvaluationFlag {
         self.key = try container.decode(String.self, forKey: .key)
         self.variants = try container.decode([String: EvaluationVariant].self, forKey: .variants)
         self.segments = try container.decode([EvaluationSegment].self, forKey: .segments)
-        self.dependencies = try? container.decode(Set<String>.self, forKey: .dependencies)
+        self.dependencies = try? container.decode([String].self, forKey: .dependencies)
         let metadata = try? container.decode([String: AnyDecodable].self, forKey: .metadata)
         self.metadata = metadata?.mapValues { anyDecodable in anyDecodable.value }
     }

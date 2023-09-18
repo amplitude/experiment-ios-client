@@ -284,9 +284,9 @@ func flag(_ key: Int, _ dependencies: [Int]) -> EvaluationFlag {
         key: String(key),
         variants: [:],
         segments: [],
-        dependencies: Set(dependencies.map { i in
+        dependencies: dependencies.map { i in
             String(i)
-        }),
+        },
         metadata: nil
     )
 }
