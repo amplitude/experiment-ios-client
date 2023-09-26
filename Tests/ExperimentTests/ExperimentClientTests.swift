@@ -1023,6 +1023,132 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual("initial", remoteVariant?.value)
     }
     
+    // Start Tests
+    
+    private class MockClient: DefaultExperimentClient {
+        
+        var fetchCalls = 0
+        var mockFetch: (() -> Result<[String: Variant], Error>)? = nil
+        var flagCalls = 0
+        var mockFlags: (() -> Result<[String: EvaluationFlag], Error>)? = nil
+        
+        override func doFetch(
+            user: ExperimentUser,
+            timeoutMillis: Int,
+            options: FetchOptions?,
+            completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+        ) -> URLSessionTask? {
+            fetchCalls += 1
+            if let mockFetch = mockFetch {
+                completion(mockFetch())
+                return nil
+            } else {
+                return super.doFetch(user: user, timeoutMillis: timeoutMillis, options: options, completion: completion)
+            }
+        }
+        
+        override func doFlags(
+            timeoutMillis: Int,
+            completion: @escaping ((Result<[String: EvaluationFlag], Error>) -> Void)
+        ) {
+            flagCalls += 1
+            if let mockFlags = mockFlags {
+                completion(mockFlags())
+            } else {
+                super.doFlags(timeoutMillis: timeoutMillis, completion: completion)
+            }
+        }
+    }
+    
+    func testStart_WithLocalAndRemoteEvaluation_CallsFetch() {
+        let storage = InMemoryStorage()
+        let config = ExperimentConfigBuilder()
+            .build()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: config,
+            storage: storage
+        )
+        let user = ExperimentUserBuilder()
+            .userId("test_user")
+            .build()
+        client.startBlocking(user: user)
+        let variant = client.variant("sdk-ci-test")
+        // If we get on for the variant, fetch must be called.
+        XCTAssertEqual("on", variant.key)
+        XCTAssertEqual("on", variant.value)
+    }
+    
+    func testStart_WithLocalEvaluationOnly_DoesNotCallFetch() {
+        let storage = InMemoryStorage()
+        let config = ExperimentConfigBuilder()
+            .build()
+        let client = MockClient(
+            apiKey: API_KEY,
+            config: config,
+            storage: storage
+        )
+        client.mockFlags = {
+            return .success([:])
+        }
+        client.mockFetch = {
+            return .success([:])
+        }
+        let user = ExperimentUserBuilder()
+            .build()
+        client.startBlocking(user: user)
+        XCTAssertEqual(0, client.fetchCalls)
+        client.fetchBlocking(user: user)
+        XCTAssertEqual(1, client.fetchCalls)
+    }
+    
+    func testStart_WithLocalEvalautionOnly_FetchOnStartEnabled_CallsFetch() {
+        let storage = InMemoryStorage()
+        let config = ExperimentConfigBuilder()
+            .fetchOnStart(true)
+            .build()
+        let client = MockClient(
+            apiKey: API_KEY,
+            config: config,
+            storage: storage
+        )
+        client.mockFlags = {
+            return .success([:])
+        }
+        client.mockFetch = {
+            return .success([:])
+        }
+        let user = ExperimentUserBuilder()
+            .build()
+        client.startBlocking(user: user)
+        XCTAssertEqual(1, client.fetchCalls)
+        client.fetchBlocking(user: user)
+        XCTAssertEqual(2, client.fetchCalls)
+    }
+    
+    func testStart_WithLocalEvalautionOnly_FetchOnStartDisabled_DoesNotCallFetch() {
+        let storage = InMemoryStorage()
+        let config = ExperimentConfigBuilder()
+            .fetchOnStart(false)
+            .build()
+        let client = MockClient(
+            apiKey: API_KEY,
+            config: config,
+            storage: storage
+        )
+        client.mockFlags = {
+            return .success([:])
+        }
+        client.mockFetch = {
+            return .success([:])
+        }
+        let user = ExperimentUserBuilder()
+            .build()
+        client.startBlocking(user: user)
+        XCTAssertEqual(0, client.fetchCalls)
+        client.fetchBlocking(user: user)
+        XCTAssertEqual(1, client.fetchCalls)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
@@ -1088,6 +1214,23 @@ extension DefaultExperimentClient {
         switch s.wait(timeout: .now() + .seconds(20)) {
         case .timedOut: XCTFail("start request timed out")
         case .success: return
+        }
+    }
+    func startBlockingThrows(user: ExperimentUser) throws {
+        let s = DispatchSemaphore(value: 0)
+        var err: Error?
+        start(user) { error in
+            if let error = error {
+                err = error
+            }
+            s.signal()
+        }
+        switch s.wait(timeout: .now() + .seconds(20)) {
+        case .timedOut: XCTFail("start request timed out")
+        case .success:
+            if let error = err {
+                throw error
+            }
         }
     }
     func fetchBlocking(user: ExperimentUser) {

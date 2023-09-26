@@ -436,7 +436,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     // Must be run on flagsQueue
-    private func doFlags(
+    internal func doFlags(
         timeoutMillis: Int,
         completion: @escaping ((Result<[String: EvaluationFlag], Error>) -> Void)
     ) {
@@ -478,7 +478,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
 
     // Must be run on fetchQueue
-    public func doFetch(
+    internal func doFetch(
         user: ExperimentUser,
         timeoutMillis: Int,
         options: FetchOptions?,

@@ -9,9 +9,9 @@ import Foundation
 
 internal struct AnyDecodable: Decodable {
     
-    public let value: Any?
+    let value: Any?
 
-    public init<T>(_ value: T?) {
+    init<T>(_ value: T?) {
         if value is NSNull {
             self.value = nil
         } else {
@@ -19,7 +19,7 @@ internal struct AnyDecodable: Decodable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         if container.decodeNil() {
@@ -45,13 +45,14 @@ internal struct AnyDecodable: Decodable {
 }
 
 internal struct AnyEncodable: Encodable {
-    public let value: Any
+    
+    let value: Any
 
-    public init<T>(_ value: T?) {
+    init<T>(_ value: T?) {
         self.value = value ?? ()
     }
 
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
 
         switch value {

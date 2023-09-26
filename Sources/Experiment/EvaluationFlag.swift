@@ -76,7 +76,7 @@ internal class EvaluationOperator {
 
 // Selectable Extensions
 
-extension EvaluationVariant {
+internal extension EvaluationVariant {
     
     func select(selector: String) -> Any? {
         switch selector {
@@ -91,7 +91,7 @@ extension EvaluationVariant {
 
 // Codable Extensions
 
-extension EvaluationFlag {
+internal extension EvaluationFlag {
     
     enum CodingKeys: CodingKey {
         case key
@@ -123,7 +123,7 @@ extension EvaluationFlag {
     }
 }
 
-extension EvaluationSegment {
+internal extension EvaluationSegment {
     
     enum CodingKeys: CodingKey {
         case bucket
@@ -152,7 +152,7 @@ extension EvaluationSegment {
     }
 }
 
-extension EvaluationVariant {
+internal extension EvaluationVariant {
     
     enum CodingKeys: CodingKey {
         case key
