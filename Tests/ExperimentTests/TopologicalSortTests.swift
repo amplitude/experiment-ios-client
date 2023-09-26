@@ -7,7 +7,7 @@
 
 import XCTest
 import Foundation
-
+@testable import Experiment
 
 class TopologicalSortTests: XCTestCase {
     
@@ -274,7 +274,7 @@ class TopologicalSortTests: XCTestCase {
 // Utils
 
 extension EvaluationFlag : Equatable {
-    static func == (lhs: EvaluationFlag, rhs: EvaluationFlag) -> Bool {
+    public static func == (lhs: EvaluationFlag, rhs: EvaluationFlag) -> Bool {
         return lhs.key == rhs.key
     }
 }

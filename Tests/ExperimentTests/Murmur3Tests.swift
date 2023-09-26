@@ -7,6 +7,7 @@
 
 import XCTest
 import Foundation
+@testable import Experiment
 
 let MURMUR_SEED = 0x7f3a21ea
 

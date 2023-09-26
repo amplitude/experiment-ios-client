@@ -53,11 +53,21 @@ import Foundation
      * experiments associated with the same flag.
      */
     @objc public let experimentKey: String?
+    /**
+     * (Optional) Flag, segment, and variant metadata produced as a result of
+     * evaluation for the user. Used for system purposes.
+     */
+    @objc public let metadata: [String: Any]?
     
-    internal init(flagKey: String, variant: String?, experimentKey: String?) {
+    internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: Any?]?) {
         self.flagKey = flagKey
         self.variant = variant
         self.experimentKey = experimentKey
+        if let m = metadata {
+            self.metadata = m as [String: Any]
+        } else {
+            self.metadata = nil
+        }
     }
     
     override public func isEqual(_ object: Any?) -> Bool {

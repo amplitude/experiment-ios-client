@@ -12,17 +12,32 @@ import Foundation
     case InitialVariants = 1
 }
 
+@objc public enum ServerZone: Int {
+    case US = 0
+    case EU = 1
+}
+
+@objc public enum FetchOnStart: Int {
+    case Dynamic = 0
+    case Fetch = 1
+    case NoFetch = 2
+}
+
 @objc public class ExperimentConfig : NSObject {
 
     @objc public let debug: Bool
     @objc public let instanceName: String
-    @objc public let fallbackVariant: Variant
+@objc public let fallbackVariant: Variant
     @objc public let initialVariants: [String: Variant]
     @objc public let source: Source
     @objc public let serverUrl: String
+    @objc public let flagsServerUrl: String
+    @objc public let serverZone: ServerZone
     @objc public let fetchTimeoutMillis: Int
     @objc public let retryFetchOnFailure: Bool
     @objc public let automaticExposureTracking: Bool
+    @objc public let fetchOnStart: NSNumber? // objc cant do nil boolean values, use nsnumber
+    @objc public let pollOnStart: Bool
     @objc public let automaticFetchOnAmplitudeIdentityChange: Bool
     @objc public let userProvider: ExperimentUserProvider?
     @available(*, deprecated, message: "Use exposureTrackingProvider instead.")
@@ -36,9 +51,13 @@ import Foundation
         self.initialVariants = ExperimentConfig.Defaults.initialVariants
         self.source = ExperimentConfig.Defaults.source
         self.serverUrl = ExperimentConfig.Defaults.serverUrl
+        self.flagsServerUrl = ExperimentConfig.Defaults.flagsServerUrl
+        self.serverZone = ExperimentConfig.Defaults.serverZone
         self.fetchTimeoutMillis = ExperimentConfig.Defaults.fetchTimeoutMillis
         self.retryFetchOnFailure = ExperimentConfig.Defaults.retryFetchOnFailure
         self.automaticExposureTracking = ExperimentConfig.Defaults.automaticExposureTracking
+        self.fetchOnStart = ExperimentConfig.Defaults.fetchOnStart
+        self.pollOnStart = ExperimentConfig.Defaults.pollOnStart
         self.automaticFetchOnAmplitudeIdentityChange = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
@@ -52,9 +71,13 @@ import Foundation
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
+        self.flagsServerUrl = builder.flagsServerUrl
+        self.serverZone = builder.serverZone
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
         self.automaticExposureTracking = builder.automaticExposureTracking
+        self.fetchOnStart = builder.fetchOnStart
+        self.pollOnStart = builder.pollOnStart
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
@@ -68,9 +91,13 @@ import Foundation
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
+        self.flagsServerUrl = builder.flagsServerUrl
+        self.serverZone = builder.serverZone
         self.fetchTimeoutMillis = builder.fetchTimeoutMillis
         self.retryFetchOnFailure = builder.retryFetchOnFailure
         self.automaticExposureTracking = builder.automaticExposureTracking
+        self.fetchOnStart = builder.fetchOnStart
+        self.pollOnStart = builder.pollOnStart
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
@@ -84,9 +111,13 @@ import Foundation
         static let initialVariants: [String: Variant] = [:]
         static let source: Source = Source.LocalStorage
         static let serverUrl: String = "https://api.lab.amplitude.com"
+        static let flagsServerUrl: String = "https://flag.lab.amplitude.com"
+        static let serverZone: ServerZone = .US
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
         static let automaticExposureTracking: Bool = true
+        static let fetchOnStart: NSNumber? = nil
+        static let pollOnStart: Bool = true
         static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
@@ -102,9 +133,13 @@ import Foundation
         internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
         internal var source: Source = ExperimentConfig.Defaults.source
         internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
+        internal var flagsServerUrl: String = ExperimentConfig.Defaults.flagsServerUrl
+        internal var serverZone: ServerZone = ExperimentConfig.Defaults.serverZone
         internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
         internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
         internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
+        internal var fetchOnStart: NSNumber? = ExperimentConfig.Defaults.fetchOnStart
+        internal var pollOnStart: Bool = true
         internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
@@ -151,6 +186,18 @@ import Foundation
         }
         
         @discardableResult
+        public func flagsServerUrl(_ flagsServerUrl: String) -> Builder {
+            self.flagsServerUrl = flagsServerUrl
+            return self
+        }
+        
+        @discardableResult
+        public func serverZone(_ serverZone: ServerZone) -> Builder {
+            self.serverZone = serverZone
+            return self
+        }
+        
+        @discardableResult
         public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> Builder {
             self.fetchTimeoutMillis = fetchTimeoutMillis
             return self
@@ -165,6 +212,23 @@ import Foundation
         @discardableResult
         public func automaticExposureTracking(_ automaticExposureTracking: Bool) -> Builder {
             self.automaticExposureTracking = automaticExposureTracking
+            return self
+        }
+        
+        
+        @discardableResult
+        public func fetchOnStart(_ fetchOnStart: Bool) -> Builder {
+            if fetchOnStart {
+                self.fetchOnStart = 1
+            } else {
+                self.fetchOnStart = 0
+            }
+            return self
+        }
+        
+        @discardableResult
+        public func pollOnStart(_ pollOnStart: Bool) -> Builder {
+            self.pollOnStart = pollOnStart
             return self
         }
         
@@ -205,20 +269,28 @@ import Foundation
     }
     
     internal func copyToBuilder() -> ExperimentConfigBuilder {
-        return ExperimentConfigBuilder()
+        let fetchOnStart = self.fetchOnStart?.boolValue
+        let builder = ExperimentConfigBuilder()
             .debug(self.debug)
             .instanceName(self.instanceName)
             .fallbackVariant(self.fallbackVariant)
             .initialVariants(self.initialVariants)
             .source(self.source)
             .serverUrl(self.serverUrl)
+            .flagsServerUrl(self.flagsServerUrl)
+            .serverZone(self.serverZone)
             .fetchTimeoutMillis(self.fetchTimeoutMillis)
             .fetchRetryOnFailure(self.retryFetchOnFailure)
             .automaticExposureTracking(self.automaticExposureTracking)
+            .pollOnStart(self.pollOnStart)
             .automaticFetchOnAmplitudeIdentityChange(self.automaticFetchOnAmplitudeIdentityChange)
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
             .exposureTrackingProvider(self.exposureTrackingProvider)
+        if let fetchOnStart = fetchOnStart {
+            builder.fetchOnStart(fetchOnStart)
+        }
+        return builder
     }
 }
 
@@ -230,9 +302,13 @@ import Foundation
     internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
     internal var source: Source = ExperimentConfig.Defaults.source
     internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
+    internal var flagsServerUrl: String = ExperimentConfig.Defaults.flagsServerUrl
+    internal var serverZone: ServerZone = ExperimentConfig.Defaults.serverZone
     internal var fetchTimeoutMillis: Int = ExperimentConfig.Defaults.fetchTimeoutMillis
     internal var retryFetchOnFailure: Bool = ExperimentConfig.Defaults.retryFetchOnFailure
     internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
+    internal var fetchOnStart: NSNumber? = ExperimentConfig.Defaults.fetchOnStart
+    internal var pollOnStart: Bool = true
     internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
@@ -275,6 +351,18 @@ import Foundation
     }
     
     @discardableResult
+    @objc public func flagsServerUrl(_ flagsServerUrl: String) -> ExperimentConfigBuilder {
+        self.flagsServerUrl = flagsServerUrl
+        return self
+    }
+    
+    @discardableResult
+    @objc public func serverZone(_ serverZone: ServerZone) -> ExperimentConfigBuilder {
+        self.serverZone = serverZone
+        return self
+    }
+    
+    @discardableResult
     @objc public func fetchTimeoutMillis(_ fetchTimeoutMillis: Int) -> ExperimentConfigBuilder {
         self.fetchTimeoutMillis = fetchTimeoutMillis
         return self
@@ -289,6 +377,22 @@ import Foundation
     @discardableResult
     @objc public func automaticExposureTracking(_ automaticExposureTracking: Bool) -> ExperimentConfigBuilder {
         self.automaticExposureTracking = automaticExposureTracking
+        return self
+    }
+    
+    @discardableResult
+    @objc public func fetchOnStart(_ fetchOnStart: Bool) -> ExperimentConfigBuilder {
+        if fetchOnStart {
+            self.fetchOnStart = 1
+        } else {
+            self.fetchOnStart = 0
+        }
+        return self
+    }
+    
+    @discardableResult
+    @objc public func pollOnStart(_ pollOnStart: Bool) -> ExperimentConfigBuilder {
+        self.pollOnStart = pollOnStart
         return self
     }
     

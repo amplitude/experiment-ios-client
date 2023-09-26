@@ -9,55 +9,100 @@ import Foundation
 
 @objc public class Variant : NSObject, Codable {
     
+    @objc public let key: String?
     @objc public let value: String?
     @objc public let payload: Any?
     @objc public let expKey: String?
+    @objc public let metadata: [String: Any]?
 
+    @objc public init(_ value: String? = nil, payload: Any? = nil) {
+        self.key = nil
+        self.value = value
+        self.payload = payload
+        self.expKey = nil
+        self.metadata = nil
+    }
+    
     @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil) {
+        self.key = nil
         self.value = value
         self.payload = payload
         self.expKey = expKey
-    }
-
-    internal init?(json: [String: Any]) {
-        let key = json["key"] as? String
-        let value = json["value"] as? String
-        if (key == nil && value == nil) {
-            return nil
-        }
-        self.value = (value ?? key)!
-        self.payload = json["payload"]
-        self.expKey = json["expKey"] as? String
+        self.metadata = nil
     }
     
+    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil, key: String? = nil, metadata: [String: Any]? = nil) {
+        self.key = key
+        self.value = value
+        self.payload = payload
+        self.expKey = expKey
+        self.metadata = metadata
+    }
+    
+    internal init(key: String? = nil, value: String? = nil, payload: Any? = nil, expKey: String? = nil, metadata: [String:Any]? = nil) {
+        self.key = key
+        self.value = value
+        self.payload = payload
+        self.expKey = expKey
+        self.metadata = metadata
+    }
+
     enum CodingKeys: String, CodingKey {
+        case key
         case value
         case payload
         case expKey
+        case metadata
     }
 
     required public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.value = try values.decode(String.self, forKey: .value)
-        if let data = try? values.decode(Data.self, forKey: .payload),
-           let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
-            self.payload = objectPayload["payload"] ?? nil
+        self.value = try? values.decode(String.self, forKey: .value)
+        self.key = (try? values.decode(String.self, forKey: .key)) ?? self.value
+        // The payload may be encoded multiple ways. The old way
+        if let payload = try? values.decode(AnyDecodable.self, forKey: .payload) {
+            self.payload = payload.value
+        } else if let data = try? values.decode(Data.self, forKey: .payload) {
+            // The legacy way to encode/decode the payload as a json string where the actual object is the value wrapped inside another json object with a single key, `payload`.
+            if let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
+                self.payload = objectPayload["payload"] ?? nil
+            } else {
+                self.payload = nil
+            }
         } else {
             self.payload = nil
         }
-        self.expKey = try? values.decode(String.self, forKey: .expKey)
+        // Experiment key should always exist in both the explicit field and the metadata.
+        let expKey = try? values.decode(String.self, forKey: .expKey)
+        let metadataAny = try? values.decode([String: AnyDecodable].self, forKey: .metadata)
+        var metadata = metadataAny?.filter { element in element.value.value != nil }.mapValues { anyDecodable in anyDecodable.value! }
+        let metadataExpKey = metadata?["experimentKey"] as? String
+        if let expKey = expKey, metadataExpKey == nil {
+            if metadata == nil {
+                metadata = ["experimentKey": expKey]
+            } else if metadata?["experimentKey"] != nil {
+                metadata?["experimentKey"] = expKey
+            }
+            self.expKey = expKey
+        } else if let metadataExpKey = metadataExpKey, expKey == nil {
+            self.expKey = metadataExpKey
+        } else {
+            self.expKey = nil
+        }
+        self.metadata = metadata
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(value, forKey: .value)
-        let objectPayload = ["payload": self.payload]
-        if let data = try? JSONSerialization.data(withJSONObject: objectPayload, options: []) {
-            try container.encode(data, forKey: .payload)
-        } else {
-            try container.encodeNil(forKey: .payload)
+        try? container.encodeIfPresent(key, forKey: .key)
+        try? container.encodeIfPresent(value, forKey: .value)
+        if let payload = payload {
+            try? container.encodeIfPresent(AnyEncodable(payload), forKey: .payload)
         }
-        try container.encode(expKey, forKey: .expKey)
+        try? container.encodeIfPresent(expKey, forKey: .expKey)
+        if let metadata = metadata {
+            try? container.encodeIfPresent(AnyEncodable(metadata), forKey: .metadata)
+        }
     }
     
     @objc public override func isEqual(_ object: Any?) -> Bool {
@@ -85,10 +130,26 @@ import Foundation
     }
     
     @objc override public var description: String {
-        return "Variant{value=\(value ?? "nil"), payload=\(payload ?? "nil"), expKey=\(expKey ?? "nil")}"
+        return "Variant{key=\(key ?? "nil"), value=\(value ?? "nil"), payload=\(payload ?? "nil"), expKey=\(expKey ?? "nil"), metadata=\(metadata?.description ?? "nil")}"
     }
     
     @objc override public var debugDescription: String {
-        return "Variant{value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription), expKey=\(expKey ?? "nil")}"
+        return "Variant{key=\(key?.debugDescription ?? "nil"), value=\(value?.debugDescription ?? "nil"), payload=\(payload.debugDescription), expKey=\(expKey ?? "nil"), metadata=\(metadata?.debugDescription ?? "nil")}"
+    }
+}
+
+// Utility extensions
+
+internal extension Variant {
+    
+    func isDefaultVariant() -> Bool {
+        if let isDefault = metadata?["default"] as? Bool {
+            return isDefault
+        }
+        return false
+    }
+    
+    func isEmpty() -> Bool {
+        return key == nil && value == nil && payload == nil && expKey == nil && metadata == nil
     }
 }
