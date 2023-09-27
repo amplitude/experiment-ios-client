@@ -95,9 +95,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         isRunning = true
         if self.config.pollOnStart {
-            self.poller = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            self.poller = Timer.init(timeInterval: 60.0, repeats: true, block: { _ in
                 self.flagsInternal { _ in }
-            }
+            })
         }
         runningLock.signal()
         setUser(user)
@@ -663,11 +663,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         var exposureVariant: String? = nil
         if !fallback && !variantAndSource.variant.isDefaultVariant() {
-            if let variantKey = variantAndSource.variant.key {
-                exposureVariant = variantKey
-            } else if let variantValue = variantAndSource.variant.value {
-                exposureVariant = variantValue
-            }
+            exposureVariant = variantAndSource.variant.key ?? variantAndSource.variant.value
         }
         userSessionExposureTracker.track(exposure: Exposure(flagKey: key, variant: exposureVariant, experimentKey: variantAndSource.variant.expKey, metadata: variantAndSource.variant.metadata))
     }
