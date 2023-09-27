@@ -17,17 +17,11 @@ import Foundation
     case EU = 1
 }
 
-@objc public enum FetchOnStart: Int {
-    case Dynamic = 0
-    case Fetch = 1
-    case NoFetch = 2
-}
-
 @objc public class ExperimentConfig : NSObject {
 
     @objc public let debug: Bool
     @objc public let instanceName: String
-@objc public let fallbackVariant: Variant
+    @objc public let fallbackVariant: Variant
     @objc public let initialVariants: [String: Variant]
     @objc public let source: Source
     @objc public let serverUrl: String

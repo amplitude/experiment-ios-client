@@ -37,9 +37,13 @@ private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     private let apiKey: String
+    
     internal let variants: LoadStoreCache<Variant>
+    private let variantsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
+    
     internal let flags: LoadStoreCache<EvaluationFlag>
-    private let storageLock = DispatchSemaphore(value: 1)
+    private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
+
     internal let config: ExperimentConfig
     private let engine = EvaluationEngine()
     
@@ -102,7 +106,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         runningLock.signal()
         setUser(user)
         // Determine to fetch remove evaluation variants on start, either using the configured setting, or dynamically by checking the flag cache.
-        var remoteFlags = config.fetchOnStart?.boolValue ?? self.flags.getAll().contains { (_, flag: EvaluationFlag) in
+        var remoteFlags = config.fetchOnStart?.boolValue ?? flagsStorageQueue.sync { self.flags.getAll() }.contains { (_, flag: EvaluationFlag) in
             flag.isRemoteEvaluationMode()
         }
         startQueue.async {
@@ -138,7 +142,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                     flagsGroup.leave()
                 }
                 flagsGroup.wait()
-                remoteFlags = self.config.fetchOnStart?.boolValue ?? self.flags.getAll().contains { (_, flag: EvaluationFlag) in
+                remoteFlags = self.config.fetchOnStart?.boolValue ?? self.flagsStorageQueue.sync { self.flags.getAll() }.contains { (_, flag: EvaluationFlag) in
                     flag.isRemoteEvaluationMode()
                 }
                 if (remoteFlags) {
@@ -209,8 +213,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     public func all() -> [String: Variant] {
         var localVariants = evaluate()
         for flagKey in localVariants.keys {
-            let isLocalEvaluationFlag = flags.get(key: flagKey)?.isLocalEvaluationMode() ?? false
-            if let flag = flags.get(key: flagKey), !flag.isLocalEvaluationMode() {
+            if let flag = flagsStorageQueue.sync(execute: { flags.get(key: flagKey) }), !flag.isLocalEvaluationMode() {
                 localVariants.removeValue(forKey: flagKey)
             }
         }
@@ -220,8 +223,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     // Clear all variants in the cache and storage.
     public func clear() {
-        self.variants.clear();
-        self.variants.store();
+        variantsStorageQueue.sync(flags: .barrier) {
+            self.variants.clear();
+            self.variants.store();
+        }
     }
 
     public func exposure(key: String) {
@@ -255,7 +260,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         let user = mergeUserWithProvider()
         do {
-            let flags = try topologicalSort(flags: flags.getAll(), flagKeys: keys)
+            let storageFlags = flagsStorageQueue.sync { self.flags.getAll() }
+            let flags = try topologicalSort(flags: storageFlags, flagKeys: keys)
             let evaluationVariants = engine.evaluate(context: user.toEvaluationContext(), flags: flags)
             return evaluationVariants.mapValues { evaluationVariant in
                 evaluationVariant.toVariant()
@@ -279,7 +285,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     private func localStorageVariantAndSource(key: String, fallback: Variant?) -> VariantAndSource {
         var defaultVariantAndSource: VariantAndSource = VariantAndSource()
         // Local storage
-        let localStorageVariant = variants.get(key: key)
+        let localStorageVariant = variantsStorageQueue.sync { variants.get(key: key) }
         let isLocalStorageDefault = localStorageVariant?.isDefaultVariant() ?? false
         if let localStorageVariant = localStorageVariant, !isLocalStorageDefault {
             return VariantAndSource(variant: localStorageVariant, source: .LocalStorage, hasDefaultVariant: false)
@@ -318,7 +324,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             return VariantAndSource(variant: initialVariant, source: .InitialVariants, hasDefaultVariant: defaultVariantAndSource.hasDefaultVariant)
         }
         // Local storage
-        let localStorageVariant = variants.get(key: key)
+        let localStorageVariant = variantsStorageQueue.sync { variants.get(key: key) }
         let isLocalStorageDefault = localStorageVariant?.isDefaultVariant() ?? false
         if let localStorageVariant = localStorageVariant, !isLocalStorageDefault {
             return VariantAndSource(variant: localStorageVariant, source: .LocalStorage, hasDefaultVariant: false)
@@ -381,7 +387,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         case .InitialVariants:
             variantAndSource = initialVariantsVariantAndSource(key: key, fallback: fallback)
         }
-        guard let flag = flags.get(key: key) else {
+        guard let flag = flagsStorageQueue.sync(execute: { flags.get(key: key) }) else {
             return variantAndSource
         }
         if flag.isLocalEvaluationMode() || (variantAndSource.variant.isEmpty()) {
@@ -419,13 +425,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     private func flagsInternal(
         completion: @escaping (Result<[String: EvaluationFlag], Error>) -> Void
     ) {
-        fetchQueue.async {
+        flagsQueue.async {
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
                 switch result {
                 case .success(let flags):
-                    self.flags.clear()
-                    self.flags.putAll(values: flags)
-                    self.flags.store()
+                    self.flagsStorageQueue.sync(flags: .barrier) {
+                        self.flags.clear()
+                        self.flags.putAll(values: flags)
+                        self.flags.store()
+                    }
                     completion(result)
                 case .failure(let error):
                     print("[Expeirment] get flags failed: \(error)")
@@ -610,29 +618,27 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     private func storeVariants(_ variants: [String: Variant], _ options: FetchOptions?) {
-        storageLock.wait()
-        defer { storageLock.signal() }
-        if (options?.flagKeys == nil) {
-            self.variants.clear()
+        variantsStorageQueue.sync(flags: .barrier) {
+            if (options?.flagKeys == nil) {
+                self.variants.clear()
+            }
+            var failedKeys: [String] = options?.flagKeys ?? []
+            for (key, variant) in variants {
+                failedKeys.removeAll { $0 == key }
+                self.variants.put(key: key, value: variant)
+            }
+            for (key) in failedKeys {
+                self.variants.remove(key: key)
+            }
+            self.variants.store()
+            self.debug("Stored variants: \(variants)")
         }
-        var failedKeys: [String] = options?.flagKeys ?? []
-        for (key, variant) in variants {
-            failedKeys.removeAll { $0 == key }
-            self.variants.put(key: key, value: variant)
-        }
-        for (key) in failedKeys {
-            self.variants.remove(key: key)
-        }
-        self.variants.store()
-        self.debug("Stored variants: \(variants)")
     }
     
     private func sourceVariants() -> [String: Variant] {
         switch config.source {
         case .LocalStorage:
-            storageLock.wait()
-            defer { storageLock.signal() }
-            return variants.getAll()
+            return variantsStorageQueue.sync { variants.getAll() }
         case .InitialVariants:
             return config.initialVariants
         }
@@ -643,9 +649,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         case .LocalStorage:
             return config.initialVariants
         case .InitialVariants:
-            storageLock.wait()
-            defer { storageLock.signal() }
-            return variants.getAll()
+            return variantsStorageQueue.sync { variants.getAll() }
         }
     }
     
