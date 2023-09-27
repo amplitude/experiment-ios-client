@@ -49,8 +49,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     private var isRunning = false
     private let runningLock = DispatchSemaphore(value: 1)
-    private var poller: Timer? = nil
-
+    private var poller: DispatchSourceTimer? = nil
+    private var pollerQueue = DispatchQueue(label: "com.amplitude.experiment.PollerQueue", qos: .background)
+    
     private var user: ExperimentUser? = nil
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
     
@@ -99,9 +100,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         isRunning = true
         if self.config.pollOnStart {
-            self.poller = Timer.init(timeInterval: 60.0, repeats: true, block: { _ in
-                self.flagsInternal { _ in }
-            })
+            let timer = DispatchSource.makeTimerSource(queue: pollerQueue)
+            timer.schedule(deadline: .now() + .seconds(60), repeating: .seconds(60))
+            timer.setEventHandler { self.flagsInternal() }
+            timer.activate()
+            self.poller = timer
         }
         runningLock.signal()
         setUser(user)
@@ -117,14 +120,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 let startGroup = DispatchGroup()
                 startGroup.enter()
                 startGroup.enter()
-                self.fetch(user: user) { _, e in
-                    error = e
+                self.flagsInternal { e in
+                    if let e = e {
+                        error = e
+                    }
                     startGroup.leave()
                 }
-                self.flagsInternal { r in
-                    switch r {
-                    case .success: break
-                    case .failure(let e): error = e
+                self.fetch(user: user) { _, e in
+                    if let e = e {
+                        error = e
                     }
                     startGroup.leave()
                 }
@@ -134,10 +138,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 // and recheck for remote flags.
                 let flagsGroup = DispatchGroup()
                 flagsGroup.enter()
-                self.flagsInternal { r in
-                    switch r {
-                    case .success: break
-                    case .failure(let e): error = e
+                self.flagsInternal { e in
+                    if let e = e {
+                        error = e
                     }
                     flagsGroup.leave()
                 }
@@ -149,7 +152,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                     let fetchGroup = DispatchGroup()
                     fetchGroup.enter()
                     self.fetch(user: user) { _, e in
-                        error = e
+                        if let e = e {
+                            error = e
+                        }
                         fetchGroup.leave()
                     }
                     fetchGroup.wait()
@@ -163,7 +168,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.runningLock.wait()
         if isRunning {
             isRunning = false
-            poller?.invalidate()
+            poller?.cancel()
+            self.poller = nil
         }
         self.runningLock.signal()
     }
@@ -422,22 +428,22 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
     }
     
-    private func flagsInternal(
-        completion: @escaping (Result<[String: EvaluationFlag], Error>) -> Void
-    ) {
+    private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
         flagsQueue.async {
+            self.debug("Updating flag configurations")
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
                 switch result {
                 case .success(let flags):
+                    self.debug("Got \(flags.count) flag configurations")
                     self.flagsStorageQueue.sync(flags: .barrier) {
                         self.flags.clear()
                         self.flags.putAll(values: flags)
                         self.flags.store()
                     }
-                    completion(result)
+                    completion?(nil)
                 case .failure(let error):
                     print("[Expeirment] get flags failed: \(error)")
-                    completion(result)
+                    completion?(error)
                 }
             }
         }
@@ -535,6 +541,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             self.debug("Received fetch response: \(httpResponse)")
             guard httpResponse.statusCode == 200 else {
                 completion(Result.failure(ExperimentError("Error Response: status=\(httpResponse.statusCode)")))
+                return
+            }
+            guard let data = data else {
+                completion(Result.failure(ExperimentError("Response data is nil")))
                 return
             }
             do {
@@ -691,7 +701,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     private func debug(_ msg: String) {
         if self.config.debug {
-            print("[Experiment] \(msg)")
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            print("\(formatter.string(from: Date())) [Experiment] \(msg)")
         }
     }
 }
