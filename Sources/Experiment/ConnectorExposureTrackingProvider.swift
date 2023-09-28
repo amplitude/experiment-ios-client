@@ -21,6 +21,7 @@ internal class ConnectorExposureTrackingProvider : ExposureTrackingProvider {
         if let variant = exposure.variant {
             eventProperties["variant"] = variant
         }
+        eventProperties["experiment_key"] = exposure.experimentKey
         eventBridge.logEvent(event: AnalyticsEvent(
             eventType: "$exposure",
             eventProperties: NSDictionary(dictionary: eventProperties),
