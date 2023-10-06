@@ -23,12 +23,12 @@ let payloadArrayJson = """
 let payloadArray = try! JSONSerialization.jsonObject(with: payloadArrayJson.data(using: .utf8)!, options: [])
 
 let variantNullPayload = Variant("testNull", payload: nil)
-let variantStringPayload = Variant("testString", payload: "test")
-let variantIntPayload = Variant("testInt", payload: 69)
-let variantDoublePayload = Variant("testDouble", payload: 6.9)
-let variantBoolPayload = Variant("testBool", payload: true)
-let variantObjectPayload = Variant("testObject", payload: payloadObject)
-let variantArrayPayload = Variant("testObject", payload: payloadArray)
+let variantStringPayload = Variant("testString", payload: "test", key: "testString")
+let variantIntPayload = Variant("testInt", payload: 69, key: "testInt")
+let variantDoublePayload = Variant("testDouble", payload: 6.9, key: "testDouble")
+let variantBoolPayload = Variant("testBool", payload: true, key: "testBool")
+let variantObjectPayload = Variant("testObject", payload: payloadObject, key: "testObject")
+let variantArrayPayload = Variant("testArray", payload: payloadArray, key: "testArray")
 
 class VariantTests: XCTestCase {
 
@@ -116,18 +116,80 @@ class VariantTests: XCTestCase {
         let decoded = try! decoder.decode(Variant.self, from: encoded)
         print("decoded: \(decoded)")
         XCTAssertEqual(decoded, original)
-        let originalPayload = original.payload as! [Any]
-        let decodedPayload = decoded.payload as! [Any]
-        XCTAssertEqual(decodedPayload.debugDescription, originalPayload.debugDescription)
+        let originalPayload = try! JSONEncoder().encode(AnyEncodable(original.payload as! [Any?]))
+        let decodedPayload = try! JSONEncoder().encode(AnyEncodable(decoded.payload as! [Any?]))
+        XCTAssertEqual(decodedPayload.description, originalPayload.description)
     }
     
     func testVariantExpeirmentKey() {
-        let variantMap = ["value":"value","expKey":"expKey"]
-        let variantFromMap = Variant(json: variantMap)
+        let variantMap = """
+            {"value":"value","expKey":"expKey"}
+        """.data(using: .utf8)!
+        let variantFromMap = try! decoder.decode(Variant.self, from: variantMap)
         let variant = Variant("value", payload: nil, expKey: "expKey")
         XCTAssertEqual(variant, variantFromMap)
         let encoded = try! encoder.encode(variant)
         let decoded = try! decoder.decode(Variant.self, from: encoded)
         XCTAssertEqual(decoded, variant)
+    }
+    
+    // V1 -> V2 variant encoding transformation tests
+    
+    func testV1VariantTransformation() {
+        let rawVariant = """
+            {"value":"on"}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "on", value: "on"), variant)
+    }
+    
+    func testV1VariantTransformationWithNewPayload() {
+        let rawVariant = """
+            {"value":"on", "payload":{"k":"v"}}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "on", value: "on", payload: ["k":"v"]), variant)
+    }
+    
+    func testV1VariantTransformationWithOldPayload() {
+        let rawVariant = """
+        {"value":"on", "payload":"{\\"payload\\":{\\"k\\":\\"v\\"}}"}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "on", value: "on", payload: ["k":"v"]), variant)
+    }
+    
+    func testV1VariantTransformationWithPayloadAndExperimentKey() {
+        let rawVariant = """
+            {"value":"on", "payload":{"k":"v"}, "expKey":"exp-1"}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "on", value: "on", payload: ["k":"v"], expKey: "exp-1"), variant)
+        XCTAssertEqual("exp-1", variant.metadata?["experimentKey"] as! String)
+    }
+    
+    // Test V2 encoding and decoding
+    
+    func testV2VariantTransformation() {
+        let rawVariant = """
+            {"key":"treatment", "value":"on"}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "treatment", value: "on"), variant)
+    }
+    
+    func testV2VariantTransformationWithExperimentKeyMetadata() {
+        let rawVariant = """
+            {"key":"treatment", "value":"on", "metadata":{"experimentKey":"exp-1"}}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "treatment", value: "on", expKey: "exp-1", metadata: ["experimentKey":"exp-1"]), variant)
+    }
+    func testV2VariantTransformationWithExperimentKeyExplicit() {
+        let rawVariant = """
+            {"key":"treatment", "value":"on", "expKey":"exp-1"}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "treatment", value: "on", expKey: "exp-1", metadata: ["experimentKey":"exp-1"]), variant)
     }
 }

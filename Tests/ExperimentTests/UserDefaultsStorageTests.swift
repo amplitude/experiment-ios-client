@@ -13,57 +13,25 @@ let apiKey = "123456"
 let userDefaults = UserDefaults.standard
 let userDefaultsKey = "com.amplituide.experiment.variants.\(instance).\(apiKey)"
 
+let storage = UserDefaultsStorage()
+
 class UserDefaultsStorageTests: XCTestCase {
     
-    let storage = UserDefaultsStorage(instanceName: instance, apiKey: apiKey)
-    let variants: [String: Variant] = [
-        "variant1": Variant("1", payload: 1),
-        "variant2": Variant("2", payload: "2"),
-        "variant3": Variant("3", payload: nil),
-        "variant4": Variant("4", payload: [4, 4, 4]),
-        "variant5": Variant("5", payload: ["k":"v"]),
-        "variant6": Variant("6", payload: true),
-        "variant7": Variant("7", payload: 6.9)
-    ]
-    func testLoadAndGetAll() {
-        preload(variants)
-        storage.load()
-        let storageVariants = storage.getAll()
-        XCTAssertEqual(variants, storageVariants)
+    override class func tearDown() {
+        storage.delete(key: userDefaultsKey)
     }
     
-    func testPutSaveAndGetAll() {
-        for (key, variant) in variants {
-            storage.put(key: key, value: variant)
-        }
-        storage.save()
-        let storageVariants = storage.getAll()
-        XCTAssertEqual(variants, storageVariants)
-        storage.load()
-        let storageVariants2 = storage.getAll()
-        XCTAssertEqual(variants, storageVariants2)
-        XCTAssertEqual(storageVariants, storageVariants2)
+    override func setUp() {
+        storage.delete(key: userDefaultsKey)
     }
     
-    func testLoadNilStorage() {
-        userDefaults.set(nil, forKey: userDefaultsKey)
-        storage.load()
-        print(storage.getAll())
-    }
-    
-    func testClear() {
-        preload(variants)
-        storage.load()
-        storage.clear()
-        let empty = storage.getAll()
-        XCTAssertTrue(empty.isEmpty)
-        storage.load()
-        let storageVariants = storage.getAll()
-        XCTAssertEqual(variants, storageVariants)
-    }
-    
-    func preload(_ variants: [String: Variant]) {
-        let data = try! JSONEncoder().encode(variants)
-        userDefaults.set(data, forKey: userDefaultsKey)
+    func testAllMethods() {
+        let data = "data".data(using: .utf8)!
+        storage.put(key: userDefaultsKey, value: data)
+        var value = storage.get(key: userDefaultsKey)
+        XCTAssertEqual(data, value)
+        storage.delete(key: userDefaultsKey)
+        value = storage.get(key: userDefaultsKey)
+        XCTAssertEqual(nil, value)
     }
 }

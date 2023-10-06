@@ -17,18 +17,19 @@ internal class Backoff {
 
     // Dispatch
     private let lock = DispatchSemaphore(value: 1)
-    private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.fetch.backoff", qos: .default)
+    private let fetchQueue: DispatchQueue
 
     // State
     private var started: Bool = false
     private var cancelled: Bool = false
     private var fetchTask: URLSessionTask? = nil
 
-    init(attempts: Int, min: Int, max: Int, scalar: Float) {
+    init(attempts: Int, min: Int, max: Int, scalar: Float, queue: DispatchQueue = DispatchQueue(label: "com.amplitude.experiment.backoff", qos: .default)) {
         self.attempts = attempts
         self.min = min
         self.max = max
         self.scalar = scalar
+        self.fetchQueue = queue
     }
 
     func start(

@@ -580,3 +580,28 @@ private func takeOrMerge<T>(_ this: T?, _ other: T?, _ merger: ((T, T) -> T)? = 
         return this
     }
 }
+
+extension ExperimentUser {
+    func toEvaluationContext() -> [String: Any?] {
+        var user = toDictionary()
+        user.removeValue(forKey: "groups")
+        user.removeValue(forKey: "group_properties")
+        var context: [String: Any?] = ["user": user]
+        // Re-configured group properties to match expected context format.
+        if let userGroups = groups {
+            var groups: [String: [String: Any]] = [:]
+            for (groupType, groupNames) in userGroups {
+                if let groupName = groupNames.first {
+                    var groupNameMap: [String: Any] = ["group_name": groupName]
+                    // Check for group properties
+                    if let groupProperties = groupProperties?[groupType]?[groupName] ?? nil {
+                        groupNameMap["group_properties"] = groupProperties
+                    }
+                    groups[groupType] = groupNameMap
+                }
+            }
+            context["groups"] = groups
+        }
+        return context
+    }
+}

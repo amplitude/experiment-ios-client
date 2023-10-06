@@ -22,7 +22,7 @@ import AnalyticsConnector
         if (instance != nil) {
             return instance!
         }
-        let storage = UserDefaultsStorage(instanceName: instanceName, apiKey: apiKey)
+        let storage = UserDefaultsStorage()
         let newInstance: ExperimentClient = DefaultExperimentClient(
             apiKey: apiKey,
             config: config,
@@ -52,7 +52,7 @@ import AnalyticsConnector
         if config.exposureTrackingProvider == nil {
             configBuilder.exposureTrackingProvider(ConnectorExposureTrackingProvider(eventBridge:  connector.eventBridge))
         }
-        let storage = UserDefaultsStorage(instanceName: instanceName, apiKey: apiKey)
+        let storage = UserDefaultsStorage()
         let newInstance: ExperimentClient = DefaultExperimentClient(
             apiKey: apiKey,
             config: configBuilder.build(),
