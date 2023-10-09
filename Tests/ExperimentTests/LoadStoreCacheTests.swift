@@ -81,13 +81,12 @@ class LoadStoreCacheTests: XCTestCase {
         let namespace = "test"
         let storage = InMemoryStorage()
         let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
-        let testData = """
-        {"flag-key-1":{"key":"on","value":"on"}}
-        """.data(using: .utf8)!
         cache.put(key: "flag-key-1", value: Variant(key: "on", value: "on"))
         cache.store()
         let storageData = storage.get(key: namespace)
-        XCTAssertEqual(testData, storageData)
+        let storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
+        let expectedVariants = ["flag-key-1": Variant(key: "on", value: "on")]
+        XCTAssertEqual(expectedVariants, storageVariants)
     }
     
     func testStoreOverwritesStorage() {
@@ -101,16 +100,14 @@ class LoadStoreCacheTests: XCTestCase {
         cache.put(key: "flag-key-1", value: Variant(key: "off", value: "off"))
         cache.store()
         var storageData = storage.get(key: namespace)
-        var expectedData = """
-        {"flag-key-1":{"key":"off","value":"off"}}
-        """.data(using: .utf8)!
-        XCTAssertEqual(expectedData, storageData)
+        var storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
+        var expectedVariants = ["flag-key-1": Variant(key: "off", value: "off")]
+        XCTAssertEqual(expectedVariants, storageVariants)
         cache.clear()
         cache.store()
         storageData = storage.get(key: namespace)
-        expectedData = """
-        {}
-        """.data(using: .utf8)!
-        XCTAssertEqual(expectedData, storageData)
+        storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
+        expectedVariants = [:]
+        XCTAssertEqual(expectedVariants, storageVariants)
     }
 }
