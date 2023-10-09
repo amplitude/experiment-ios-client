@@ -7,7 +7,7 @@ let package = Package(
     name: "experiment-ios-client",
     platforms: [
         .iOS(.v10),
-        .macOS(.v10_10),
+        .macOS(.v10_13),
         .tvOS(.v10),
         .watchOS(.v3)
     ],
@@ -19,7 +19,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/amplitude/analytics-connector-ios.git", from: "1.0.1")
+        .package(url: "https://github.com/amplitude/analytics-connector-ios.git", from: "1.0.3")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

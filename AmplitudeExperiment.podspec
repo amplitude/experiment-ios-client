@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target  = '10.0'
   spec.ios.source_files       = 'Sources/Experiment/**/*.{h,swift}'
 
-  spec.osx.deployment_target  = '10.10'
+  spec.osx.deployment_target  = '10.13'
   spec.osx.source_files       = 'sources/Experiment/**/*.{h,swift}'
 
   spec.tvos.deployment_target = '10.0'
@@ -26,6 +26,6 @@ Pod::Spec.new do |spec|
 
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
-  spec.dependency 'AnalyticsConnector', '~> 1.0.1'
+  spec.dependency 'AnalyticsConnector', '~> 1.0'
 
 end
