@@ -17,14 +17,20 @@ internal class ConnectorExposureTrackingProvider : ExposureTrackingProvider {
     }
     
     func track(exposure: Exposure) {
-        var eventProperties = ["flag_key": exposure.flagKey]
+        let eventProperties = NSMutableDictionary()
+        eventProperties.setValue(exposure.flagKey, forKey: "flag_key")
         if let variant = exposure.variant {
-            eventProperties["variant"] = variant
+            eventProperties.setValue(variant, forKey: "variant")
         }
-        eventProperties["experiment_key"] = exposure.experimentKey
+        if let experimentKey = exposure.experimentKey {
+            eventProperties.setValue(experimentKey, forKey: "experiment_key")
+        }
+        if let metadata = exposure.metadata {
+            eventProperties.setValue(metadata, forKey: "metadata")
+        }
         eventBridge.logEvent(event: AnalyticsEvent(
             eventType: "$exposure",
-            eventProperties: NSDictionary(dictionary: eventProperties),
+            eventProperties: eventProperties,
             userProperties: nil
         ))
     }
