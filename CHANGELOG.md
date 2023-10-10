@@ -1,3 +1,15 @@
+# [1.12.0](https://github.com/amplitude/experiment-ios-client/compare/v1.11.1...v1.12.0) (2023-10-10)
+
+
+### Bug Fixes
+
+* update analytics-connector; min macos deployment target 10.13 ([46f295e](https://github.com/amplitude/experiment-ios-client/commit/46f295e1b6d02e54913ee77be23402877a29e0d8))
+
+
+### Features
+
+* local-evaluation ([#36](https://github.com/amplitude/experiment-ios-client/issues/36)) ([ebe1188](https://github.com/amplitude/experiment-ios-client/commit/ebe1188e8cb8103052c17323e5ec050e713679e0))
+
 ## [1.11.1](https://github.com/amplitude/experiment-ios-client/compare/v1.11.0...v1.11.1) (2023-09-28)
 
 
