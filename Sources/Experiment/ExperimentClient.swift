@@ -111,8 +111,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         startQueue.async {
             var error: Error? = nil
             let fetchOnStart = self.config.fetchOnStart?.boolValue ?? true
-            // We already have remote flags in our flag cache, so we know we need to
-            // evaluate remotely even before we've updated our flags.
             let startGroup = DispatchGroup()
             startGroup.enter()
             self.flagsInternal { e in
