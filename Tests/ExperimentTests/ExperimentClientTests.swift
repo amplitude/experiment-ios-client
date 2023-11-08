@@ -1079,7 +1079,7 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual("on", variant.value)
     }
     
-    func testStart_WithLocalEvaluationOnly_DoesNotCallFetch() {
+    func testStart_WithLocalEvaluationOnly_CallsFetch() {
         let storage = InMemoryStorage()
         let config = ExperimentConfigBuilder()
             .build()
@@ -1097,9 +1097,9 @@ class ExperimentClientTests: XCTestCase {
         let user = ExperimentUserBuilder()
             .build()
         client.startBlocking(user: user)
-        XCTAssertEqual(0, client.fetchCalls)
-        client.fetchBlocking(user: user)
         XCTAssertEqual(1, client.fetchCalls)
+        client.fetchBlocking(user: user)
+        XCTAssertEqual(2, client.fetchCalls)
     }
     
     func testStart_WithLocalEvalautionOnly_FetchOnStartEnabled_CallsFetch() {

@@ -110,7 +110,7 @@ import Foundation
         static let fetchTimeoutMillis: Int = 10000
         static let retryFetchOnFailure: Bool = true
         static let automaticExposureTracking: Bool = true
-        static let fetchOnStart: NSNumber? = nil
+        static let fetchOnStart: NSNumber? = 1
         static let pollOnStart: Bool = true
         static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil

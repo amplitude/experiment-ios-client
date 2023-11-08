@@ -108,58 +108,29 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
         runningLock.signal()
         setUser(user)
-        // Determine to fetch remove evaluation variants on start, either using the configured setting, or dynamically by checking the flag cache.
-        var remoteFlags = config.fetchOnStart?.boolValue ?? flagsStorageQueue.sync { self.flags.getAll() }.contains { (_, flag: EvaluationFlag) in
-            flag.isRemoteEvaluationMode()
-        }
         startQueue.async {
             var error: Error? = nil
-            if (remoteFlags) {
-                // We already have remote flags in our flag cache, so we know we need to
-                // evaluate remotely even before we've updated our flags.
-                let startGroup = DispatchGroup()
-                startGroup.enter()
-                startGroup.enter()
-                self.flagsInternal { e in
-                    if let e = e {
-                        error = e
-                    }
-                    startGroup.leave()
+            let fetchOnStart = self.config.fetchOnStart?.boolValue ?? true
+            // We already have remote flags in our flag cache, so we know we need to
+            // evaluate remotely even before we've updated our flags.
+            let startGroup = DispatchGroup()
+            startGroup.enter()
+            self.flagsInternal { e in
+                if let e = e {
+                    error = e
                 }
+                startGroup.leave()
+            }
+            if (fetchOnStart) {
+                startGroup.enter()
                 self.fetch(user: user) { _, e in
                     if let e = e {
                         error = e
                     }
                     startGroup.leave()
                 }
-                startGroup.wait()
-            } else {
-                // We don't know if remote evaluation is required, await the flag promise,
-                // and recheck for remote flags.
-                let flagsGroup = DispatchGroup()
-                flagsGroup.enter()
-                self.flagsInternal { e in
-                    if let e = e {
-                        error = e
-                    }
-                    flagsGroup.leave()
-                }
-                flagsGroup.wait()
-                remoteFlags = self.config.fetchOnStart?.boolValue ?? self.flagsStorageQueue.sync { self.flags.getAll() }.contains { (_, flag: EvaluationFlag) in
-                    flag.isRemoteEvaluationMode()
-                }
-                if (remoteFlags) {
-                    let fetchGroup = DispatchGroup()
-                    fetchGroup.enter()
-                    self.fetch(user: user) { _, e in
-                        if let e = e {
-                            error = e
-                        }
-                        fetchGroup.leave()
-                    }
-                    fetchGroup.wait()
-                }
             }
+            startGroup.wait()
             completion?(error)
         }
     }
