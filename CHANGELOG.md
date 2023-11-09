@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/amplitude/experiment-ios-client/compare/v1.12.0...v1.12.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* call fetch on start by default ([#38](https://github.com/amplitude/experiment-ios-client/issues/38)) ([66fea3b](https://github.com/amplitude/experiment-ios-client/commit/66fea3bcb771973e28aa4e308c8ca329a7938d4a))
+
 # [1.12.0](https://github.com/amplitude/experiment-ios-client/compare/v1.11.1...v1.12.0) (2023-10-10)
 
 
