@@ -59,19 +59,29 @@ import Foundation
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.value = try? values.decode(String.self, forKey: .value)
         self.key = (try? values.decode(String.self, forKey: .key)) ?? self.value
-        // The payload may be encoded multiple ways. The old way
-        if let payload = try? values.decode(AnyDecodable.self, forKey: .payload) {
-            self.payload = payload.value
-        } else if let data = try? values.decode(Data.self, forKey: .payload) {
-            // The legacy way to encode/decode the payload as a json string where the actual object is the value wrapped inside another json object with a single key, `payload`.
+
+        // The legacy way to encode/decode the payload as a json string where the actual object
+        // is the value wrapped inside another json object with a single key, `payload`. And
+        // the object is encoded as a base64 string.
+        //
+        // Check if the payload can be decoded as base64 data, and if the decoded string can be
+        // dedcoded to a json object with one key, "payload" which contains the actual json value.
+        var payload: Any? = nil
+        if let data = try? values.decode(Data.self, forKey: .payload) {
             if let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
-                self.payload = objectPayload["payload"] ?? nil
-            } else {
-                self.payload = nil
+                if let subPayload = objectPayload["payload"] {
+                    payload = subPayload
+                }
             }
-        } else {
-            self.payload = nil
         }
+        if payload == nil {
+            if let anyPayload = try? values.decode(AnyDecodable.self, forKey: .payload) {
+                // New way, straight up.
+                payload = anyPayload.value
+            }
+        }
+        self.payload = payload
+
         // Experiment key should always exist in both the explicit field and the metadata.
         let expKey = try? values.decode(String.self, forKey: .expKey)
         let metadataAny = try? values.decode([String: AnyDecodable].self, forKey: .metadata)
@@ -121,7 +131,7 @@ import Foundation
         guard self.payload != nil, other.payload != nil else {
             return false
         }
-        if let objectPayload = self.payload as? [String: Any], let otherObjectPayload = self.payload as? [String: Any] {
+        if let objectPayload = self.payload as? [String: Any], let otherObjectPayload = other.payload as? [String: Any] {
             return NSDictionary(dictionary: objectPayload).isEqual(to: otherObjectPayload)
         }
         let lhsData = try? JSONEncoder().encode(self)

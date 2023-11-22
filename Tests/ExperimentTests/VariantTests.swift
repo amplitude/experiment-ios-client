@@ -153,7 +153,7 @@ class VariantTests: XCTestCase {
     
     func testV1VariantTransformationWithOldPayload() {
         let rawVariant = """
-        {"value":"on", "payload":"{\\"payload\\":{\\"k\\":\\"v\\"}}"}
+        {"value":"on", "payload":"eyJwYXlsb2FkIjp7ImsiOiJ2In19"}
         """.data(using: .utf8)!
         let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
         XCTAssertEqual(Variant(key: "on", value: "on", payload: ["k":"v"]), variant)
