@@ -64,10 +64,8 @@ import Foundation
         // is the value wrapped inside another json object with a single key, `payload`. And
         // the object is encoded as a base64 string.
         //
-        // Check if the payload can be decoded as a string, and if the decoded string is:
-        //  (a) a base 64 encoded string and
-        //  (b) can be dedcoded to a json object with one key, "payload" which contains the
-        //      actual json value.
+        // Check if the payload can be decoded as base64 data, and if the decoded string can be
+        // dedcoded to a json object with one key, "payload" which contains the actual json value.
         var payload: Any? = nil
         if let data = try? values.decode(Data.self, forKey: .payload) {
             if let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
