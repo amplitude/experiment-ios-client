@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/amplitude/experiment-ios-client/compare/v1.12.1...v1.12.2) (2023-11-22)
+
+
+### Bug Fixes
+
+* fix the translation of legacy variant payloads from storage ([#40](https://github.com/amplitude/experiment-ios-client/issues/40)) ([83c2391](https://github.com/amplitude/experiment-ios-client/commit/83c2391f5c83f0c2468ffc82f9f2c820fdda039e))
+
 ## [1.12.1](https://github.com/amplitude/experiment-ios-client/compare/v1.12.0...v1.12.1) (2023-11-09)
 
 
