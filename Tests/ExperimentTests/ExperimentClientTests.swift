@@ -1149,6 +1149,44 @@ class ExperimentClientTests: XCTestCase {
         client.fetchBlocking(user: user)
         XCTAssertEqual(1, client.fetchCalls)
     }
+    
+    func testInitialflags() {
+        let initialFlags = """
+            [
+                {"key":"sdk-ci-test-local","metadata":{"deployed":true,"evaluationMode":"local","flagType":"release","flagVersion":1},"segments":[{"metadata":{"segmentName":"All Other Users"},"variant":"off"}],"variants":{"off":{"key":"off","metadata":{"default":true}},"on":{"key":"on","value":"on"}}},
+                {"key":"sdk-ci-test-local-2","metadata":{"deployed":true,"evaluationMode":"local","flagType":"release","flagVersion":1},"segments":[{"metadata":{"segmentName":"All Other Users"},"variant":"on"}],"variants":{"off":{"key":"off","metadata":{"default":true}},"on":{"key":"on","value":"on"}}}
+            ]
+        """
+        let storage = InMemoryStorage()
+        let config = ExperimentConfigBuilder()
+            .initialFlags(initialFlags)
+            .build()
+        let client = DefaultExperimentClient(apiKey: API_KEY, config: config, storage: storage)
+        let user = ExperimentUserBuilder()
+            .userId("user_id")
+            .deviceId("device_id")
+            .build()
+        client.setUser(user)
+        // before start, should get result from initial flags
+        var variant = client.variant("sdk-ci-test-local")
+        var variant2 = client.variant("sdk-ci-test-local-2")
+        XCTAssertEqual("off", variant.key!)
+        XCTAssertEqual("on", variant2.key!)
+        client.startBlocking(user: user)
+        // After start, should get result from downloaded flag, fallback on initial flag
+        variant = client.variant("sdk-ci-test-local")
+        variant2 = client.variant("sdk-ci-test-local-2")
+        XCTAssertEqual("on", variant.key!)
+        XCTAssertEqual("on", variant2.key!)
+        // Initialize a second client with the same storage to simulate an app restart
+        let client2 = DefaultExperimentClient(apiKey: API_KEY, config: config, storage: storage)
+        client2.setUser(user)
+        // Should get downloaded flag persisted in storage without calling start
+        variant = client2.variant("sdk-ci-test-local")
+        variant2 = client2.variant("sdk-ci-test-local-2")
+        XCTAssertEqual("on", variant.key!)
+        XCTAssertEqual("on", variant2.key!)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
