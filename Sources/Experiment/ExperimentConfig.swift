@@ -22,6 +22,7 @@ import Foundation
     @objc public let debug: Bool
     @objc public let instanceName: String
     @objc public let fallbackVariant: Variant
+    @objc public let initialFlags: String?
     @objc public let initialVariants: [String: Variant]
     @objc public let source: Source
     @objc public let serverUrl: String
@@ -42,6 +43,7 @@ import Foundation
         self.debug = ExperimentConfig.Defaults.debug
         self.instanceName = ExperimentConfig.Defaults.instanceName
         self.fallbackVariant = ExperimentConfig.Defaults.fallbackVariant
+        self.initialFlags = ExperimentConfig.Defaults.initialFlags
         self.initialVariants = ExperimentConfig.Defaults.initialVariants
         self.source = ExperimentConfig.Defaults.source
         self.serverUrl = ExperimentConfig.Defaults.serverUrl
@@ -62,6 +64,7 @@ import Foundation
         self.debug = builder.debug
         self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
+        self.initialFlags = builder.initialFlags
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
@@ -82,6 +85,7 @@ import Foundation
         self.debug = builder.debug
         self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
+        self.initialFlags = builder.initialFlags
         self.initialVariants = builder.initialVariants
         self.source = builder.source
         self.serverUrl = builder.serverUrl
@@ -102,6 +106,7 @@ import Foundation
         static let debug: Bool = false
         static let instanceName: String = "$default_instance"
         static let fallbackVariant: Variant = Variant()
+        static let initialFlags: String? = nil
         static let initialVariants: [String: Variant] = [:]
         static let source: Source = Source.LocalStorage
         static let serverUrl: String = "https://api.lab.amplitude.com"
@@ -124,6 +129,7 @@ import Foundation
         internal var debug: Bool = ExperimentConfig.Defaults.debug
         internal var instanceName = ExperimentConfig.Defaults.instanceName
         internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
+        internal var initialFlags: String? = ExperimentConfig.Defaults.initialFlags
         internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
         internal var source: Source = ExperimentConfig.Defaults.source
         internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
@@ -158,6 +164,12 @@ import Foundation
         @discardableResult
         public func fallbackVariant(_ fallbackVariant: Variant) -> Builder {
             self.fallbackVariant = fallbackVariant
+            return self
+        }
+        
+        @discardableResult
+        public func initialFlags(_ initialFlags: String?) -> Builder {
+            self.initialFlags = initialFlags
             return self
         }
         
@@ -268,6 +280,7 @@ import Foundation
             .debug(self.debug)
             .instanceName(self.instanceName)
             .fallbackVariant(self.fallbackVariant)
+            .initialFlags(self.initialFlags)
             .initialVariants(self.initialVariants)
             .source(self.source)
             .serverUrl(self.serverUrl)
@@ -293,6 +306,7 @@ import Foundation
     internal var debug: Bool = ExperimentConfig.Defaults.debug
     internal var instanceName: String = ExperimentConfig.Defaults.instanceName
     internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
+    internal var initialFlags: String? = ExperimentConfig.Defaults.initialFlags
     internal var initialVariants: [String: Variant] = ExperimentConfig.Defaults.initialVariants
     internal var source: Source = ExperimentConfig.Defaults.source
     internal var serverUrl: String = ExperimentConfig.Defaults.serverUrl
@@ -323,6 +337,12 @@ import Foundation
     @discardableResult
     @objc public func fallbackVariant(_ fallbackVariant: Variant) -> ExperimentConfigBuilder {
         self.fallbackVariant = fallbackVariant
+        return self
+    }
+    
+    @discardableResult
+    @objc public func initialFlags(_ initialFlags: String?) -> ExperimentConfigBuilder {
+        self.initialFlags = initialFlags
         return self
     }
     

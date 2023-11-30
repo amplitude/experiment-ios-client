@@ -90,6 +90,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.variants.load()
         self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
         self.flags.load()
+        self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
     }
     
     public func start(_ user: ExperimentUser? = nil, completion: ((Error?) -> Void)? = nil) -> Void {
@@ -408,6 +409,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                         self.flags.clear()
                         self.flags.putAll(values: flags)
                         self.flags.store()
+                        self.flags.mergeInitialFlagsWithStorage(self.config.initialFlags)
                     }
                     completion?(nil)
                 case .failure(let error):
@@ -716,5 +718,21 @@ internal extension EvaluationVariant {
         }
         let experimentKey = self.metadata?["experimentKey"] as? String ?? nil
         return Variant(self.value as? String, payload: self.payload, expKey: experimentKey, key: self.key, metadata: metadata)
+    }
+}
+
+private extension LoadStoreCache<EvaluationFlag> {
+    func mergeInitialFlagsWithStorage(_ initialFlagsString: String?) {
+        guard let initialFlagsData = initialFlagsString?.data(using: .utf8) else {
+            return
+        }
+        guard let initialFlags = try? JSONDecoder().decode([EvaluationFlag].self, from: initialFlagsData) else {
+            return
+        }
+        for flag in initialFlags {
+            if self.get(key: flag.key) == nil {
+                self.put(key: flag.key, value: flag)
+            }
+        }
     }
 }
