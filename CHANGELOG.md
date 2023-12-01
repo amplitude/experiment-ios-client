@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/amplitude/experiment-ios-client/compare/v1.12.2...v1.13.0) (2023-12-01)
+
+
+### Features
+
+* bootstrap initial local evaluation flags ([#41](https://github.com/amplitude/experiment-ios-client/issues/41)) ([7c5c995](https://github.com/amplitude/experiment-ios-client/commit/7c5c995eb8c22331f6b4eb03e56cb283352ceb08))
+
 ## [1.12.2](https://github.com/amplitude/experiment-ios-client/compare/v1.12.1...v1.12.2) (2023-11-22)
 
 
