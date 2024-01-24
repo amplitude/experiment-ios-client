@@ -74,3 +74,13 @@ internal struct ExperimentError: Error {
         self.message = msg
     }
 }
+
+internal struct FetchError: Error {
+    let statusCode: Int
+    let message: String
+    
+    init(statusCode: Int, message: String) {
+        self.statusCode = statusCode
+        self.message = message
+    }
+}
