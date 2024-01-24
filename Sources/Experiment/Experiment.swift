@@ -81,6 +81,6 @@ internal struct FetchError: Error {
     
     init(_ statusCode: Int, _ msg: String) {
         self.statusCode = statusCode
-        self.message = message
+        self.message = msg
     }
 }
