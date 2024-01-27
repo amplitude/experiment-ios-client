@@ -679,10 +679,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     private func shouldRetryFetch(_ e: Error) -> Bool {
-        guard let e = e as FetchError else {
+        guard let e = e as? FetchError else {
             return true
         }
-        return fetchError.statusCode < 400 || fetchError.statusCode >= 500 || fetchError.statusCode == 429
+        return e.statusCode < 400 || e.statusCode >= 500 || e.statusCode == 429
     }
 }
 
