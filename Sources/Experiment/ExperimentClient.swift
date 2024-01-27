@@ -532,7 +532,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return task
     }
 
-    private func startRetries(user: ExperimentUser, options: FetchOptions?) {
+    internal func startRetries(user: ExperimentUser, options: FetchOptions?) {
         backoffLock.wait()
         defer { backoffLock.signal() }
         self.backoff?.cancel()
