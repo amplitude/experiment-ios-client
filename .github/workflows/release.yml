@@ -36,6 +36,11 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_14.2.app
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
 
