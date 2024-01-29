@@ -389,9 +389,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             case .success(let variants):
                 self.storeVariants(variants, options)
                 completion(result)
-            case .failure:
+            case .failure(let error):
                 completion(result)
-                if retry {
+                if retry && self.shouldRetryFetch(error) {
                     self.startRetries(user: user, options: options)
                 }
             }
@@ -511,7 +511,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             }
             self.debug("Received fetch response: \(httpResponse)")
             guard httpResponse.statusCode == 200 else {
-                completion(Result.failure(ExperimentError("Error Response: status=\(httpResponse.statusCode)")))
+                completion(Result.failure(FetchError(httpResponse.statusCode, "Error Response: status=\(httpResponse.statusCode)")))
                 return
             }
             guard let data = data else {
@@ -532,7 +532,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return task
     }
 
-    private func startRetries(user: ExperimentUser, options: FetchOptions?) {
+    internal func startRetries(user: ExperimentUser, options: FetchOptions?) {
         backoffLock.wait()
         defer { backoffLock.signal() }
         self.backoff?.cancel()
@@ -676,6 +676,13 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             print("\(formatter.string(from: Date())) [Experiment] \(msg)")
         }
+    }
+    
+    private func shouldRetryFetch(_ e: Error) -> Bool {
+        guard let e = e as? FetchError else {
+            return true
+        }
+        return e.statusCode < 400 || e.statusCode >= 500 || e.statusCode == 429
     }
 }
 

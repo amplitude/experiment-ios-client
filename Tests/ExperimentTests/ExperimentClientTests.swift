@@ -1031,6 +1031,7 @@ class ExperimentClientTests: XCTestCase {
         var mockFetch: (() -> Result<[String: Variant], Error>)? = nil
         var flagCalls = 0
         var mockFlags: (() -> Result<[String: EvaluationFlag], Error>)? = nil
+        var startRetriesCalls = 0
         
         override func doFetch(
             user: ExperimentUser,
@@ -1057,6 +1058,11 @@ class ExperimentClientTests: XCTestCase {
             } else {
                 super.doFlags(timeoutMillis: timeoutMillis, completion: completion)
             }
+        }
+        
+        override func startRetries(user: ExperimentUser, options: FetchOptions?) {
+            startRetriesCalls += 1
+            return
         }
     }
     
@@ -1187,6 +1193,42 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual("on", variant.key!)
         XCTAssertEqual("on", variant2.key!)
     }
+    
+    func testRemoteFetchRetry() {
+        // Response code, error message, and whether retry should be called
+        let testData: [(Int, String, Int)] = [
+            (300, "Fetch Exception 300", 1),
+            (400, "Fetch Exception 400", 0),
+            (429, "Fetch Exception 429", 1),
+            (500, "Fetch Exception 500", 1),
+            (0, "Other Exception", 1)
+        ]
+
+        for (responseCode, errorMessage, retryCalled) in testData {
+            let storage = InMemoryStorage()
+            let config = ExperimentConfigBuilder()
+                .fetchRetryOnFailure(true)
+                .build()
+            let client = MockClient(
+                apiKey: API_KEY,
+                config: config,
+                storage: storage
+            )
+            client.mockFetch = {
+                let error = FetchError(responseCode, errorMessage)
+                return .failure(error)
+            }
+            client.mockFlags = {
+                return .success([:])
+            }
+            let user = ExperimentUserBuilder()
+                .userId("test_retry_fetch")
+                .build()
+            
+            client.fetchBlocking(user: user, isTestRetry: true)
+            XCTAssertEqual(retryCalled, client.startRetriesCalls)
+        }
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
@@ -1271,11 +1313,13 @@ extension DefaultExperimentClient {
             }
         }
     }
-    func fetchBlocking(user: ExperimentUser) {
+    func fetchBlocking(user: ExperimentUser, isTestRetry: Bool = false) {
         let s = DispatchSemaphore(value: 0)
         fetch(user: user) { _, error in
             if let error = error {
-                XCTFail(error.localizedDescription)
+                if (!isTestRetry) {
+                    XCTFail(error.localizedDescription)
+                }
             }
             s.signal()
         }
