@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/amplitude/experiment-ios-client/compare/v1.13.0...v1.13.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* Improve remote evaluation fetch retry logic ([#43](https://github.com/amplitude/experiment-ios-client/issues/43)) ([00f00ef](https://github.com/amplitude/experiment-ios-client/commit/00f00ef72cd2da885d2348fc786ec7903d42f86b))
+
 # [1.13.0](https://github.com/amplitude/experiment-ios-client/compare/v1.12.2...v1.13.0) (2023-12-01)
 
 
