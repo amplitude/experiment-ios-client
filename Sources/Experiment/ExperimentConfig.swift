@@ -38,6 +38,7 @@ import Foundation
     @available(*, deprecated, message: "Use exposureTrackingProvider instead.")
     @objc public let analyticsProvider: ExperimentAnalyticsProvider?
     @objc public let exposureTrackingProvider: ExposureTrackingProvider?
+    @objc public let deploymentKey: String?
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
@@ -58,6 +59,7 @@ import Foundation
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
         self.exposureTrackingProvider = ExperimentConfig.Defaults.exposureTrackingProvider
+        self.deploymentKey = ExperimentConfig.Defaults.deploymentKey
     }
     
     internal init(builder: ExperimentConfigBuilder) {
@@ -79,6 +81,7 @@ import Foundation
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
         self.exposureTrackingProvider = builder.exposureTrackingProvider
+        self.deploymentKey = builder.deploymentKey
     }
     
     internal init(builder: ExperimentConfig.Builder) {
@@ -100,6 +103,7 @@ import Foundation
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
         self.exposureTrackingProvider = builder.exposureTrackingProvider
+        self.deploymentKey = builder.deploymentKey
     }
 
     internal struct Defaults {
@@ -121,6 +125,7 @@ import Foundation
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
         static let exposureTrackingProvider: ExposureTrackingProvider? = nil
+        static let deploymentKey: String? = nil
     }
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
@@ -144,6 +149,7 @@ import Foundation
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
         internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+        internal var deploymentKey: String? = ExperimentConfig.Defaults.deploymentKey
         
         public init() {
             // public init
@@ -261,6 +267,12 @@ import Foundation
             self.exposureTrackingProvider = exposureTrackingProvider
             return self
         }
+        
+        @discardableResult
+        public func deploymentKey(_ deploymentKey: String?) -> Builder {
+            self.deploymentKey = deploymentKey
+            return self
+        }
 
         public func build() -> ExperimentConfig {
             return ExperimentConfig(builder: self)
@@ -294,6 +306,7 @@ import Foundation
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
             .exposureTrackingProvider(self.exposureTrackingProvider)
+            .deploymentKey(self.deploymentKey)
         if let fetchOnStart = fetchOnStart {
             builder.fetchOnStart(fetchOnStart)
         }
@@ -321,6 +334,7 @@ import Foundation
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
     internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+    internal var deploymentKey: String? = ExperimentConfig.Defaults.deploymentKey
     
     @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
@@ -431,6 +445,12 @@ import Foundation
     @discardableResult
     @objc public func exposureTrackingProvider(_ exposureTrackingProvider: ExposureTrackingProvider?) -> ExperimentConfigBuilder {
         self.exposureTrackingProvider = exposureTrackingProvider
+        return self
+    }
+    
+    @discardableResult
+    @objc public func deploymentKey(_ deploymentKey: String?) -> ExperimentConfigBuilder {
+        self.deploymentKey = deploymentKey
         return self
     }
     

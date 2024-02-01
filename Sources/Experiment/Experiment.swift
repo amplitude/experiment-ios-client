@@ -16,15 +16,16 @@ import AnalyticsConnector
     @objc public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
         instancesLock.wait()
         defer { instancesLock.signal() }
+        let usedKey = config.deploymentKey ?? apiKey
         let instanceName = config.instanceName
-        let instanceKey = "\(instanceName).\(apiKey)"
+        let instanceKey = "\(instanceName).\(usedKey)"
         let instance = instances[instanceKey]
         if (instance != nil) {
             return instance!
         }
         let storage = UserDefaultsStorage()
         let newInstance: ExperimentClient = DefaultExperimentClient(
-            apiKey: apiKey,
+            apiKey: usedKey,
             config: config,
             storage: storage
         )
@@ -38,8 +39,9 @@ import AnalyticsConnector
     @objc public static func initializeWithAmplitudeAnalytics(apiKey: String, config: ExperimentConfig = ExperimentConfig()) -> ExperimentClient {
         instancesLock.wait()
         defer { instancesLock.signal() }
+        let usedKey = config.deploymentKey ?? apiKey
         let instanceName = config.instanceName
-        let instanceKey = "\(instanceName).\(apiKey)"
+        let instanceKey = "\(instanceName).\(usedKey)"
         let connector = AnalyticsConnector.getInstance(instanceName)
         let instance = instances[instanceKey]
         if (instance != nil) {
@@ -54,7 +56,7 @@ import AnalyticsConnector
         }
         let storage = UserDefaultsStorage()
         let newInstance: ExperimentClient = DefaultExperimentClient(
-            apiKey: apiKey,
+            apiKey: usedKey,
             config: configBuilder.build(),
             storage: storage
         )
