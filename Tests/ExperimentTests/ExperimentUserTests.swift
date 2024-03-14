@@ -176,4 +176,9 @@ class ExperimentUserTests: XCTestCase {
             .build()
         XCTAssert(expected == mergedUser)
     }
+    
+    func testEqualsOnlyUserProperties() {
+        let user = ExperimentUserBuilder().userProperty("test", value: "test").build()
+        XCTAssertTrue(user != ExperimentUser())
+    }
 }

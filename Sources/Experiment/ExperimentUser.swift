@@ -134,7 +134,14 @@ import Foundation
         if let userPropertiesAnyValue = self.userPropertiesAnyValue, let otherUserPropertiesAnyValue = other.userPropertiesAnyValue {
             userPropertiesAnyValueEqual = NSDictionary(dictionary: userPropertiesAnyValue).isEqual(to: otherUserPropertiesAnyValue)
         } else {
-            userPropertiesAnyValueEqual = userProperties == nil && other.userProperties == nil
+            userPropertiesAnyValueEqual = userPropertiesAnyValue == nil && other.userPropertiesAnyValue == nil
+        }
+        
+        var userPropertiesEqual = false
+        if let userProperties = self.userProperties, let otherUserProperties = other.userProperties {
+            userPropertiesEqual = NSDictionary(dictionary: userProperties).isEqual(to: otherUserProperties)
+        } else {
+            userPropertiesEqual = userProperties == nil && other.userProperties == nil
         }
         
         var groupPropertiesEqual = false
@@ -159,6 +166,7 @@ import Foundation
             self.carrier == other.carrier &&
             self.library == other.library &&
             userPropertiesAnyValueEqual &&
+            userPropertiesEqual &&
             self.groups == other.groups &&
             groupPropertiesEqual
     }
