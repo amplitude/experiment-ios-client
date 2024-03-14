@@ -1,3 +1,11 @@
+## [1.13.2](https://github.com/amplitude/experiment-ios-client/compare/v1.13.1...v1.13.2) (2024-03-14)
+
+
+### Bug Fixes
+
+* experiment user equals user property comparison ([0e66823](https://github.com/amplitude/experiment-ios-client/commit/0e66823e377f5298238657c19e84924ea20d3149))
+* explicitly unwrap double optional for swift 4 compilation ([de347f9](https://github.com/amplitude/experiment-ios-client/commit/de347f9c8c68d92c2972d52dbec6f767d8a1e6c4))
+
 ## [1.13.1](https://github.com/amplitude/experiment-ios-client/compare/v1.13.0...v1.13.1) (2024-01-29)
 
 
