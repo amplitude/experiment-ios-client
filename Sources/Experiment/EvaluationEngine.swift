@@ -293,14 +293,16 @@ internal class EvaluationEngine {
         guard let dataValue = coerceString(value: value)?.data(using: .utf8) else {
             return nil
         }
-        if let nsArray = try? JSONSerialization.jsonObject(with: dataValue) as? NSArray {
-            var result = Set<String>()
-            for element in nsArray {
-                if let stringElement = coerceString(value: element) {
-                    result.insert(stringElement)
+        if let opt = try? JSONSerialization.jsonObject(with: dataValue) {
+            if let nsArray = opt as? NSArray {
+                var result = Set<String>()
+                for element in nsArray {
+                    if let stringElement = coerceString(value: element) {
+                        result.insert(stringElement)
+                    }
                 }
+                return result
             }
-            return result
         }
  
         return nil

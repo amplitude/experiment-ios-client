@@ -68,9 +68,11 @@ import Foundation
         // dedcoded to a json object with one key, "payload" which contains the actual json value.
         var payload: Any? = nil
         if let data = try? values.decode(Data.self, forKey: .payload) {
-            if let objectPayload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any?] {
-                if let subPayload = objectPayload["payload"] {
-                    payload = subPayload
+            if let opt = try? JSONSerialization.jsonObject(with: data, options: []) {
+                if let objectPayload = opt as? [String: Any?] {
+                    if let subPayload = objectPayload["payload"] {
+                        payload = subPayload
+                    }
                 }
             }
         }
