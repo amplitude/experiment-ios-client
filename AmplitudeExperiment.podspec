@@ -14,16 +14,20 @@ Pod::Spec.new do |spec|
   
   spec.ios.deployment_target  = '10.0'
   spec.ios.source_files       = 'Sources/Experiment/**/*.{h,swift}'
+  spec.ios.resources          = 'Sources/Experiment/PrivacyInfo.xcprivacy'
 
   spec.osx.deployment_target  = '10.13'
   spec.osx.source_files       = 'sources/Experiment/**/*.{h,swift}'
+  spec.osx.resources          = 'Sources/Experiment/PrivacyInfo.xcprivacy'
 
   spec.tvos.deployment_target = '10.0'
   spec.tvos.source_files      = 'sources/Experiment/**/*.{h,swift}'
+  spec.tvos.resources         = 'Sources/Experiment/PrivacyInfo.xcprivacy'
   
   spec.watchos.deployment_target = '3.0'
   spec.watchos.source_files      = 'sources/Experiment/**/*.{h,swift}'
-
+  spec.watchos.resources         = 'Sources/Experiment/PrivacyInfo.xcprivacy'
+  
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   spec.dependency 'AnalyticsConnector', '~> 1.0'
