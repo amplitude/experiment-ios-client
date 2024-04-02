@@ -29,12 +29,5 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSPrivacyTrackingDomains</key>
-	<array>
-		<string>api.lab.amplitude.com</string>
-		<string>api.lab.eu.amplitude.com</string>
-		<string>flag.lab.amplitude.com</string>
-		<string>flag.lab.eu.amplitude.com</string>
-	</array>
 </dict>
 </plist>
