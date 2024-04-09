@@ -1,3 +1,10 @@
+## [1.13.3](https://github.com/amplitude/experiment-ios-client/compare/v1.13.2...v1.13.3) (2024-04-09)
+
+
+### Bug Fixes
+
+* add privacy manifest ([#48](https://github.com/amplitude/experiment-ios-client/issues/48)) ([ea9ceed](https://github.com/amplitude/experiment-ios-client/commit/ea9ceedfa486e175569f2e5decc10aa70487a8bf))
+
 ## [1.13.2](https://github.com/amplitude/experiment-ios-client/compare/v1.13.1...v1.13.2) (2024-03-14)
 
 
