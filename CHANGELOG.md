@@ -1,3 +1,10 @@
+## [1.13.4](https://github.com/amplitude/experiment-ios-client/compare/v1.13.3...v1.13.4) (2024-04-10)
+
+
+### Bug Fixes
+
+* Adopt resource bundle for privacy manifest in Cocoapods ([#52](https://github.com/amplitude/experiment-ios-client/issues/52)) ([dc87951](https://github.com/amplitude/experiment-ios-client/commit/dc8795144dac89242ad03fa434be806b60c4630f))
+
 ## [1.13.3](https://github.com/amplitude/experiment-ios-client/compare/v1.13.2...v1.13.3) (2024-04-09)
 
 
