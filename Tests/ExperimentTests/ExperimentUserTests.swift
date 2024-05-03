@@ -196,7 +196,6 @@ class ExperimentUserTests: XCTestCase {
         let userData = user.toDictionary()
         
         if let userProperties = userData["user_properties"] as? [String: Any] {
-            // Attempt to access the dateUserProperty
             if let dateUserProperty = userProperties["dateUserProperty"] as? String {
                 XCTAssertEqual(dateUserProperty, "2021-04-30T22:20:00.000Z")
             } else {

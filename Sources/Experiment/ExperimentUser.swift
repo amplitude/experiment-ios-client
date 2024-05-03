@@ -527,7 +527,6 @@ import Foundation
 
 internal extension ExperimentUser {
 
-    // Update the toDictionary method to handle NSDate objects
     func toDictionary() -> [String:Any] {
         var data = [String:Any]()
         data["device_id"] = self.deviceId
