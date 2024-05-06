@@ -32,9 +32,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set Xcode 14.2
+      - name: Set Xcode 15.1
         run: |
-          sudo xcode-select -switch /Applications/Xcode_14.2.app
+          sudo xcode-select -switch /Applications/Xcode_15.1.app
 
       - name: Set up Node
         uses: actions/setup-node@v4
