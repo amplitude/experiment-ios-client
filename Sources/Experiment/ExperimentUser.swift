@@ -526,7 +526,7 @@ import Foundation
 }
 
 internal extension ExperimentUser {
-    
+
     func toDictionary() -> [String:Any] {
         var data = [String:Any]()
         data["device_id"] = self.deviceId
@@ -543,9 +543,41 @@ internal extension ExperimentUser {
         data["device_model"] = self.deviceModel
         data["carrier"] = self.carrier
         data["library"] = self.library
-        data["user_properties"] = self.userPropertiesAnyValue
-        data["groups"] = self.groups
-        data["group_properties"] = self.groupProperties
+        
+        // Convert NSDate objects to ISO 8601 strings in user_properties
+        if let userProperties = self.userPropertiesAnyValue {
+            var convertedUserProperties = [String:Any]()
+            for (key, value) in userProperties {
+                if let dateValue = value as? Date {
+                    convertedUserProperties[key] = dateValue.iso8601
+                } else {
+                    convertedUserProperties[key] = value
+                }
+            }
+            data["user_properties"] = convertedUserProperties
+        }
+        
+        // Convert NSDate objects to ISO 8601 strings in group_properties
+        if let groupProperties = self.groupProperties {
+            var convertedGroupProperties = [String:Any]()
+            for (groupType, groups) in groupProperties {
+                var convertedGroups = [String:Any]()
+                for (groupName, properties) in groups {
+                    var convertedProperties = [String:Any]()
+                    for (key, value) in properties {
+                        if let dateValue = value as? Date {
+                            convertedProperties[key] = dateValue.iso8601
+                        } else {
+                            convertedProperties[key] = value
+                        }
+                    }
+                    convertedGroups[groupName] = convertedProperties
+                }
+                convertedGroupProperties[groupType] = convertedGroups
+            }
+            data["group_properties"] = convertedGroupProperties
+        }
+        
         return data
     }
     
@@ -612,4 +644,20 @@ extension ExperimentUser {
         }
         return context
     }
+}
+
+internal extension Date {
+    var iso8601: String {
+        return DateFormatter.iso8601.string(from: self)
+    }
+}
+
+internal extension DateFormatter {
+    static let iso8601: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
 }

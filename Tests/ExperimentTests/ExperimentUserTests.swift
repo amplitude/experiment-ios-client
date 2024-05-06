@@ -181,4 +181,51 @@ class ExperimentUserTests: XCTestCase {
         let user = ExperimentUserBuilder().userProperty("test", value: "test").build()
         XCTAssertTrue(user != ExperimentUser())
     }
+    
+    func testUserPropertiesWithDateExtension() {
+        let date = Date(timeIntervalSince1970: 1619821200)
+        
+        let user = ExperimentUserBuilder()
+            .deviceId("device_id")
+            .userId("user_id")
+            .version(nil)
+            .country("country")
+            .userProperty("dateUserProperty", value: date)
+            .build()
+        
+        let userData = user.toDictionary()
+        
+        if let userProperties = userData["user_properties"] as? [String: Any] {
+            if let dateUserProperty = userProperties["dateUserProperty"] as? String {
+                XCTAssertEqual(dateUserProperty, "2021-04-30T22:20:00.000Z")
+            } else {
+                XCTFail("dateUserProperty not found or not a string")
+            }
+        } else {
+            XCTFail("user_properties not found or not a dictionary")
+        }
+    }
+
+    func testGroupPropertiesWithDateExtension() {
+        let date = Date(timeIntervalSince1970: 1619821200)
+        
+        let user = ExperimentUserBuilder()
+            .deviceId("device_id")
+            .userId("user_id")
+            .version(nil)
+            .country("country")
+            .groupProperty("groupType", "groupName", "dateGroupProperty", date.iso8601)
+            .build()
+        
+        let userData = user.toDictionary()
+        
+        if let groupProperties = userData["group_properties"] as? [String: Any],
+           let groupTypeDict = groupProperties["groupType"] as? [String: Any],
+           let groupNameDict = groupTypeDict["groupName"] as? [String: Any],
+           let dateGroupProperty = groupNameDict["dateGroupProperty"] as? String {
+            XCTAssertEqual(dateGroupProperty, "2021-04-30T22:20:00.000Z")
+        } else {
+            XCTFail("Unable to access group properties or dateGroupProperty")
+        }
+    }
 }
