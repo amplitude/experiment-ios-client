@@ -1,3 +1,10 @@
+## [1.13.5](https://github.com/amplitude/experiment-ios-client/compare/v1.13.4...v1.13.5) (2024-05-06)
+
+
+### Bug Fixes
+
+* toDictionary function should convert Date object to string ([#54](https://github.com/amplitude/experiment-ios-client/issues/54)) ([6ebbc3f](https://github.com/amplitude/experiment-ios-client/commit/6ebbc3fe15b7ef2f16188996aba14f7dbd480bcd))
+
 ## [1.13.4](https://github.com/amplitude/experiment-ios-client/compare/v1.13.3...v1.13.4) (2024-04-10)
 
 
