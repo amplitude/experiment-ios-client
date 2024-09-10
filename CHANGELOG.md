@@ -1,3 +1,10 @@
+## [1.13.6](https://github.com/amplitude/experiment-ios-client/compare/v1.13.5...v1.13.6) (2024-09-10)
+
+
+### Bug Fixes
+
+* Make `stop` method public ([#59](https://github.com/amplitude/experiment-ios-client/issues/59)) ([5dd4303](https://github.com/amplitude/experiment-ios-client/commit/5dd4303fca36feedbcd112b9f4444a6d59145ceb))
+
 ## [1.13.5](https://github.com/amplitude/experiment-ios-client/compare/v1.13.4...v1.13.5) (2024-05-06)
 
 
