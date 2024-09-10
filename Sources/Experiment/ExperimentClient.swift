@@ -18,6 +18,7 @@ import Foundation
     @objc func setUser(_ user: ExperimentUser?)
     @objc func getUser() -> ExperimentUser?
     @objc func clear()
+    @objc func stop()
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
