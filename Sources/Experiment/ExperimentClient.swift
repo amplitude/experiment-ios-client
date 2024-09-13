@@ -98,6 +98,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         runningLock.wait()
         if isRunning {
             runningLock.signal()
+            completion?(nil)
             return
         }
         isRunning = true
