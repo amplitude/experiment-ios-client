@@ -1,3 +1,10 @@
+## [1.13.7](https://github.com/amplitude/experiment-ios-client/compare/v1.13.6...v1.13.7) (2024-09-13)
+
+
+### Bug Fixes
+
+* ensure `completion` block is always called in `DefaultExperimentClient.start` function ([#60](https://github.com/amplitude/experiment-ios-client/issues/60)) ([5f0e1dc](https://github.com/amplitude/experiment-ios-client/commit/5f0e1dc892b5ece649e9a8b4dafaaa854ff38203))
+
 ## [1.13.6](https://github.com/amplitude/experiment-ios-client/compare/v1.13.5...v1.13.6) (2024-09-10)
 
 
