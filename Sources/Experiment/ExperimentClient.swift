@@ -15,6 +15,7 @@ import Foundation
     @objc func variant(_ key: String, fallback: Variant?) -> Variant
     @objc func all() -> [String:Variant]
     @objc func exposure(key: String)
+    @objc func exposure(key: String, variant: String, payload: Any?)
     @objc func setUser(_ user: ExperimentUser?)
     @objc func getUser() -> ExperimentUser?
     @objc func clear()
@@ -209,6 +210,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     public func exposure(key: String) {
         let variantAndSource = variantAndSource(key: key, fallback: nil)
+        exposureInternal(key: key, variantAndSource: variantAndSource)
+    }
+    
+    public func exposure(key: String, variant: String, payload: Any?) {
+        let variantAndSource = VariantAndSource(variant: Variant(variant, payload: payload))
         exposureInternal(key: key, variantAndSource: variantAndSource)
     }
 
