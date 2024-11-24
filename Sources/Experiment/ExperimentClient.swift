@@ -31,6 +31,7 @@ private let fetchBackoffAttempts = 8
 private let fetchBackoffMinMillis = 500
 private let fetchBackoffMaxMillis = 10000
 private let fetchBackoffScalar: Float = 1.5
+private let minFlagConfigPollingIntervalMillis = 60000
 
 private let euServerUrl = "https://api.lab.eu.amplitude.com";
 private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
@@ -71,6 +72,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let configBuilder = config.copyToBuilder()
         if config.serverUrl == ExperimentConfig.Defaults.serverUrl && config.flagsServerUrl == ExperimentConfig.Defaults.flagsServerUrl && config.serverZone == .EU {
             configBuilder.serverUrl(euServerUrl).flagsServerUrl(euFlagsServerUrl)
+        }
+        if config.flagConfigPollingIntervalMillis < minFlagConfigPollingIntervalMillis {
+            configBuilder.flagConfigPollingIntervalMillis(minFlagConfigPollingIntervalMillis)
         }
         self.config = configBuilder.build()
         if config.userProvider != nil {

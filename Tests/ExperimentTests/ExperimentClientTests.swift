@@ -1229,6 +1229,24 @@ class ExperimentClientTests: XCTestCase {
             XCTAssertEqual(retryCalled, client.startRetriesCalls)
         }
     }
+    
+    func testFlagConfigPollingIntervalConfigNotSet() {
+        let config = ExperimentConfigBuilder().build()
+        let client = DefaultExperimentClient(apiKey: "", config: config, storage: InMemoryStorage())
+        XCTAssertEqual(300000, client.config.flagConfigPollingIntervalMillis)
+    }
+    
+    func testFlagConfigPollingIntervalConfigSetUnderMinimum() {
+        let config = ExperimentConfigBuilder().flagConfigPollingIntervalMillis(1000).build()
+        let client = DefaultExperimentClient(apiKey: "", config: config, storage: InMemoryStorage())
+        XCTAssertEqual(60000, client.config.flagConfigPollingIntervalMillis)
+    }
+    
+    func testFlagConfigPollingIntervalConfigSetOverMinimum() {
+        let config = ExperimentConfigBuilder().flagConfigPollingIntervalMillis(900000).build()
+        let client = DefaultExperimentClient(apiKey: "", config: config, storage: InMemoryStorage())
+        XCTAssertEqual(900000, client.config.flagConfigPollingIntervalMillis)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
