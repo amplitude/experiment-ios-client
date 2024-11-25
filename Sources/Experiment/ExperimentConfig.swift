@@ -33,6 +33,7 @@ import Foundation
     @objc public let automaticExposureTracking: Bool
     @objc public let fetchOnStart: NSNumber? // objc cant do nil boolean values, use nsnumber
     @objc public let pollOnStart: Bool
+    @objc public let flagConfigPollingIntervalMillis: Int
     @objc public let automaticFetchOnAmplitudeIdentityChange: Bool
     @objc public let userProvider: ExperimentUserProvider?
     @available(*, deprecated, message: "Use exposureTrackingProvider instead.")
@@ -54,6 +55,7 @@ import Foundation
         self.automaticExposureTracking = ExperimentConfig.Defaults.automaticExposureTracking
         self.fetchOnStart = ExperimentConfig.Defaults.fetchOnStart
         self.pollOnStart = ExperimentConfig.Defaults.pollOnStart
+        self.flagConfigPollingIntervalMillis = ExperimentConfig.Defaults.flagConfigPollingIntervalMillis
         self.automaticFetchOnAmplitudeIdentityChange = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
@@ -75,6 +77,7 @@ import Foundation
         self.automaticExposureTracking = builder.automaticExposureTracking
         self.fetchOnStart = builder.fetchOnStart
         self.pollOnStart = builder.pollOnStart
+        self.flagConfigPollingIntervalMillis = builder.flagConfigPollingIntervalMillis
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
@@ -96,6 +99,7 @@ import Foundation
         self.automaticExposureTracking = builder.automaticExposureTracking
         self.fetchOnStart = builder.fetchOnStart
         self.pollOnStart = builder.pollOnStart
+        self.flagConfigPollingIntervalMillis = builder.flagConfigPollingIntervalMillis
         self.automaticFetchOnAmplitudeIdentityChange = builder.automaticFetchOnAmplitudeIdentityChange
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
@@ -117,6 +121,7 @@ import Foundation
         static let automaticExposureTracking: Bool = true
         static let fetchOnStart: NSNumber? = 1
         static let pollOnStart: Bool = true
+        static let flagConfigPollingIntervalMillis = 300000
         static let automaticFetchOnAmplitudeIdentityChange: Bool = false
         static let userProvider: ExperimentUserProvider? = nil
         static let analyticsProvider: ExperimentAnalyticsProvider? = nil
@@ -140,6 +145,7 @@ import Foundation
         internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
         internal var fetchOnStart: NSNumber? = ExperimentConfig.Defaults.fetchOnStart
         internal var pollOnStart: Bool = true
+        internal var flagConfigPollingIntervalMillis = ExperimentConfig.Defaults.flagConfigPollingIntervalMillis
         internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
@@ -239,6 +245,12 @@ import Foundation
         }
         
         @discardableResult
+        public func flagConfigPollingIntervalMillis(_ flagConfigPollingIntervalMillis: Int) -> Builder {
+            self.flagConfigPollingIntervalMillis = flagConfigPollingIntervalMillis
+            return self
+        }
+        
+        @discardableResult
         public func automaticFetchOnAmplitudeIdentityChange(_ automaticFetchOnAmplitudeIdentityChange: Bool) -> Builder {
             self.automaticFetchOnAmplitudeIdentityChange = automaticFetchOnAmplitudeIdentityChange
             return self
@@ -290,6 +302,7 @@ import Foundation
             .fetchRetryOnFailure(self.retryFetchOnFailure)
             .automaticExposureTracking(self.automaticExposureTracking)
             .pollOnStart(self.pollOnStart)
+            .flagConfigPollingIntervalMillis(self.flagConfigPollingIntervalMillis)
             .automaticFetchOnAmplitudeIdentityChange(self.automaticFetchOnAmplitudeIdentityChange)
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
@@ -317,6 +330,7 @@ import Foundation
     internal var automaticExposureTracking: Bool = ExperimentConfig.Defaults.automaticExposureTracking
     internal var fetchOnStart: NSNumber? = ExperimentConfig.Defaults.fetchOnStart
     internal var pollOnStart: Bool = true
+    internal var flagConfigPollingIntervalMillis: Int = ExperimentConfig.Defaults.flagConfigPollingIntervalMillis
     internal var automaticFetchOnAmplitudeIdentityChange: Bool = ExperimentConfig.Defaults.automaticFetchOnAmplitudeIdentityChange
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
@@ -407,6 +421,12 @@ import Foundation
     @discardableResult
     @objc public func pollOnStart(_ pollOnStart: Bool) -> ExperimentConfigBuilder {
         self.pollOnStart = pollOnStart
+        return self
+    }
+    
+    @discardableResult
+    @objc public func flagConfigPollingIntervalMillis(_ flagConfigPollingIntervalMillis: Int) -> ExperimentConfigBuilder {
+        self.flagConfigPollingIntervalMillis = flagConfigPollingIntervalMillis
         return self
     }
     
