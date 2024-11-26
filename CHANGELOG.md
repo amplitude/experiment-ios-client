@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/amplitude/experiment-ios-client/compare/v1.13.7...v1.14.0) (2024-11-26)
+
+
+### Features
+
+* increase flag polling interval; add flag poller interval config ([#64](https://github.com/amplitude/experiment-ios-client/issues/64)) ([520123c](https://github.com/amplitude/experiment-ios-client/commit/520123c2d0da7cba9e80b5591f03398abd450cec))
+
 ## [1.13.7](https://github.com/amplitude/experiment-ios-client/compare/v1.13.6...v1.13.7) (2024-09-13)
 
 
