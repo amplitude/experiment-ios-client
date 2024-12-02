@@ -51,12 +51,28 @@ import Foundation
     }
 
     private static func getPlatform() -> String {
-        return "iOS"
+        #if os(OSX)
+            return "macOS"
+        #elseif os(watchOS)
+            return "watchOS"
+        #elseif os(tvOS)
+            return "tvOS"
+        #elseif os(visionOS)
+            return "visionOS"
+        #elseif os(iOS)
+            #if targetEnvironment(macCatalyst)
+                return "macOS"
+            #else
+                return "iOS"
+            #endif
+        #else
+            return "iOS"
+        #endif
     }
 
     private static func getOs() -> String {
         let systemVersion = ProcessInfo.processInfo.operatingSystemVersion
-        let os = "ios \(systemVersion.majorVersion).\(systemVersion.minorVersion).\(systemVersion.patchVersion)."
+        let os = getPlatform().lowercased() + " \(systemVersion.majorVersion).\(systemVersion.minorVersion).\(systemVersion.patchVersion)."
         return os
     }
 
@@ -113,6 +129,7 @@ import Foundation
 
         // iPhone XS
         if (platform == "iPhone11,2") { return "iPhone XS" }
+        if (platform == "iPhone11,4") { return "iPhone XS Max" }
         if (platform == "iPhone11,6") { return "iPhone XS Max" }
 
         // iPhone XR
@@ -122,10 +139,42 @@ import Foundation
         if (platform == "iPhone12,1") { return "iPhone 11" }
         if (platform == "iPhone12,3") { return "iPhone 11 Pro" }
         if (platform == "iPhone12,5") { return "iPhone 11 Pro Max" }
+        
+        // iPhone 12
+        if (platform == "iPhone13,1") { return "iPhone 12 Mini" }
+        if (platform == "iPhone13,2") { return "iPhone 12" }
+        if (platform == "iPhone13,3") { return "iPhone 12 Pro" }
+        if (platform == "iPhone13,4") { return "iPhone 12 Pro Max" }
+        
+
+        // iPhone 13
+        if (platform == "iPhone14,2") { return "iPhone 13 Pro" }
+        if (platform == "iPhone14,3") { return "iPhone 13 Pro Max" }
+        if (platform == "iPhone14,4") { return "iPhone 13 Mini" }
+        if (platform == "iPhone14,5") { return "iPhone 13" }
+        
+        // iPhone 14
+        if (platform == "iPhone14,7") { return "iPhone 14" }
+        if (platform == "iPhone14,8") { return "iPhone 14 Plus" }
+        if (platform == "iPhone15,2") { return "iPhone 14 Pro" }
+        if (platform == "iPhone15,3") { return "iPhone 14 Pro Max" }
+        
+        // iPhone 15
+        if (platform == "iPhone15,4") { return "iPhone 15" }
+        if (platform == "iPhone15,5") { return "iPhone 15 Plus" }
+        if (platform == "iPhone16,1") { return "iPhone 15 Pro" }
+        if (platform == "iPhone16,2") { return "iPhone 15 Pro Max" }
+        
+        // iPhone 16
+        if (platform == "iPhone17,1") { return "iPhone 16 Pro" }
+        if (platform == "iPhone17,2") { return "iPhone 16 Pro Max" }
+        if (platform == "iPhone17,3") { return "iPhone 16" }
+        if (platform == "iPhone17,4") { return "iPhone 16 Plus" }
 
         // iPhone SE
         if (platform == "iPhone8,4") { return "iPhone SE" }
         if (platform == "iPhone12,8") { return "iPhone SE 2" }
+        if (platform == "iPhone14,6") { return "iPhone SE 3" }
 
         // == iPod ==
         if (platform == "iPod1,1") { return "iPod Touch 1G" }
@@ -139,6 +188,7 @@ import Foundation
         // == iPad ==
         // iPad 1
         if (platform == "iPad1,1") { return "iPad 1" }
+        if (platform == "iPad1,2") { return "iPad 1" }
         // iPad 2
         if (platform == "iPad2,1") { return "iPad 2" }
         if (platform == "iPad2,2") { return "iPad 2" }
@@ -171,12 +221,26 @@ import Foundation
         // iPad 7
         if (platform == "iPad7,11") { return "iPad 6" }
         if (platform == "iPad7,12") { return "iPad 6" }
+        if (platform == "iPad11,6") { return "iPad 8th Gen (WiFi)" }
+        if (platform == "iPad11,7") { return "iPad 8th Gen (WiFi+Cellular)" }
+        if (platform == "iPad12,1") { return "iPad 9th Gen (WiFi)" }
+        if (platform == "iPad12,2") { return "iPad 9th Gen (WiFi+Cellular)" }
+        if (platform == "iPad13,1") { return "iPad Air 4th Gen (WiFi)" }
+        if (platform == "iPad13,2") { return "iPad Air 4th Gen (WiFi+Cellular)" }
+        if (platform == "iPad13,16") { return "iPad Air 5th Gen (WiFi)" }
+        if (platform == "iPad13,17") { return "iPad Air 5th Gen (WiFi+Cellular)" }
+        if (platform == "iPad13,18") { return "iPad 10th Gen" }
+        if (platform == "iPad13,19") { return "iPad 10th Gen" }
+        if (platform == "iPad14,8") { return "iPad Air 6th Gen" }
+        if (platform == "iPad14,9") { return "iPad Air 6th Gen" }
+        if (platform == "iPad14,10") { return "iPad Air 7th Gen" }
+        if (platform == "iPad14,11") { return "iPad Air 7th Gen" }
 
         // iPad Pro
-        if (platform == "iPad6,7") { return "iPad Pro" }
-        if (platform == "iPad6,8") { return "iPad Pro" }
         if (platform == "iPad6,3") { return "iPad Pro" }
         if (platform == "iPad6,4") { return "iPad Pro" }
+        if (platform == "iPad6,7") { return "iPad Pro" }
+        if (platform == "iPad6,8") { return "iPad Pro" }
         if (platform == "iPad7,1") { return "iPad Pro" }
         if (platform == "iPad7,2") { return "iPad Pro" }
         if (platform == "iPad7,3") { return "iPad Pro" }
@@ -189,6 +253,26 @@ import Foundation
         if (platform == "iPad8,6") { return "iPad Pro" }
         if (platform == "iPad8,7") { return "iPad Pro" }
         if (platform == "iPad8,8") { return "iPad Pro" }
+        if (platform == "iPad8,9") { return "iPad Pro" }
+        if (platform == "iPad8,10") { return "iPad Pro" }
+        if (platform == "iPad8,11") { return "iPad Pro" }
+        if (platform == "iPad8,12") { return "iPad Pro" }
+        if (platform == "iPad13,4") { return "iPad Pro" }
+        if (platform == "iPad13,5") { return "iPad Pro" }
+        if (platform == "iPad13,6") { return "iPad Pro" }
+        if (platform == "iPad13,7") { return "iPad Pro" }
+        if (platform == "iPad13,8") { return "iPad Pro" }
+        if (platform == "iPad13,9") { return "iPad Pro" }
+        if (platform == "iPad13,10") { return "iPad Pro" }
+        if (platform == "iPad13,11") { return "iPad Pro" }
+        if (platform == "iPad14,3") { return "iPad Pro" }
+        if (platform == "iPad14,4") { return "iPad Pro" }
+        if (platform == "iPad14,5") { return "iPad Pro" }
+        if (platform == "iPad14,6") { return "iPad Pro" }
+        if (platform == "iPad16,3") { return "iPad Pro" }
+        if (platform == "iPad16,4") { return "iPad Pro" }
+        if (platform == "iPad16,5") { return "iPad Pro" }
+        if (platform == "iPad16,6") { return "iPad Pro" }
 
         // iPad Mini
         if (platform == "iPad2,5") { return "iPad Mini" }
@@ -208,6 +292,8 @@ import Foundation
         // iPad Mini 5
         if (platform == "iPad11,1") { return "iPad Mini 5" }
         if (platform == "iPad11,2") { return "iPad Mini 5" }
+        if (platform == "iPad14,1") { return "iPad mini 6" }
+        if (platform == "iPad14,2") { return "iPad mini 6" }
 
         // == Apple Watch ==
         if (platform == "Watch1,1") { return "Apple Watch 38mm" }
@@ -228,14 +314,37 @@ import Foundation
         if (platform == "Watch5,2") { return "Apple Watch Series 5 44mm" }
         if (platform == "Watch5,3") { return "Apple Watch Series 5 40mm Cellular" }
         if (platform == "Watch5,4") { return "Apple Watch Series 5 44mm Cellular" }
+        if (platform == "Watch5,9") { return "Apple Watch SE 40mm case" }
+        if (platform == "Watch5,10") { return "Apple Watch SE 44mm case" }
+        if (platform == "Watch5,11") { return "Apple Watch SE 40mm case Cellular" }
+        if (platform == "Watch5,12") { return "Apple Watch SE 44mm case Cellular" }
         if (platform == "Watch6,1") { return "Apple Watch Series 6 40mm" }
         if (platform == "Watch6,2") { return "Apple Watch Series 6 44mm" }
         if (platform == "Watch6,3") { return "Apple Watch Series 6 40mm Cellular" }
         if (platform == "Watch6,4") { return "Apple Watch Series 6 44mm Cellular" }
+        if (platform == "Watch6,6") { return "Apple Watch Series 7 41mm case" }
+        if (platform == "Watch6,7") { return "Apple Watch Series 7 45mm case" }
+        if (platform == "Watch6,8") { return "Apple Watch Series 7 41mm case Cellular" }
+        if (platform == "Watch6,9") { return "Apple Watch Series 7 45mm case Cellular" }
+        if (platform == "Watch6,10") { return "Apple Watch SE 40mm case" }
+        if (platform == "Watch6,11") { return "Apple Watch SE 44mm case" }
+        if (platform == "Watch6,12") { return "Apple Watch SE 40mm case Cellular" }
+        if (platform == "Watch6,13") { return "Apple Watch SE 44mm case Cellular" }
+        if (platform == "Watch6,14") { return "Apple Watch Series 8 41mm case" }
+        if (platform == "Watch6,15") { return "Apple Watch Series 8 45mm case" }
+        if (platform == "Watch6,16") { return "Apple Watch Series 8 41mm case Cellular" }
+        if (platform == "Watch6,17") { return "Apple Watch Series 8 45mm case Cellular" }
+        if (platform == "Watch6,18") { return "Apple Watch Ultra" }
+        if (platform == "Watch7,1") { return "Apple Watch Series 9 41mm case" }
+        if (platform == "Watch7,2") { return "Apple Watch Series 9 45mm case" }
+        if (platform == "Watch7,3") { return "Apple Watch Series 9 41mm case Cellular" }
+        if (platform == "Watch7,4") { return "Apple Watch Series 9 45mm case Cellular" }
+        if (platform == "Watch7,5") { return "Apple Watch Ultra 2" }
 
         // == Others ==
         if (platform == "i386") { return "Simulator" }
         if (platform == "x86_64") { return "Simulator" }
+        if (platform == "arm64") { return "Simulator" }
         if (platform.hasPrefix("MacBookAir")) { return "MacBook Air" }
         if (platform.hasPrefix("MacBookPro")) { return "MacBook Pro" }
         if (platform.hasPrefix("MacBook")) { return "MacBook" }
