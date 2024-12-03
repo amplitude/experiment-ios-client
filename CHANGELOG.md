@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/amplitude/experiment-ios-client/compare/v1.14.0...v1.15.0) (2024-12-03)
+
+
+### Features
+
+* Update DefaultUserProvider platform and device values ([#65](https://github.com/amplitude/experiment-ios-client/issues/65)) ([9d63b9a](https://github.com/amplitude/experiment-ios-client/commit/9d63b9a39698208ebd3018f169c4a5aef077fe19))
+
 # [1.14.0](https://github.com/amplitude/experiment-ios-client/compare/v1.13.7...v1.14.0) (2024-11-26)
 
 
