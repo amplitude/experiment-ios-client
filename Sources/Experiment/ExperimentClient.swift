@@ -590,13 +590,13 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     internal func mergeUserWithProviderOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
-        try userQueue.sync {
-            var providedUser: ExperimentUser?
-            if let connectorUserProvider = self.userProvider as? ConnectorUserProvider {
-                providedUser = try connectorUserProvider.getUserOrWait(timeout: timeout)
-            } else {
-                providedUser = self.userProvider?.getUser()
-            }
+        var providedUser: ExperimentUser?
+        if let connectorUserProvider = self.userProvider as? ConnectorUserProvider {
+            providedUser = try connectorUserProvider.getUserOrWait(timeout: timeout)
+        } else {
+            providedUser = self.userProvider?.getUser()
+        }
+        return userQueue.sync {
             var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
             if self.user?.library == nil {
                 let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
