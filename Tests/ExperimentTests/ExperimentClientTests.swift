@@ -28,21 +28,23 @@ let serverVariant2 = Variant("on")
 class ExperimentClientTests: XCTestCase {
     
     func testFetch() {
-        let s = DispatchSemaphore(value: 0)
-        let client = DefaultExperimentClient(
-            apiKey: API_KEY,
-            config: ExperimentConfigBuilder()
-                .debug(true)
-                .build(),
-            storage: InMemoryStorage()
-        )
-        client.fetch(user: testUser) { (client, error) in
-            XCTAssertNil(error)
-            let variant = client.variant(KEY, fallback: nil)
-            XCTAssertEqual(serverVariant, variant)
-            s.signal()
+        for i in 0..<100 {
+            let s = DispatchSemaphore(value: 0)
+            let client = DefaultExperimentClient(
+                apiKey: API_KEY,
+                config: ExperimentConfigBuilder()
+                    .debug(true)
+                    .build(),
+                storage: InMemoryStorage()
+            )
+            client.fetch(user: testUser) { (client, error) in
+                XCTAssertNil(error)
+                let variant = client.variant(KEY, fallback: nil)
+                XCTAssertEqual(serverVariant, variant)
+                s.signal()
+            }
+            s.wait()
         }
-        s.wait()
     }
     
     func testFetchTimeout() {
@@ -217,6 +219,7 @@ class ExperimentClientTests: XCTestCase {
             .library("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
             .build()
         XCTAssertEqual(expectedUserAfterMerge, mergedUser)
+        
     }
     
     func testMergeUserWithConfiguredProvider() {

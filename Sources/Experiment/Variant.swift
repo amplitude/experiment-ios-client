@@ -136,8 +136,10 @@ import Foundation
         if let objectPayload = self.payload as? [String: Any], let otherObjectPayload = other.payload as? [String: Any] {
             return NSDictionary(dictionary: objectPayload).isEqual(to: otherObjectPayload)
         }
-        let lhsData = try? JSONEncoder().encode(self)
-        let rhsData = try? JSONEncoder().encode(other)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let lhsData = try? encoder.encode(self)
+        let rhsData = try? encoder.encode(other)
         return lhsData == rhsData
     }
     
