@@ -156,10 +156,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
 
     public func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
-        userQueue.sync {
-            if user != nil && user != ExperimentUser() {
-                self.user = user
-            }
+        if user != nil && user != ExperimentUser() {
+            self.setUser(user)
         }
         fetchQueue.async {
             do {
@@ -578,14 +576,14 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.backoff = nil
     }
 
-    internal func mergeUserWithProvider() -> ExperimentUser {
+    internal func mergeUserWithProvider(_ providedUser: ExperimentUser? = nil) -> ExperimentUser {
         userQueue.sync {
             var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
             if self.user?.library == nil {
                 let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
                 libraryUser = libraryUser.copyToBuilder().library(library).build()
             }
-            return libraryUser.merge(userProvider?.getUser())
+            return libraryUser.merge(providedUser ?? userProvider?.getUser())
         }
     }
     
@@ -596,14 +594,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         } else {
             providedUser = self.userProvider?.getUser()
         }
-        return userQueue.sync {
-            var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
-            if self.user?.library == nil {
-                let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
-                libraryUser = libraryUser.copyToBuilder().library(library).build()
-            }
-            return libraryUser.merge(providedUser)
-        }
+        return mergeUserWithProvider(providedUser)
     }
 
     private func parseResponseData(_ data: Data?) throws -> [String: Variant] {

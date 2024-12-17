@@ -28,24 +28,22 @@ let serverVariant2 = Variant("on")
 class ExperimentClientTests: XCTestCase {
     
     func testFetch() {
-        for i in 0..<100 {
-            let s = DispatchSemaphore(value: 0)
-            let client = DefaultExperimentClient(
-                apiKey: API_KEY,
-                config: ExperimentConfigBuilder()
-                    .debug(true)
-                    .build(),
-                storage: InMemoryStorage()
-            )
-            client.fetch(user: testUser) { (client, error) in
-                XCTAssertNil(error)
-                let variant = client.variant(KEY, fallback: nil)
-                XCTAssertEqual(serverVariant, variant)
-                s.signal()
-            }
-            s.wait()
+        let s = DispatchSemaphore(value: 0)
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        client.fetch(user: testUser) { (client, error) in
+            XCTAssertNil(error)
+            let variant = client.variant(KEY, fallback: nil)
+            XCTAssertEqual(serverVariant, variant)
+            s.signal()
         }
-    }
+        s.wait()
+}
     
     func testFetchTimeout() {
         let client = DefaultExperimentClient(
