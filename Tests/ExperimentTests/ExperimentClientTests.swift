@@ -217,6 +217,7 @@ class ExperimentClientTests: XCTestCase {
             .library("\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)")
             .build()
         XCTAssertEqual(expectedUserAfterMerge, mergedUser)
+        
     }
     
     func testMergeUserWithConfiguredProvider() {

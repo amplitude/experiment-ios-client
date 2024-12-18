@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.osx.source_files       = 'sources/Experiment/**/*.{h,swift}'
   spec.osx.resource_bundle    = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
 
-  spec.tvos.deployment_target = '10.0'
+  spec.tvos.deployment_target = '11.0'
   spec.tvos.source_files      = 'sources/Experiment/**/*.{h,swift}'
   spec.tvos.resource_bundle   = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
   
