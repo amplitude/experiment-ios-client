@@ -43,7 +43,7 @@ class ExperimentClientTests: XCTestCase {
             s.signal()
         }
         s.wait()
-}
+    }
     
     func testFetchTimeout() {
         let client = DefaultExperimentClient(
