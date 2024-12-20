@@ -66,6 +66,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.FetchQueue")
     private let flagsQueue = DispatchQueue(label: "com.amplitude.experiment.FlagsQueue")
     private let startQueue = DispatchQueue(label: "com.amplitude.experiment.StartQueue")
+    private let userQueue = DispatchQueue(label: "com.amplitude.experiment.UserQueue")
 
     internal init(apiKey: String, config: ExperimentConfig, storage: Storage) {
         self.apiKey = apiKey
@@ -156,7 +157,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     public func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
         if user != nil && user != ExperimentUser() {
-            self.user = user
+            self.setUser(user)
         }
         fetchQueue.async {
             do {
@@ -221,7 +222,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
 
     public func setUser(_ user: ExperimentUser?) {
-        self.user = user
+        userQueue.sync {
+            self.user = user
+        }
     }
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
@@ -573,13 +576,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.backoff = nil
     }
 
-    internal func mergeUserWithProvider() -> ExperimentUser {
-        var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
-        if self.user?.library == nil {
-            let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
-            libraryUser = libraryUser.copyToBuilder().library(library).build()
+    internal func mergeUserWithProvider(_ providedUser: ExperimentUser? = nil) -> ExperimentUser {
+        userQueue.sync {
+            var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
+            if self.user?.library == nil {
+                let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
+                libraryUser = libraryUser.copyToBuilder().library(library).build()
+            }
+            return libraryUser.merge(providedUser ?? userProvider?.getUser())
         }
-        return libraryUser.merge(userProvider?.getUser())
     }
     
     internal func mergeUserWithProviderOrWait(timeout: DispatchTimeInterval) throws -> ExperimentUser {
@@ -589,12 +594,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         } else {
             providedUser = self.userProvider?.getUser()
         }
-        var libraryUser: ExperimentUser = self.user ?? ExperimentUser()
-        if self.user?.library == nil {
-            let library = "\(ExperimentConfig.Constants.Library)/\(ExperimentConfig.Constants.Version)"
-            libraryUser = libraryUser.copyToBuilder().library(library).build()
-        }
-        return libraryUser.merge(providedUser)
+        return mergeUserWithProvider(providedUser)
     }
 
     private func parseResponseData(_ data: Data?) throws -> [String: Variant] {
