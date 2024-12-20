@@ -24,7 +24,7 @@ Pod::Spec.new do |spec|
   spec.tvos.source_files      = 'sources/Experiment/**/*.{h,swift}'
   spec.tvos.resource_bundle   = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
   
-  spec.watchos.deployment_target = '3.0'
+  spec.watchos.deployment_target = '4.0'
   spec.watchos.source_files      = 'sources/Experiment/**/*.{h,swift}'
   spec.watchos.resource_bundle   = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
   
