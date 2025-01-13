@@ -1,3 +1,16 @@
+# [1.16.0](https://github.com/amplitude/experiment-ios-client/compare/v1.15.0...v1.16.0) (2025-01-13)
+
+
+### Bug Fixes
+
+* add synchronization around the client's user object ([#66](https://github.com/amplitude/experiment-ios-client/issues/66)) ([964616f](https://github.com/amplitude/experiment-ios-client/commit/964616f3812841ff39f170738b74f15e4f7fbf1e))
+
+
+### Features
+
+* update ios deployment target to 11.0 ([b550e27](https://github.com/amplitude/experiment-ios-client/commit/b550e27002e7a37595a649a9186e3ae85f1eca37))
+* update watchos deployment target to 4.0 ([c80f40a](https://github.com/amplitude/experiment-ios-client/commit/c80f40ad40e539c309a2ebbc3417a2bca107a1c6))
+
 # [1.15.0](https://github.com/amplitude/experiment-ios-client/compare/v1.14.0...v1.15.0) (2024-12-03)
 
 
