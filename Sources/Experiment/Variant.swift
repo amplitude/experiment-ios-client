@@ -88,18 +88,13 @@ import Foundation
         let expKey = try? values.decode(String.self, forKey: .expKey)
         let metadataAny = try? values.decode([String: AnyDecodable].self, forKey: .metadata)
         var metadata = metadataAny?.filter { element in element.value.value != nil }.mapValues { anyDecodable in anyDecodable.value! }
-        let metadataExpKey = metadata?["experimentKey"] as? String
-        if let expKey = expKey, metadataExpKey == nil {
-            if metadata == nil {
-                metadata = ["experimentKey": expKey]
-            } else if metadata?["experimentKey"] != nil {
+        self.expKey = expKey ?? metadata?["experimentKey"] as? String
+        if let expKey = self.expKey {
+            if metadata != nil {
                 metadata?["experimentKey"] = expKey
+            } else {
+                metadata = ["experimentKey": expKey]
             }
-            self.expKey = expKey
-        } else if let metadataExpKey = metadataExpKey, expKey == nil {
-            self.expKey = metadataExpKey
-        } else {
-            self.expKey = nil
         }
         self.metadata = metadata
     }
