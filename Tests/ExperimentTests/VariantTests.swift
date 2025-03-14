@@ -192,4 +192,12 @@ class VariantTests: XCTestCase {
         let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
         XCTAssertEqual(Variant(key: "treatment", value: "on", expKey: "exp-1", metadata: ["experimentKey":"exp-1"]), variant)
     }
+    
+    func testV2VariantTransformationWithBothExperimentKeys() {
+        let rawVariant = """
+            {"key":"treatment", "value":"on", "expKey":"exp-1", "metadata":{"experimentKey":"exp-1"}}
+        """.data(using: .utf8)!
+        let variant = try! JSONDecoder().decode(Variant.self, from: rawVariant)
+        XCTAssertEqual(Variant(key: "treatment", value: "on", expKey: "exp-1", metadata: ["experimentKey":"exp-1"]), variant)
+    }
 }
