@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/amplitude/experiment-ios-client/compare/v1.16.0...v1.16.1) (2025-03-14)
+
+
+### Bug Fixes
+
+* fix variant experiment key serialization w/ both keys set ([#68](https://github.com/amplitude/experiment-ios-client/issues/68)) ([a62fbc0](https://github.com/amplitude/experiment-ios-client/commit/a62fbc0fa31024c6f63e33361933aa96aa19d1d8))
+
 # [1.16.0](https://github.com/amplitude/experiment-ios-client/compare/v1.15.0...v1.16.0) (2025-01-13)
 
 
