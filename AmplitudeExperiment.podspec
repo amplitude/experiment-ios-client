@@ -35,5 +35,6 @@ Pod::Spec.new do |spec|
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   spec.dependency 'AnalyticsConnector', '~> 1.3'
+  spec.dependency 'AmplitudeCore', '>=1.0.10', '<2.0.0'
 
 end

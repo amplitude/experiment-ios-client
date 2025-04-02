@@ -41,6 +41,8 @@
 		20F8C8DF2AB14B7100B5717C /* SelectableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F8C8DE2AB14B7100B5717C /* SelectableTests.swift */; };
 		20F8C8E12AB218C600B5717C /* TopologicalSortTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F8C8E02AB218C600B5717C /* TopologicalSortTests.swift */; };
 		3E0148342921C08D004D259D /* FetchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0148332921C08D004D259D /* FetchOptions.swift */; };
+		4EDAAFB02DB0609B00C90724 /* AmplitudeCoreFramework in Frameworks */ = {isa = PBXBuildFile; productRef = 4EDAAFAF2DB0609B00C90724 /* AmplitudeCoreFramework */; };
+		4EDAAFB22DB060A700C90724 /* ExperimentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */; };
 		E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9030DB425B8AFC600BA1BA8 /* Variant.swift */; };
 		E914961925796DA800C64B38 /* Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E914960F25796DA800C64B38 /* Experiment.framework */; };
 		E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914961D25796DA800C64B38 /* ExperimentClientTests.swift */; };
@@ -103,6 +105,7 @@
 		20F8C8DE2AB14B7100B5717C /* SelectableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableTests.swift; sourceTree = "<group>"; };
 		20F8C8E02AB218C600B5717C /* TopologicalSortTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopologicalSortTests.swift; sourceTree = "<group>"; };
 		3E0148332921C08D004D259D /* FetchOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchOptions.swift; sourceTree = "<group>"; };
+		4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentPlugin.swift; sourceTree = "<group>"; };
 		E9030DB425B8AFC600BA1BA8 /* Variant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variant.swift; sourceTree = "<group>"; };
 		E914960F25796DA800C64B38 /* Experiment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Experiment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E914961225796DA800C64B38 /* Experiment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Experiment.h; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4EDAAFB02DB0609B00C90724 /* AmplitudeCoreFramework in Frameworks */,
 				207C95FA27A9F0A4008EE143 /* AnalyticsConnector.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -174,6 +178,7 @@
 		E914961125796DA800C64B38 /* Experiment */ = {
 			isa = PBXGroup;
 			children = (
+				4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */,
 				201FCB5F2BBB879500F07EC1 /* PrivacyInfo.xcprivacy */,
 				20F8C8C32AAFE2A100B5717C /* Murmur3.swift */,
 				20F8C8C62AAFE2B300B5717C /* SemanticVersion.swift */,
@@ -276,6 +281,7 @@
 			);
 			name = Experiment;
 			packageProductDependencies = (
+				4EDAAFAF2DB0609B00C90724 /* AmplitudeCoreFramework */,
 			);
 			productName = Experiment;
 			productReference = E914960F25796DA800C64B38 /* Experiment.framework */;
@@ -328,6 +334,7 @@
 			);
 			mainGroup = E914960525796DA800C64B38;
 			packageReferences = (
+				4EDAAFAE2DB0609A00C90724 /* XCRemoteSwiftPackageReference "AmplitudeCore-Swift" */,
 			);
 			productRefGroup = E914961025796DA800C64B38 /* Products */;
 			projectDirPath = "";
@@ -377,6 +384,7 @@
 				207CBB9426AB8BD400A0029D /* ExperimentAnalyticsEvent.swift in Sources */,
 				20F8C8CA2AAFE2BF00B5717C /* TopologicalSort.swift in Sources */,
 				E9C5D91E2579718E00867574 /* ExperimentConfig.swift in Sources */,
+				4EDAAFB22DB060A700C90724 /* ExperimentPlugin.swift in Sources */,
 				20C9FA382787621100A4D530 /* ConnectorExposureTrackingProvider.swift in Sources */,
 				E9C5D9202579718E00867574 /* Experiment.swift in Sources */,
 				2073275A278E42B0002BBD43 /* SessionAnalyticsProvider.swift in Sources */,
@@ -701,6 +709,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4EDAAFAE2DB0609A00C90724 /* XCRemoteSwiftPackageReference "AmplitudeCore-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/amplitude/AmplitudeCore-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.10;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4EDAAFAF2DB0609B00C90724 /* AmplitudeCoreFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4EDAAFAE2DB0609A00C90724 /* XCRemoteSwiftPackageReference "AmplitudeCore-Swift" */;
+			productName = AmplitudeCoreFramework;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E914960625796DA800C64B38 /* Project object */;
 }
