@@ -106,26 +106,26 @@ import Foundation
         self.exposureTrackingProvider = builder.exposureTrackingProvider
     }
 
-    internal struct Defaults {
-        static let debug: Bool = false
-        static let instanceName: String = "$default_instance"
-        static let fallbackVariant: Variant = Variant()
-        static let initialFlags: String? = nil
-        static let initialVariants: [String: Variant] = [:]
-        static let source: Source = Source.LocalStorage
-        static let serverUrl: String = "https://api.lab.amplitude.com"
-        static let flagsServerUrl: String = "https://flag.lab.amplitude.com"
-        static let serverZone: ServerZone = .US
-        static let fetchTimeoutMillis: Int = 10000
-        static let retryFetchOnFailure: Bool = true
-        static let automaticExposureTracking: Bool = true
-        static let fetchOnStart: NSNumber? = 1
-        static let pollOnStart: Bool = true
-        static let flagConfigPollingIntervalMillis = 300000
-        static let automaticFetchOnAmplitudeIdentityChange: Bool = false
-        static let userProvider: ExperimentUserProvider? = nil
-        static let analyticsProvider: ExperimentAnalyticsProvider? = nil
-        static let exposureTrackingProvider: ExposureTrackingProvider? = nil
+    public struct Defaults {
+        public static let debug: Bool = false
+        public static let instanceName: String = "$default_instance"
+        public static let fallbackVariant: Variant = Variant()
+        public static let initialFlags: String? = nil
+        public static let initialVariants: [String: Variant] = [:]
+        public static let source: Source = Source.LocalStorage
+        public static let serverUrl: String = "https://api.lab.amplitude.com"
+        public static let flagsServerUrl: String = "https://flag.lab.amplitude.com"
+        public static let serverZone: ServerZone = .US
+        public static let fetchTimeoutMillis: Int = 10000
+        public static let retryFetchOnFailure: Bool = true
+        public static let automaticExposureTracking: Bool = true
+        public static let fetchOnStart: NSNumber? = 1
+        public static let pollOnStart: Bool = true
+        public static let flagConfigPollingIntervalMillis = 300000
+        public static let automaticFetchOnAmplitudeIdentityChange: Bool = false
+        public static let userProvider: ExperimentUserProvider? = nil
+        public static let analyticsProvider: ExperimentAnalyticsProvider? = nil
+        public static let exposureTrackingProvider: ExposureTrackingProvider? = nil
     }
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
