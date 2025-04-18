@@ -27,7 +27,11 @@ Pod::Spec.new do |spec|
   spec.watchos.deployment_target = '4.0'
   spec.watchos.source_files      = 'sources/Experiment/**/*.{h,swift}'
   spec.watchos.resource_bundle   = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
-  
+
+  spec.visionos.deployment_target = '1.0'
+  spec.visionos.source_files      = 'sources/Experiment/**/*.{h,swift}'
+  spec.visionos.resource_bundle   = { 'AmplitudeExperiment': ['Sources/Experiment/PrivacyInfo.xcprivacy'] }
+
   spec.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   spec.dependency 'AnalyticsConnector', '~> 1.0'
