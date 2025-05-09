@@ -68,12 +68,27 @@ public class ExperimentPlugin: NSObject, UniversalPlugin {
 
     @objc public var experiment: ExperimentClient?
 
-    private let config: Config
+    private enum ExperimentClientMode {
+        case hosted(config: Config)
+        case external
+    }
+
+    private let mode: ExperimentClientMode
+    private var context: AmplitudeContext?
     private var analytics: (any AnalyticsClient)?
     private var logger: CoreLogger?
 
     public var name: String? {
-        return Self.instanceName(deploymentKey: config.deploymentKey)
+        switch mode {
+        case .hosted(config: let config):
+            return Self.instanceName(deploymentKey: config.deploymentKey)
+        case .external:
+            if let experiment = experiment as? DefaultExperimentClient {
+                return Self.instanceName(deploymentKey: experiment.apiKey)
+            } else {
+                return nil
+            }
+        }
     }
 
     // Dedup instances by deployment key.
@@ -90,44 +105,55 @@ public class ExperimentPlugin: NSObject, UniversalPlugin {
     }
 
     @objc public init(config: Config = .init()) {
-        self.config = config
+        mode = .hosted(config: config)
+    }
+
+    @objc public init(experiment: ExperimentClient) {
+        mode = .external
+        self.experiment = experiment
     }
 
     public func setup(analyticsClient: any AmplitudeCore.AnalyticsClient,
                       amplitudeContext: AmplitudeCore.AmplitudeContext) {
+        self.context = amplitudeContext
         self.analytics = analyticsClient
 
-        let configBuilder = ExperimentConfigBuilder()
-        configBuilder.debug = config.debug
-        configBuilder.instanceName = amplitudeContext.instanceName
-        configBuilder.fallbackVariant = config.fallbackVariant
-        configBuilder.initialFlags = config.initialFlags
-        configBuilder.initialVariants = config.initialVariants
-        configBuilder.source = config.source
-        configBuilder.serverUrl = config.serverUrl
-        configBuilder.flagsServerUrl = config.flagsServerUrl
-        let serverZone: ServerZone
-        switch amplitudeContext.serverZone {
-        case .US:
-            serverZone = .US
-        case .EU:
-            serverZone = .EU
-        @unknown default:
-            serverZone = .US
-        }
-        configBuilder.serverZone = serverZone
-        configBuilder.fetchTimeoutMillis = config.fetchTimeoutMillis
-        configBuilder.retryFetchOnFailure = config.retryFetchOnFailure
-        configBuilder.automaticExposureTracking = config.automaticExposureTracking
-        configBuilder.fetchOnStart = config.fetchOnStart
-        configBuilder.pollOnStart = config.pollOnStart
-        configBuilder.flagConfigPollingIntervalMillis = config.flagConfigPollingIntervalMillis
-        configBuilder.automaticFetchOnAmplitudeIdentityChange = config.automaticFetchOnAmplitudeIdentityChange
-        configBuilder.userProvider = self
-        configBuilder.exposureTrackingProvider = self
+        switch mode {
+        case .hosted(let config):
+            let configBuilder = ExperimentConfigBuilder()
+            configBuilder.debug = config.debug
+            configBuilder.instanceName = amplitudeContext.instanceName
+            configBuilder.fallbackVariant = config.fallbackVariant
+            configBuilder.initialFlags = config.initialFlags
+            configBuilder.initialVariants = config.initialVariants
+            configBuilder.source = config.source
+            configBuilder.serverUrl = config.serverUrl
+            configBuilder.flagsServerUrl = config.flagsServerUrl
+            let serverZone: ServerZone
+            switch amplitudeContext.serverZone {
+            case .US:
+                serverZone = .US
+            case .EU:
+                serverZone = .EU
+            @unknown default:
+                serverZone = .US
+            }
+            configBuilder.serverZone = serverZone
+            configBuilder.fetchTimeoutMillis = config.fetchTimeoutMillis
+            configBuilder.retryFetchOnFailure = config.retryFetchOnFailure
+            configBuilder.automaticExposureTracking = config.automaticExposureTracking
+            configBuilder.fetchOnStart = config.fetchOnStart
+            configBuilder.pollOnStart = config.pollOnStart
+            configBuilder.flagConfigPollingIntervalMillis = config.flagConfigPollingIntervalMillis
+            configBuilder.automaticFetchOnAmplitudeIdentityChange = config.automaticFetchOnAmplitudeIdentityChange
+            configBuilder.userProvider = self
+            configBuilder.exposureTrackingProvider = self
 
-        experiment = Experiment.initialize(apiKey: config.deploymentKey ?? amplitudeContext.apiKey,
-                                           config: configBuilder.build())
+            experiment = Experiment.initialize(apiKey: config.deploymentKey ?? amplitudeContext.apiKey,
+                                               config: configBuilder.build())
+        case .external:
+            break
+        }
     }
 }
 
@@ -188,7 +214,17 @@ extension ExperimentPlugin: ExposureTrackingProvider {
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension PluginHost {
 
-    public func experiment(with apiKey: String) -> ExperimentClient? {
+    public func experiment(apiKey: String?) -> ExperimentClient? {
         return (plugin(name: ExperimentPlugin.instanceName(deploymentKey: apiKey)) as? ExperimentPlugin)?.experiment
+    }
+
+    public var experiment: ExperimentClient? {
+        let plugins = plugins(type: ExperimentPlugin.self)
+        // If there's only one experiment instance attached, we can reference it directly
+        if plugins.count == 1 {
+            return plugins.first?.experiment
+        } else {
+            return nil
+        }
     }
 }
