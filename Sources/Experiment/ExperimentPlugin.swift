@@ -73,7 +73,20 @@ public class ExperimentPlugin: NSObject, UniversalPlugin {
     private var logger: CoreLogger?
 
     public var name: String? {
-        return Self.pluginName
+        return Self.instanceName(deploymentKey: config.deploymentKey)
+    }
+
+    // Dedup instances by deployment key.
+    // A nil deployment key means we should use the API key of the analytics client we attach to.
+    // But this may not be available as the client may not be attached
+    // So we indicate this by deduping just on pluginName, as api key should be consistent
+    // per analytics client
+    fileprivate static func instanceName(deploymentKey: String?) -> String {
+        if let deploymentKey {
+            return pluginName + "_" + deploymentKey
+        } else {
+            return pluginName
+        }
     }
 
     @objc public init(config: Config = .init()) {
@@ -175,7 +188,7 @@ extension ExperimentPlugin: ExposureTrackingProvider {
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 extension PluginHost {
 
-    public var experiment: ExperimentClient? {
-        return (plugin(name: ExperimentPlugin.pluginName) as? ExperimentPlugin)?.experiment
+    public func experiment(with apiKey: String) -> ExperimentClient? {
+        return (plugin(name: ExperimentPlugin.instanceName(deploymentKey: apiKey)) as? ExperimentPlugin)?.experiment
     }
 }
