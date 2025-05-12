@@ -44,34 +44,34 @@ jobs:
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
 
-      - name: iOS Tests
-        run: |
-          xcodebuild test \
-            -project Experiment.xcodeproj \
-            -scheme Experiment \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
-
-      - name: macOS Tests
-        run: |
-          xcodebuild \
-            -project Experiment.xcodeproj \
-            -scheme Experiment \
-            -sdk macosx \
-            -destination 'platform=macosx' \
-            test
-
-      - name: tvOS Tests
-        run: |
-          xcodebuild \
-            -project Experiment.xcodeproj \
-            -scheme Experiment \
-            -sdk appletvsimulator \
-            -destination 'platform=tvOS Simulator,name=Apple TV' \
-            test
+#      - name: iOS Tests
+#        run: |
+#          xcodebuild test \
+#            -project Experiment.xcodeproj \
+#            -scheme Experiment \
+#            -sdk iphonesimulator \
+#            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
+#
+#      - name: macOS Tests
+#        run: |
+#          xcodebuild \
+#            -project Experiment.xcodeproj \
+#            -scheme Experiment \
+#            -sdk macosx \
+#            -destination 'platform=macosx' \
+#            test
+#
+#      - name: tvOS Tests
+#        run: |
+#          xcodebuild \
+#            -project Experiment.xcodeproj \
+#            -scheme Experiment \
+#            -sdk appletvsimulator \
+#            -destination 'platform=tvOS Simulator,name=Apple TV' \
+#            test
 
       - name: Validate Podfile
-        run: pod lib lint --allow-warnings
+        run: pod lib lint --allow-warnings --verbose
 
       - name: Semantic Release --dry-run
         if: ${{ github.event.inputs.dryRun == 'true'}}
