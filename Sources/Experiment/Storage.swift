@@ -39,6 +39,8 @@ internal class UserDefaultsStorage: Storage {
     }
 }
 
+private let storageQueue = DispatchQueue(label: "com.amplitude.experiment.loadStoreCache", attributes: .concurrent)
+
 internal class LoadStoreCache<Value : Codable> {
     
     private var cache: [String: Value] = [:]
@@ -88,10 +90,17 @@ internal class LoadStoreCache<Value : Codable> {
         }
     }
     
-    func store() {
+    func store(async: Bool = true) {
         do {
             let data = try JSONEncoder().encode(cache)
-            storage.put(key: namespace, value: data)
+            if (async) {
+                storageQueue.async { [self] in
+                    storage.put(key: self.namespace, value: data)
+                }
+            } else {
+                // Used for testing
+                storage.put(key: self.namespace, value: data)
+            }
         } catch {
             print("[Experiment] save failed: \(error)")
         }
