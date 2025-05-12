@@ -82,7 +82,7 @@ class LoadStoreCacheTests: XCTestCase {
         let storage = InMemoryStorage()
         let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
         cache.put(key: "flag-key-1", value: Variant(key: "on", value: "on"))
-        cache.store()
+        cache.store(async: false)
         let storageData = storage.get(key: namespace)
         let storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
         let expectedVariants = ["flag-key-1": Variant(key: "on", value: "on")]
@@ -98,13 +98,13 @@ class LoadStoreCacheTests: XCTestCase {
         """.data(using: .utf8)!
         storage.put(key: namespace, value: initialData)
         cache.put(key: "flag-key-1", value: Variant(key: "off", value: "off"))
-        cache.store()
+        cache.store(async: false)
         var storageData = storage.get(key: namespace)
         var storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
         var expectedVariants = ["flag-key-1": Variant(key: "off", value: "off")]
         XCTAssertEqual(expectedVariants, storageVariants)
         cache.clear()
-        cache.store()
+        cache.store(async: false)
         storageData = storage.get(key: namespace)
         storageVariants = try! JSONDecoder().decode([String:Variant].self, from: storageData!)
         expectedVariants = [:]

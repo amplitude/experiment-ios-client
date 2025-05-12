@@ -90,10 +90,15 @@ internal class LoadStoreCache<Value : Codable> {
         }
     }
     
-    func store() {
+    func store(async: Bool = true) {
         do {
             let data = try JSONEncoder().encode(cache)
-            storageQueue.async { [self] in
+            if (async) {
+                storageQueue.async { [self] in
+                    storage.put(key: self.namespace, value: data)
+                }
+            } else {
+                // Used for testing
                 storage.put(key: self.namespace, value: data)
             }
         } catch {
