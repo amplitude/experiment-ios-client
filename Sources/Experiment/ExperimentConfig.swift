@@ -282,7 +282,7 @@ import Foundation
     internal struct Constants {
         // Version string is matched in release.config.js
         // Changing this may result in breaking automated releases
-        internal static let Version: String = "1.16.1"
+        internal static let Version: String = "1.17.0"
         internal static let Library: String = "experiment-ios-client"
     }
     

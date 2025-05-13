@@ -1,3 +1,16 @@
+# [1.17.0](https://github.com/amplitude/experiment-ios-client/compare/v1.16.1...v1.17.0) (2025-05-13)
+
+
+### Bug Fixes
+
+* fix deadlock synchronization ([#71](https://github.com/amplitude/experiment-ios-client/issues/71)) ([19ad0b4](https://github.com/amplitude/experiment-ios-client/commit/19ad0b41e0c0a3f5282ed49e957554d815290a4b))
+* update analytics connector to 1.3.1 ([5740bd7](https://github.com/amplitude/experiment-ios-client/commit/5740bd73b7f53c66c1a83d6ac067a14dae209fee))
+
+
+### Features
+
+* add support for visionOS ([#69](https://github.com/amplitude/experiment-ios-client/issues/69)) ([b91e1e0](https://github.com/amplitude/experiment-ios-client/commit/b91e1e0c1da8d2e47f2883ba5b79ad1febc2df5b))
+
 ## [1.16.1](https://github.com/amplitude/experiment-ios-client/compare/v1.16.0...v1.16.1) (2025-03-14)
 
 
