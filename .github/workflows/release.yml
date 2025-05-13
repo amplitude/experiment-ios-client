@@ -50,7 +50,7 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1'
 
       - name: macOS Tests
         run: |
