@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/amplitude/experiment-ios-client/compare/v1.17.0...v1.18.0) (2025-05-14)
+
+
+### Features
+
+* add core dependency and plugin ([#70](https://github.com/amplitude/experiment-ios-client/issues/70)) ([e384a71](https://github.com/amplitude/experiment-ios-client/commit/e384a71f21fc1a07a8eeaa1eb4bbfed3697f8f82))
+
 # [1.17.0](https://github.com/amplitude/experiment-ios-client/compare/v1.16.1...v1.17.0) (2025-05-13)
 
 
