@@ -38,7 +38,7 @@ private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 
 internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
-    private let apiKey: String
+    let apiKey: String
     
     internal let variants: LoadStoreCache<Variant>
     private let variantsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)

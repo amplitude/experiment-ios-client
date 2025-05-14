@@ -1,1 +1,2 @@
-github "amplitude/analytics-connector-ios" "v1.3.0"
+binary "https://amplitude.github.io/AmplitudeCore-Swift/Carthage/AmplitudeCore.json" "1.0.11"
+github "amplitude/analytics-connector-ios" "v1.3.1"
