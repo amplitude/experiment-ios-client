@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/amplitude/experiment-ios-client/compare/v1.18.0...v1.18.1) (2025-05-30)
+
+
+### Bug Fixes
+
+* improve plugin objc interface ([#73](https://github.com/amplitude/experiment-ios-client/issues/73)) ([77ec832](https://github.com/amplitude/experiment-ios-client/commit/77ec8323e723ee941cad9d87e025266ddcba00e5))
+
 # [1.18.0](https://github.com/amplitude/experiment-ios-client/compare/v1.17.0...v1.18.0) (2025-05-14)
 
 
