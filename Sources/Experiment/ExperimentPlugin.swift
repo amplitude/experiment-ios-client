@@ -12,24 +12,29 @@ import Foundation
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
 public class ExperimentPlugin: NSObject, UniversalPlugin {
 
+    @objc(ExperimentPluginConfig)
     @objcMembers
     public class Config : NSObject {
 
-        public let deploymentKey: String?
-        public let debug: Bool
-        public let fallbackVariant: Variant
-        public let initialFlags: String?
-        public let initialVariants: [String: Variant]
-        public let source: Source
-        public let serverUrl: String
-        public let flagsServerUrl: String
-        public let fetchTimeoutMillis: Int
-        public let retryFetchOnFailure: Bool
-        public let automaticExposureTracking: Bool
-        public let fetchOnStart: NSNumber? // objc cant do nil boolean values, use nsnumber
-        public let pollOnStart: Bool
-        public let flagConfigPollingIntervalMillis: Int
-        public let automaticFetchOnAmplitudeIdentityChange: Bool
+        public var deploymentKey: String?
+        public var debug: Bool
+        public var fallbackVariant: Variant
+        public var initialFlags: String?
+        public var initialVariants: [String: Variant]
+        public var source: Source
+        public var serverUrl: String
+        public var flagsServerUrl: String
+        public var fetchTimeoutMillis: Int
+        public var retryFetchOnFailure: Bool
+        public var automaticExposureTracking: Bool
+        public var fetchOnStart: NSNumber? // objc cant do nil boolean values, use nsnumber
+        public var pollOnStart: Bool
+        public var flagConfigPollingIntervalMillis: Int
+        public var automaticFetchOnAmplitudeIdentityChange: Bool
+
+        public convenience override init() {
+            self.init(deploymentKey: nil)
+        }
 
         public init(deploymentKey: String? = nil,
                     debug: Bool = ExperimentConfig.Defaults.debug,
