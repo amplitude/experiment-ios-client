@@ -4,4 +4,4 @@ iOS Client SDK for Experiment
 
 ## Getting Started
 
-See the [Documentation](https://amplitude-lab.readme.io/docs/ios-sdk) for getting started.
+See the [Documentation](https://amplitude.com/docs/sdks/experiment-sdks/experiment-ios) for getting started.
