@@ -8,14 +8,14 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Checkout 
         uses: actions/checkout@v2
 
-      - name: Set Xcode 15
+      - name: Set Xcode 16.3
         run: |
-          sudo xcode-select -switch /Applications/Xcode_15.1.app
+          sudo xcode-select -switch /Applications/Xcode_16.3.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -26,7 +26,7 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.2'
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
 
       - name: macOS Tests
         run: |
@@ -34,7 +34,7 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk macosx \
-            -destination 'platform=macosx' \
+            -destination 'platform=macOS' \
             test
 
       - name: tvOS Tests
