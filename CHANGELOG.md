@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/amplitude/experiment-ios-client/compare/v1.18.1...v1.18.2) (2025-08-22)
+
+
+### Bug Fixes
+
+* avoid supported version deprecated warning ([#76](https://github.com/amplitude/experiment-ios-client/issues/76)) ([91b1957](https://github.com/amplitude/experiment-ios-client/commit/91b195799f2c99b2835ea799ea32bd693b35b066))
+
 ## [1.18.1](https://github.com/amplitude/experiment-ios-client/compare/v1.18.0...v1.18.1) (2025-05-30)
 
 
