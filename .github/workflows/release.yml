@@ -11,7 +11,7 @@ on:
 jobs:
   authorize:
     name: Authorize
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: ${{ github.actor }} permission check to do a release
         uses: octokit/request-action@v2.0.0
@@ -23,7 +23,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: [authorize]
     env:
       SWIFT_DOC_VERSION: '1.0.0-rc.1'
@@ -32,9 +32,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set Xcode 16.1
+      - name: Set Xcode 16.3
         run: |
-          sudo xcode-select -switch /Applications/Xcode_16.1.app
+          sudo xcode-select -switch /Applications/Xcode_16.3.app
 
       - name: Set up Node
         uses: actions/setup-node@v4
