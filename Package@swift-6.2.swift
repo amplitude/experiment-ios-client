@@ -34,7 +34,8 @@ let package = Package(
             ],
             path: "Sources/Experiment",
             exclude: ["Info.plist"],
-            resources: [.copy("PrivacyInfo.xcprivacy")]),
+            resources: [.copy("PrivacyInfo.xcprivacy")],
+            swiftSettings: [.swiftLanguageMode(.v5)]),
         .testTarget(
             name: "ExperimentTests",
             dependencies: ["Experiment"],
