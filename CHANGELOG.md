@@ -1,3 +1,10 @@
+## [1.18.3](https://github.com/amplitude/experiment-ios-client/compare/v1.18.2...v1.18.3) (2025-09-02)
+
+
+### Bug Fixes
+
+* specify swift 5 language mode ([#78](https://github.com/amplitude/experiment-ios-client/issues/78)) ([9760637](https://github.com/amplitude/experiment-ios-client/commit/976063700023c0e7d3f180a0ecd04bfef550749a))
+
 ## [1.18.2](https://github.com/amplitude/experiment-ios-client/compare/v1.18.1...v1.18.2) (2025-08-22)
 
 
