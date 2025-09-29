@@ -15,7 +15,7 @@ let KEY = "sdk-ci-test"
 let INITIAL_KEY = "initial-key"
 
 let testUser = ExperimentUserBuilder().userId("test_user").build()
-let serverVariant = Variant("on", payload: "payload", key: "on")
+let serverVariant = Variant("on", payload: "payload", key: "on", metadata: ["evaluationId": ""])
 let fallbackVariant = Variant("fallback", payload: "payload")
 let initialVariant = Variant("initial")
 let initialVariants: [String: Variant] = [
@@ -23,7 +23,14 @@ let initialVariants: [String: Variant] = [
     KEY: Variant("off")
 ]
 let KEY2 = "sdk-ci-test-2"
-let serverVariant2 = Variant("on")
+let serverVariant2 = Variant("on", metadata: ["evaluationId": ""])
+
+func assertVariantEqual(expected: Variant, actual: Variant) {
+    var metadata = expected.metadata ?? (actual.metadata != nil ? [:] : nil)
+    metadata?["evaluationId"] = actual.metadata?["evaluationId"]
+    let matchedExpected = Variant(key: expected.key, value: expected.value, payload: expected.payload, expKey: expected.expKey, metadata: metadata)
+    XCTAssertEqual(matchedExpected, actual)
+}
 
 class ExperimentClientTests: XCTestCase {
     
@@ -39,7 +46,7 @@ class ExperimentClientTests: XCTestCase {
         client.fetch(user: testUser) { (client, error) in
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
-            XCTAssertEqual(serverVariant, variant)
+            assertVariantEqual(expected: serverVariant, actual: variant)
             s.signal()
         }
         s.wait()
@@ -89,7 +96,7 @@ class ExperimentClientTests: XCTestCase {
         // Wait for retry to succeed
         _ = s.wait(timeout: .now() + .seconds(2))
         let variant = client.variant(KEY, fallback: nil)
-        XCTAssertEqual(serverVariant, variant)
+        assertVariantEqual(expected: serverVariant, actual: variant)
     }
     
     func testFallbackVariantReturnedInCorrectOrder() {
@@ -126,9 +133,9 @@ class ExperimentClientTests: XCTestCase {
         client.fetch(user: testUser, options: options) { (client, error) in
             XCTAssertNil(error)
             let variant = client.variant(KEY, fallback: nil)
-            XCTAssertEqual(serverVariant, variant)
+            assertVariantEqual(expected: serverVariant, actual: variant)
             let variant2 = client.variant(KEY2, fallback: nil)
-            XCTAssertEqual(serverVariant2, variant2)
+            assertVariantEqual(expected: serverVariant2, actual: variant2)
             s.signal()
         }
         s.wait()
@@ -490,7 +497,7 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(nil, variant.value)
         client.fetchBlocking(user: user)
         variant = client.variant("sdk-ci-test")
-        XCTAssertEqual(Variant(key: "on", value: "on", payload: "payload"), variant)
+        assertVariantEqual(expected: Variant(key: "on", value: "on", payload: "payload"), actual: variant)
     }
     
     // Server Zone Tests
@@ -746,7 +753,7 @@ class ExperimentClientTests: XCTestCase {
             .build()
         client.startBlocking(user: user)
         let variant = client.variant("sdk-ci-test")
-        XCTAssertEqual(Variant(key: "on", value: "on", payload: "payload"), variant)
+        assertVariantEqual(expected: Variant(key: "on", value: "on", payload: "payload"), actual: variant)
         XCTAssertEqual(1, exposureTrackingProvider.trackCount)
         XCTAssertEqual("sdk-ci-test", exposureTrackingProvider.lastExposure?.flagKey)
         XCTAssertEqual("on", exposureTrackingProvider.lastExposure?.variant)
