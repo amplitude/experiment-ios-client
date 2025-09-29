@@ -9,6 +9,22 @@
 #import <Experiment/Experiment-Swift.h>
 #import <dispatch/dispatch.h>
 
+void assertVariantEqualExpected(Variant *expected, Variant *actual) {
+    NSMutableDictionary *metadata = [expected.metadata mutableCopy];
+    if (metadata == nil && actual.metadata != nil) {
+        metadata = [NSMutableDictionary dictionary];
+    }
+    if (metadata != nil && actual.metadata != nil) {
+        metadata[@"evaluationId"] = actual.metadata[@"evaluationId"];
+    }
+    
+    Variant *matchedExpected = [[Variant alloc] init:expected.value payload:expected.payload expKey:expected.expKey key:expected.key metadata:metadata];
+    
+    XCTAssertNotNil(actual.metadata[@"evaluationId"]);
+    XCTAssertEqualObjects(matchedExpected, actual);
+    XCTAssertTrue([matchedExpected isEqual:actual]);
+}
+
 @interface ObjectiveCTest : XCTestCase
 
 @end
@@ -31,7 +47,7 @@
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     [client fetchWithUser:user completion:^(id<ExperimentClient> _Nonnull client, NSError * _Nullable error) {
         Variant *variant = [client variant:@"sdk-ci-test"];
-        XCTAssertTrue([variant isEqual:expectedVariant]);
+        assertVariantEqualExpected(expectedVariant, variant);
         dispatch_semaphore_signal(sem);
     }];
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
