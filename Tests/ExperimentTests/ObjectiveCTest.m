@@ -32,7 +32,9 @@ void assertVariantEqualExpected(Variant *expected, Variant *actual) {
 @implementation ObjectiveCTest
 
 - (void)testObjectiveCBasic {
-    Variant *expectedVariant = [[Variant alloc] init:@"on" payload:@"payload" expKey:nil key:@"on" metadata:nil];
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    metadata[@"evaluationId"] = @"";
+    Variant *expectedVariant = [[Variant alloc] init:@"on" payload:@"payload" expKey:nil key:@"on" metadata:metadata];
     
     ExperimentConfigBuilder *confBuilder = [ExperimentConfigBuilder new];
     confBuilder = [confBuilder debug:YES];

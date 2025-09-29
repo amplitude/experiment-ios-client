@@ -15,7 +15,7 @@ let KEY = "sdk-ci-test"
 let INITIAL_KEY = "initial-key"
 
 let testUser = ExperimentUserBuilder().userId("test_user").build()
-let serverVariant = Variant("on", payload: "payload", key: "on")
+let serverVariant = Variant("on", payload: "payload", key: "on", metadata: ["evaluationId": ""])
 let fallbackVariant = Variant("fallback", payload: "payload")
 let initialVariant = Variant("initial")
 let initialVariants: [String: Variant] = [
@@ -23,7 +23,7 @@ let initialVariants: [String: Variant] = [
     KEY: Variant("off")
 ]
 let KEY2 = "sdk-ci-test-2"
-let serverVariant2 = Variant("on")
+let serverVariant2 = Variant("on", metadata: ["evaluationId": ""])
 
 func assertVariantEqual(expected: Variant, actual: Variant) {
     var metadata = expected.metadata ?? (actual.metadata != nil ? [:] : nil)
