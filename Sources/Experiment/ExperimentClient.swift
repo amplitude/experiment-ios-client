@@ -19,6 +19,7 @@ import Foundation
     @objc func getUser() -> ExperimentUser?
     @objc func clear()
     @objc func stop()
+    @objc func setTrackAssignmentEvent(_ track: Bool)
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
@@ -45,6 +46,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     internal let flags: LoadStoreCache<EvaluationFlag>
     private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
+    
+    internal let fetchOptions: LoadStoreCache<FetchOptions>
+    private let fetchOptionsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.FetchOptionsStorageQueue", attributes: .concurrent)
 
     internal let config: ExperimentConfig
     private let engine = EvaluationEngine()
@@ -97,6 +101,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
         self.flags.load()
         self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
+        self.fetchOptions = getFetchOptionsStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.fetchOptions.load()
     }
     
     public func start(_ user: ExperimentUser? = nil, completion: ((Error?) -> Void)? = nil) -> Void {
@@ -506,6 +512,12 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             let flagKeysB64EncodedUrl = base64EncodeData(jsonFlagKeys)
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
+        
+        // Add tracking option from stored fetch options or from current options
+        let trackingOption = options?.trackingOption ?? fetchOptionsStorageQueue.sync { fetchOptions.get(key: "default")?.trackingOption }
+        if let trackingOption = trackingOption {
+            request.setValue(trackingOption, forHTTPHeaderField: "X-Amp-Exp-Tracking-Option")
+        }
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
         // Do fetch request
@@ -689,6 +701,15 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             return true
         }
         return e.statusCode < 400 || e.statusCode >= 500 || e.statusCode == 429
+    }
+    
+    public func setTrackAssignmentEvent(_ track: Bool) {
+        let trackingOption = track ? "track" : "no-track"
+        let fetchOptions = FetchOptions(nil, trackingOption: trackingOption)
+        fetchOptionsStorageQueue.async(flags: .barrier) {
+            self.fetchOptions.put(key: "default", value: fetchOptions)
+            self.fetchOptions.store()
+        }
     }
 }
 

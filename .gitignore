@@ -5,3 +5,5 @@ xcuserdata/
 .swiftpm/
 Carthage/
 .idea
+Package.resolved
+Experiment.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
