@@ -47,8 +47,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     internal let flags: LoadStoreCache<EvaluationFlag>
     private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
     
-    internal let fetchOptions: LoadStoreCache<FetchOptions>
-    private let fetchOptionsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.FetchOptionsStorageQueue", attributes: .concurrent)
+    public let trackingOption: LoadStoreCache<String>
+    private let trackingOptionStorageQueue = DispatchQueue(label: "com.amplitude.experiment.TrackingOptionStorageQueue", attributes: .concurrent)
 
     internal let config: ExperimentConfig
     private let engine = EvaluationEngine()
@@ -101,8 +101,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
         self.flags.load()
         self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
-        self.fetchOptions = getFetchOptionsStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
-        self.fetchOptions.load()
+        self.trackingOption = getTrackingOptionStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.trackingOption.load()
     }
     
     public func start(_ user: ExperimentUser? = nil, completion: ((Error?) -> Void)? = nil) -> Void {
@@ -513,10 +513,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
         
-        // Add tracking option from stored fetch options or from current options
-        let trackingOption = options?.trackingOption ?? fetchOptionsStorageQueue.sync { fetchOptions.get(key: "default")?.trackingOption }
-        if let trackingOption = trackingOption {
-            request.setValue(trackingOption, forHTTPHeaderField: "X-Amp-Exp-Tracking-Option")
+        // Add tracking option from current options or from stored setting
+        let trackingOptionValue = options?.trackingOption ?? trackingOptionStorageQueue.sync { trackingOption.get(key: "default") }
+        if let trackingOptionValue = trackingOptionValue {
+            request.setValue(trackingOptionValue, forHTTPHeaderField: "X-Amp-Exp-Track")
         }
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
@@ -705,10 +705,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     public func setTrackAssignmentEvent(_ track: Bool) {
         let trackingOption = track ? "track" : "no-track"
-        let fetchOptions = FetchOptions(nil, trackingOption: trackingOption)
-        fetchOptionsStorageQueue.async(flags: .barrier) {
-            self.fetchOptions.put(key: "default", value: fetchOptions)
-            self.fetchOptions.store()
+        trackingOptionStorageQueue.sync(flags: .barrier) {
+            self.trackingOption.put(key: "default", value: trackingOption)
+            self.trackingOption.store(async: false)
         }
     }
 }
