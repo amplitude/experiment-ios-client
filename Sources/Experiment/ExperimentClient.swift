@@ -513,8 +513,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
         
-        // Add tracking option from current options or from stored setting
-        let trackingOptionValue = options?.trackingOption ?? trackingOptionStorageQueue.sync { trackingOption.get(key: "default") }
+        // Add tracking option from stored setting
+        let trackingOptionValue = trackingOptionStorageQueue.sync { trackingOption.get(key: "default") }
         if let trackingOptionValue = trackingOptionValue {
             request.setValue(trackingOptionValue, forHTTPHeaderField: "X-Amp-Exp-Track")
         }

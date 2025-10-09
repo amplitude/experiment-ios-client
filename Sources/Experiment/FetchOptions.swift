@@ -9,10 +9,8 @@ import Foundation
 
 @objc public class FetchOptions : NSObject {
     @objc public let flagKeys: [String]?
-    @objc public let trackingOption: String?
 
-    @objc public init(_ flagKeys: [String]? = nil, trackingOption: String? = nil) {
+    @objc public init(_ flagKeys: [String]? = nil) {
         self.flagKeys = flagKeys
-        self.trackingOption = trackingOption
     }
 }
