@@ -39,6 +39,7 @@ import Foundation
     @available(*, deprecated, message: "Use exposureTrackingProvider instead.")
     @objc public let analyticsProvider: ExperimentAnalyticsProvider?
     @objc public let exposureTrackingProvider: ExposureTrackingProvider?
+    @objc public let customRequestHeaders: CustomRequestHeadersBuilder
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
@@ -60,6 +61,7 @@ import Foundation
         self.userProvider = ExperimentConfig.Defaults.userProvider
         self.analyticsProvider = ExperimentConfig.Defaults.analyticsProvider
         self.exposureTrackingProvider = ExperimentConfig.Defaults.exposureTrackingProvider
+        self.customRequestHeaders = ExperimentConfig.Defaults.customRequestHeaders
     }
     
     internal init(builder: ExperimentConfigBuilder) {
@@ -82,6 +84,7 @@ import Foundation
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
         self.exposureTrackingProvider = builder.exposureTrackingProvider
+        self.customRequestHeaders = builder.customRequestHeaders
     }
     
     internal init(builder: ExperimentConfig.Builder) {
@@ -104,6 +107,7 @@ import Foundation
         self.userProvider = builder.userProvider
         self.analyticsProvider = builder.analyticsProvider
         self.exposureTrackingProvider = builder.exposureTrackingProvider
+        self.customRequestHeaders = builder.customRequestHeaders
     }
 
     public struct Defaults {
@@ -126,7 +130,10 @@ import Foundation
         public static let userProvider: ExperimentUserProvider? = nil
         public static let analyticsProvider: ExperimentAnalyticsProvider? = nil
         public static let exposureTrackingProvider: ExposureTrackingProvider? = nil
+        public static let customRequestHeaders: CustomRequestHeadersBuilder = { _ in [:] }
     }
+    
+    public typealias CustomRequestHeadersBuilder = (ExperimentUser?) -> [String: String]
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
     public class Builder {
@@ -150,6 +157,7 @@ import Foundation
         internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
         internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
         internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+        internal var customRequestHeaders: CustomRequestHeadersBuilder = ExperimentConfig.Defaults.customRequestHeaders
         
         public init() {
             // public init
@@ -335,6 +343,7 @@ import Foundation
     internal var userProvider: ExperimentUserProvider? = ExperimentConfig.Defaults.userProvider
     internal var analyticsProvider: ExperimentAnalyticsProvider? = ExperimentConfig.Defaults.analyticsProvider
     internal var exposureTrackingProvider: ExposureTrackingProvider? = ExperimentConfig.Defaults.exposureTrackingProvider
+    internal var customRequestHeaders: ExperimentConfig.CustomRequestHeadersBuilder = ExperimentConfig.Defaults.customRequestHeaders
     
     @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
