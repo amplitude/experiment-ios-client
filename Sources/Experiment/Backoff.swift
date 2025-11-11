@@ -4,7 +4,7 @@
 //
 //  Created by Brian Giori on 6/23/21.
 //
-
+import AmplitudeCore
 import Foundation
 
 internal class Backoff {
@@ -14,6 +14,7 @@ internal class Backoff {
     private let min: Int
     private let max: Int
     private let scalar: Float
+    private let logger: CoreLogger
 
     // Dispatch
     private let lock = DispatchSemaphore(value: 1)
@@ -24,11 +25,12 @@ internal class Backoff {
     private var cancelled: Bool = false
     private var fetchTask: URLSessionTask? = nil
 
-    init(attempts: Int, min: Int, max: Int, scalar: Float, queue: DispatchQueue = DispatchQueue(label: "com.amplitude.experiment.backoff", qos: .default)) {
+    init(attempts: Int, min: Int, max: Int, scalar: Float, logger: any CoreLogger, queue: DispatchQueue = DispatchQueue(label: "com.amplitude.experiment.backoff", qos: .default)) {
         self.attempts = attempts
         self.min = min
         self.max = max
         self.scalar = scalar
+        self.logger = logger
         self.fetchQueue = queue
     }
 
@@ -70,10 +72,10 @@ internal class Backoff {
             self.fetchTask = function() { error in
                 guard error != nil else {
                     // Success
-                    print("[Experiment] Retry success")
+                    self.logger.log(message: "Retry success")
                     return
                 }
-                print("[Experiment] Retry failure")
+                self.logger.log(message: "Retry failure")
                 // Retry the request function
                 let nextAttempt = attempt + 1
                 if nextAttempt < self.attempts {

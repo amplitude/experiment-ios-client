@@ -5,16 +5,17 @@
 //  Copyright © 2020 Amplitude. All rights reserved.
 //
 
+import AmplitudeCore
 import Foundation
 
-internal func getVariantStorage(apiKey: String, instanceName: String, storage: Storage) -> LoadStoreCache<Variant> {
+internal func getVariantStorage(apiKey: String, instanceName: String, storage: Storage, logger: any CoreLogger) -> LoadStoreCache<Variant> {
     let namespace = "com.amplituide.experiment.variants.\(instanceName).\(apiKey.suffix(6))"
-    return LoadStoreCache(namespace: namespace, storage: storage)
+    return LoadStoreCache(namespace: namespace, storage: storage, logger: logger)
 }
 
-internal func getFlagStorage(apiKey: String, instanceName: String, storage: Storage) -> LoadStoreCache<EvaluationFlag> {
+internal func getFlagStorage(apiKey: String, instanceName: String, storage: Storage, logger: any CoreLogger) -> LoadStoreCache<EvaluationFlag> {
     let namespace = "com.amplituide.experiment.flags.\(instanceName).\(apiKey.suffix(6))"
-    return LoadStoreCache(namespace: namespace, storage: storage)
+    return LoadStoreCache(namespace: namespace, storage: storage, logger: logger)
 }
 
 internal protocol Storage {
@@ -42,14 +43,16 @@ internal class UserDefaultsStorage: Storage {
 private let storageQueue = DispatchQueue(label: "com.amplitude.experiment.loadStoreCache", attributes: .concurrent)
 
 internal class LoadStoreCache<Value : Codable> {
-    
+
     private var cache: [String: Value] = [:]
     private let namespace: String
     private let storage: Storage
-    
-    init(namespace: String, storage: Storage) {
+    private let logger: any CoreLogger
+
+    init(namespace: String, storage: Storage, logger: any CoreLogger) {
         self.namespace = namespace
         self.storage = storage
+        self.logger = logger
     }
     
     func get(key: String) -> Value? {
@@ -86,7 +89,7 @@ internal class LoadStoreCache<Value : Codable> {
                 self.cache = [:]
             }
         } catch {
-            print("[Experiment] load failed: \(error)")
+            logger.error(message: "load failed: \(error)")
         }
     }
     
@@ -102,7 +105,7 @@ internal class LoadStoreCache<Value : Codable> {
                 storage.put(key: self.namespace, value: data)
             }
         } catch {
-            print("[Experiment] save failed: \(error)")
+            logger.error(message: "save failed: \(error)")
         }
     }
 }

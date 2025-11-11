@@ -5,6 +5,7 @@
 //  Created by Brian Giori on 9/26/23.
 //
 
+import AmplitudeCore
 import Foundation
 import XCTest
 @testable import Experiment
@@ -13,7 +14,7 @@ class LoadStoreCacheTests: XCTestCase {
     
     func testCacheMethods() {
         let storage = InMemoryStorage()
-        let cache = LoadStoreCache<Variant>(namespace: "test", storage: storage)
+        let cache = LoadStoreCache<Variant>(namespace: "test", storage: storage, logger: AmpLogger(logLevel: LogLevel.debug, loggerProvier: DefaultLogger()))
         // Put / Get
         cache.put(key: "flag-key-1", value: Variant(key: "on", value: "on"))
         let variant = cache.get(key: "flag-key-1")
@@ -45,7 +46,7 @@ class LoadStoreCacheTests: XCTestCase {
     func testLoad() {
         let namespace = "test"
         let storage = InMemoryStorage()
-        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
+        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage, logger: AmpLogger(logLevel: LogLevel.debug, loggerProvier: DefaultLogger()))
         let testData = """
         {"flag-key-1":{"key":"on","value":"on"}}
         """.data(using: .utf8)!
@@ -60,7 +61,7 @@ class LoadStoreCacheTests: XCTestCase {
     func testLoadOverwritesCache() {
         let namespace = "test"
         let storage = InMemoryStorage()
-        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
+        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage, logger: AmpLogger(logLevel: LogLevel.debug, loggerProvier: DefaultLogger()))
         let testData = """
         {"flag-key-1":{"key":"off","value":"off"}}
         """.data(using: .utf8)!
@@ -80,7 +81,7 @@ class LoadStoreCacheTests: XCTestCase {
     func testStore() {
         let namespace = "test"
         let storage = InMemoryStorage()
-        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
+        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage, logger: AmpLogger(logLevel: LogLevel.debug, loggerProvier: DefaultLogger()))
         cache.put(key: "flag-key-1", value: Variant(key: "on", value: "on"))
         cache.store(async: false)
         let storageData = storage.get(key: namespace)
@@ -92,7 +93,7 @@ class LoadStoreCacheTests: XCTestCase {
     func testStoreOverwritesStorage() {
         let namespace = "test"
         let storage = InMemoryStorage()
-        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage)
+        let cache = LoadStoreCache<Variant>(namespace: namespace, storage: storage, logger: AmpLogger(logLevel: LogLevel.debug, loggerProvier: DefaultLogger()))
         let initialData = """
         {"flag-key-1":{"key":"on","value":"on"}}
         """.data(using: .utf8)!
