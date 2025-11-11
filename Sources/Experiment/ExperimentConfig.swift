@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AmplitudeCore
 
 @objc public enum Source: Int {
     case LocalStorage = 0
@@ -19,7 +20,9 @@ import Foundation
 
 @objc public class ExperimentConfig : NSObject {
 
+    @available(*, deprecated, message: "Use logLevel instead. Set to .DEBUG to enable debug logging")
     @objc public let debug: Bool
+    @objc public let logger: AmpLogger
     @objc public let instanceName: String
     @objc public let fallbackVariant: Variant
     @objc public let initialFlags: String?
@@ -42,6 +45,7 @@ import Foundation
     
     @objc public override init() {
         self.debug = ExperimentConfig.Defaults.debug
+        self.logger = AmpLogger(logLevel: ExperimentConfig.Defaults.logLevel, loggerProvier: ExperimentConfig.Defaults.loggerProvider)
         self.instanceName = ExperimentConfig.Defaults.instanceName
         self.fallbackVariant = ExperimentConfig.Defaults.fallbackVariant
         self.initialFlags = ExperimentConfig.Defaults.initialFlags
@@ -64,6 +68,7 @@ import Foundation
     
     internal init(builder: ExperimentConfigBuilder) {
         self.debug = builder.debug
+        self.logger = AmpLogger(logLevel: builder.logLevel, loggerProvier: builder.loggerProvider)
         self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialFlags = builder.initialFlags
@@ -86,6 +91,7 @@ import Foundation
     
     internal init(builder: ExperimentConfig.Builder) {
         self.debug = builder.debug
+        self.logger = AmpLogger(logLevel: builder.logLevel, loggerProvier: builder.loggerProvider)
         self.instanceName = builder.instanceName
         self.fallbackVariant = builder.fallbackVariant
         self.initialFlags = builder.initialFlags
@@ -107,6 +113,8 @@ import Foundation
     }
 
     public struct Defaults {
+        public static let logLevel: LogLevel = .warn
+        public static let loggerProvider: CoreLogger = DefaultLogger()
         public static let debug: Bool = false
         public static let instanceName: String = "$default_instance"
         public static let fallbackVariant: Variant = Variant()
@@ -130,7 +138,9 @@ import Foundation
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
     public class Builder {
-            
+
+        internal var logLevel: LogLevel = ExperimentConfig.Defaults.logLevel
+        internal var loggerProvider: any CoreLogger = ExperimentConfig.Defaults.loggerProvider
         internal var debug: Bool = ExperimentConfig.Defaults.debug
         internal var instanceName = ExperimentConfig.Defaults.instanceName
         internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
@@ -158,9 +168,25 @@ import Foundation
         @discardableResult
         public func debug(_ debug: Bool) -> Builder {
             self.debug = debug
+            // For backward compatibility: only change logLevel when debug is true
+            if debug {
+                self.logLevel = .debug
+            }
             return self
         }
-        
+
+        @discardableResult
+        public func logLevel(_ logLevel: LogLevel) -> Builder {
+            self.logLevel = logLevel
+            return self
+        }
+
+        @discardableResult
+        public func loggerProvider(_ loggerProvider: any CoreLogger) -> Builder {
+            self.loggerProvider = loggerProvider
+            return self
+        }
+
         @discardableResult
         public func instanceName(_ instanceName: String) -> Builder {
             self.instanceName = instanceName
@@ -290,6 +316,8 @@ import Foundation
         let fetchOnStart = self.fetchOnStart?.boolValue
         let builder = ExperimentConfigBuilder()
             .debug(self.debug)
+            .logLevel(self.logger.logLevel)
+            .loggerProvider(self.logger.loggerProvider)
             .instanceName(self.instanceName)
             .fallbackVariant(self.fallbackVariant)
             .initialFlags(self.initialFlags)
@@ -315,7 +343,9 @@ import Foundation
 }
 
 @objc public class ExperimentConfigBuilder : NSObject {
-    
+
+    internal var logLevel: LogLevel = ExperimentConfig.Defaults.logLevel
+    internal var loggerProvider: CoreLogger = ExperimentConfig.Defaults.loggerProvider
     internal var debug: Bool = ExperimentConfig.Defaults.debug
     internal var instanceName: String = ExperimentConfig.Defaults.instanceName
     internal var fallbackVariant: Variant = ExperimentConfig.Defaults.fallbackVariant
@@ -339,9 +369,25 @@ import Foundation
     @discardableResult
     @objc public func debug(_ debug: Bool) -> ExperimentConfigBuilder {
         self.debug = debug
+        // For backward compatibility: only change logLevel when debug is true
+        if debug {
+            self.logLevel = .debug
+        }
         return self
     }
-    
+
+    @discardableResult
+    @objc public func logLevel(_ logLevel: LogLevel) -> ExperimentConfigBuilder {
+        self.logLevel = logLevel
+        return self
+    }
+
+    @discardableResult
+    @objc public func loggerProvider(_ loggerProvider: CoreLogger) -> ExperimentConfigBuilder {
+        self.loggerProvider = loggerProvider
+        return self
+    }
+
     @discardableResult
     @objc public func instanceName(_ instanceName: String) -> ExperimentConfigBuilder {
         self.instanceName = instanceName
