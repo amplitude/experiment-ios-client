@@ -281,6 +281,12 @@ import Foundation
             self.exposureTrackingProvider = exposureTrackingProvider
             return self
         }
+        
+        @discardableResult
+        public func customRequestHeaders(_ customRequestHeaders: @escaping ExperimentConfig.CustomRequestHeadersBuilder) -> Builder {
+            self.customRequestHeaders = customRequestHeaders
+            return self
+        }
 
         public func build() -> ExperimentConfig {
             return ExperimentConfig(builder: self)
@@ -315,6 +321,7 @@ import Foundation
             .userProvider(self.userProvider)
             .analyticsProvider(self.analyticsProvider)
             .exposureTrackingProvider(self.exposureTrackingProvider)
+            .customRequestHeaders(self.customRequestHeaders)
         if let fetchOnStart = fetchOnStart {
             builder.fetchOnStart(fetchOnStart)
         }
@@ -460,6 +467,12 @@ import Foundation
     @discardableResult
     @objc public func exposureTrackingProvider(_ exposureTrackingProvider: ExposureTrackingProvider?) -> ExperimentConfigBuilder {
         self.exposureTrackingProvider = exposureTrackingProvider
+        return self
+    }
+    
+    @discardableResult
+    @objc public func customRequestHeaders(_ customRequestHeaders: @escaping ExperimentConfig.CustomRequestHeadersBuilder) -> ExperimentConfigBuilder {
+        self.customRequestHeaders = customRequestHeaders
         return self
     }
     
