@@ -130,10 +130,10 @@ import Foundation
         public static let userProvider: ExperimentUserProvider? = nil
         public static let analyticsProvider: ExperimentAnalyticsProvider? = nil
         public static let exposureTrackingProvider: ExposureTrackingProvider? = nil
-        public static let customRequestHeaders: CustomRequestHeadersBuilder = { _ in [:] }
+        public static let customRequestHeaders: CustomRequestHeadersBuilder = { [:] }
     }
     
-    public typealias CustomRequestHeadersBuilder = (ExperimentUser?) -> [String: String]
+    public typealias CustomRequestHeadersBuilder = () -> [String: String]
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
     public class Builder {

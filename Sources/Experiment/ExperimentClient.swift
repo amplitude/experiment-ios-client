@@ -110,7 +110,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if self.config.pollOnStart {
             let timer = DispatchSource.makeTimerSource(queue: pollerQueue)
             timer.schedule(deadline: .now() + .seconds(60), repeating: .seconds(60))
-            timer.setEventHandler { self.flagsInternal(user: user) }
+            timer.setEventHandler { self.flagsInternal() }
             timer.activate()
             self.poller = timer
         }
@@ -121,7 +121,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             let fetchOnStart = self.config.fetchOnStart?.boolValue ?? true
             let startGroup = DispatchGroup()
             startGroup.enter()
-            self.flagsInternal(user: user) { e in
+            self.flagsInternal { e in
                 if let e = e {
                     error = e
                 }
@@ -407,13 +407,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
     }
     
-    private func flagsInternal(
-        user: ExperimentUser?,
-        completion: ((Error?) -> Void)? = nil
-    ) {
+    private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
         flagsQueue.async {
             self.debug("Updating flag configurations")
-            return self.doFlags(user: user, timeoutMillis: self.config.fetchTimeoutMillis) { result in
+            return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
                 switch result {
                 case .success(let flags):
                     self.debug("Got \(flags.count) flag configurations")
@@ -434,7 +431,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     // Must be run on flagsQueue
     internal func doFlags(
-        user: ExperimentUser?,
         timeoutMillis: Int,
         completion: @escaping ((Result<[String: EvaluationFlag], Error>) -> Void)
     ) {
@@ -444,7 +440,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         request.setValue("Api-Key \(apiKey)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
-        config.customRequestHeaders(user).forEach { key, value in
+        config.customRequestHeaders().forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }
         
@@ -516,7 +512,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
         
-        config.customRequestHeaders(user).forEach { key, value in
+        config.customRequestHeaders().forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }
         
