@@ -19,7 +19,7 @@ import Foundation
     @objc func getUser() -> ExperimentUser?
     @objc func clear()
     @objc func stop()
-    @objc func setTrackAssignmentEvent(_ track: Bool)
+    @objc func setTracksAssignment(_ track: Bool)
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
@@ -703,7 +703,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         return e.statusCode < 400 || e.statusCode >= 500 || e.statusCode == 429
     }
     
-    public func setTrackAssignmentEvent(_ track: Bool) {
+    public func setTracksAssignment(_ track: Bool) {
         let trackingOption = track ? "track" : "no-track"
         trackingOptionStorageQueue.sync(flags: .barrier) {
             self.trackingOption.put(key: "default", value: trackingOption)

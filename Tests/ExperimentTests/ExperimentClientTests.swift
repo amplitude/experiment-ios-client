@@ -1256,7 +1256,7 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(900000, client.config.flagConfigPollingIntervalMillis)
     }
     
-    func testSetTrackAssignmentEventSetsTrackingOptionAndFetchUsesCorrectOptions() {
+    func testSetTracksAssignmentSetsTrackingOptionAndFetchUsesCorrectOptions() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
             config: ExperimentConfigBuilder()
@@ -1266,21 +1266,21 @@ class ExperimentClientTests: XCTestCase {
         )
         
         // Set track assignment event to true
-        client.setTrackAssignmentEvent(true)
+        client.setTracksAssignment(true)
         
         // Verify the setting was stored
         let storedOption = client.trackingOption.get(key: "default")
         XCTAssertEqual(storedOption, "track")
         
         // Set track assignment event to false
-        client.setTrackAssignmentEvent(false)
+        client.setTracksAssignment(false)
         
         // Verify the setting was updated
         let updatedOption = client.trackingOption.get(key: "default")
         XCTAssertEqual(updatedOption, "no-track")
     }
     
-    func testSetTrackAssignmentEventPersistsSettingToStorage() {
+    func testSetTracksAssignmentPersistsSettingToStorage() {
         let storage = InMemoryStorage()
         
         // Create first client and set track assignment event
@@ -1291,7 +1291,7 @@ class ExperimentClientTests: XCTestCase {
                 .build(),
             storage: storage
         )
-        client1.setTrackAssignmentEvent(true)
+        client1.setTracksAssignment(true)
         
         // Create second client with same storage
         let client2 = DefaultExperimentClient(
@@ -1307,7 +1307,7 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(storedOption, "track")
     }
     
-    func testMultipleCallsToSetTrackAssignmentEventUsesLatestSetting() {
+    func testMultipleCallsToSetTracksAssignmentUsesLatestSetting() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
             config: ExperimentConfigBuilder()
@@ -1317,15 +1317,15 @@ class ExperimentClientTests: XCTestCase {
         )
         
         // Set track assignment event to true, then false
-        client.setTrackAssignmentEvent(true)
-        client.setTrackAssignmentEvent(false)
+        client.setTracksAssignment(true)
+        client.setTracksAssignment(false)
         
         // Verify the latest setting is used
         let storedOption = client.trackingOption.get(key: "default")
         XCTAssertEqual(storedOption, "no-track")
     }
     
-    func testSetTrackAssignmentEventPreservesOtherExistingOptions() {
+    func testSetTracksAssignmentPreservesOtherExistingOptions() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
             config: ExperimentConfigBuilder()
@@ -1335,7 +1335,7 @@ class ExperimentClientTests: XCTestCase {
         )
         
         // Set track assignment event to true
-        client.setTrackAssignmentEvent(true)
+        client.setTracksAssignment(true)
         
         // Verify the tracking option is set
         let storedOption = client.trackingOption.get(key: "default")
