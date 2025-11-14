@@ -162,6 +162,29 @@ class ExperimentClientTests: XCTestCase {
         s.wait()
     }
     
+    func testFetch_CustomRequestHeadersBuilderCalledOnEveryFetch() {
+        var builderCallCount = 0
+        
+        let config = ExperimentConfigBuilder()
+            .debug(true)
+            .customRequestHeaders {
+                builderCallCount += 1
+                return ["X-Test-Header": "\(builderCallCount)"]
+            }
+            .build()
+        
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: config,
+            storage: InMemoryStorage()
+        )
+        
+        client.fetchBlocking(user: testUser)
+        client.fetchBlocking(user: testUser)
+        
+        XCTAssertEqual(builderCallCount, 2)
+    }
+    
     func testInitialVariantsReturned() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
@@ -1162,6 +1185,29 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(0, client.fetchCalls)
         client.fetchBlocking(user: user)
         XCTAssertEqual(1, client.fetchCalls)
+    }
+    
+    func testStart_CustomRequestHeadersBuilderCalledForFlags() {
+        var builderCallCount = 0
+
+        let config = ExperimentConfigBuilder()
+            .debug(true)
+            .fetchOnStart(false)
+            .customRequestHeaders {
+                builderCallCount += 1
+                return ["X-Flags-Header": "flags"]
+            }
+            .build()
+
+        let client = DefaultExperimentClient(
+            apiKey: SERVER_API_KEY,
+            config: config,
+            storage: InMemoryStorage()
+        )
+
+        client.startBlocking(user: ExperimentUser())
+
+        XCTAssertEqual(builderCallCount, 1)
     }
     
     func testInitialflags() {
