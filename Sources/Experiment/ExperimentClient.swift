@@ -445,6 +445,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         request.httpMethod = "GET"
         request.setValue("Api-Key \(apiKey)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
+        
+        config.customRequestHeaders().forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
         // Do fetch request
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
@@ -512,12 +517,16 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             let flagKeysB64EncodedUrl = base64EncodeData(jsonFlagKeys)
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
-        
         // Add tracking option from stored setting
         let trackingOptionValue = trackingOptionStorageQueue.sync { trackingOption.get(key: "default") }
         if let trackingOptionValue = trackingOptionValue {
             request.setValue(trackingOptionValue, forHTTPHeaderField: "X-Amp-Exp-Track")
         }
+        
+        config.customRequestHeaders().forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
         request.timeoutInterval = Double(timeoutMillis) / 1000.0
         
         // Do fetch request
