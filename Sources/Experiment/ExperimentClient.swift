@@ -19,6 +19,7 @@ import Foundation
     @objc func getUser() -> ExperimentUser?
     @objc func clear()
     @objc func stop()
+    @objc func setTracksAssignment(_ track: Bool)
 
     @available(*, deprecated, message: "User ExperimentConfig.userProvider instead")
     @objc func getUserProvider() -> ExperimentUserProvider?
@@ -45,6 +46,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     internal let flags: LoadStoreCache<EvaluationFlag>
     private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
+    
+    public let trackingOption: LoadStoreCache<String>
+    private let trackingOptionStorageQueue = DispatchQueue(label: "com.amplitude.experiment.TrackingOptionStorageQueue", attributes: .concurrent)
 
     internal let config: ExperimentConfig
     private let engine = EvaluationEngine()
@@ -97,6 +101,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
         self.flags.load()
         self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
+        self.trackingOption = getTrackingOptionStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.trackingOption.load()
     }
     
     public func start(_ user: ExperimentUser? = nil, completion: ((Error?) -> Void)? = nil) -> Void {
@@ -511,6 +517,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             let flagKeysB64EncodedUrl = base64EncodeData(jsonFlagKeys)
             request.setValue(flagKeysB64EncodedUrl, forHTTPHeaderField: "X-Amp-Exp-Flag-Keys")
         }
+        // Add tracking option from stored setting
+        let trackingOptionValue = trackingOptionStorageQueue.sync { trackingOption.get(key: "default") }
+        if let trackingOptionValue = trackingOptionValue {
+            request.setValue(trackingOptionValue, forHTTPHeaderField: "X-Amp-Exp-Track")
+        }
         
         config.customRequestHeaders().forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
@@ -699,6 +710,14 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             return true
         }
         return e.statusCode < 400 || e.statusCode >= 500 || e.statusCode == 429
+    }
+    
+    public func setTracksAssignment(_ track: Bool) {
+        let trackingOption = track ? "track" : "no-track"
+        trackingOptionStorageQueue.sync(flags: .barrier) {
+            self.trackingOption.put(key: "default", value: trackingOption)
+            self.trackingOption.store(async: false)
+        }
     }
 }
 

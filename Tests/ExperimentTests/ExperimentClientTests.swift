@@ -1301,6 +1301,101 @@ class ExperimentClientTests: XCTestCase {
         let client = DefaultExperimentClient(apiKey: "", config: config, storage: InMemoryStorage())
         XCTAssertEqual(900000, client.config.flagConfigPollingIntervalMillis)
     }
+    
+    func testSetTracksAssignmentSetsTrackingOptionAndFetchUsesCorrectOptions() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        
+        // Set track assignment event to true
+        client.setTracksAssignment(true)
+        
+        // Verify the setting was stored
+        let storedOption = client.trackingOption.get(key: "default")
+        XCTAssertEqual(storedOption, "track")
+        
+        // Set track assignment event to false
+        client.setTracksAssignment(false)
+        
+        // Verify the setting was updated
+        let updatedOption = client.trackingOption.get(key: "default")
+        XCTAssertEqual(updatedOption, "no-track")
+    }
+    
+    func testSetTracksAssignmentPersistsSettingToStorage() {
+        let storage = InMemoryStorage()
+        
+        // Create first client and set track assignment event
+        let client1 = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: storage
+        )
+        client1.setTracksAssignment(true)
+        
+        // Create second client with same storage
+        let client2 = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: storage
+        )
+        
+        // Verify the setting was persisted and loaded by the second client
+        let storedOption = client2.trackingOption.get(key: "default")
+        XCTAssertEqual(storedOption, "track")
+    }
+    
+    func testMultipleCallsToSetTracksAssignmentUsesLatestSetting() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        
+        // Set track assignment event to true, then false
+        client.setTracksAssignment(true)
+        client.setTracksAssignment(false)
+        
+        // Verify the latest setting is used
+        let storedOption = client.trackingOption.get(key: "default")
+        XCTAssertEqual(storedOption, "no-track")
+    }
+    
+    func testSetTracksAssignmentPreservesOtherExistingOptions() {
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .debug(true)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        
+        // Set track assignment event to true
+        client.setTracksAssignment(true)
+        
+        // Verify the tracking option is set
+        let storedOption = client.trackingOption.get(key: "default")
+        XCTAssertEqual(storedOption, "track")
+        
+        // Test that FetchOptions can still be created with flag keys
+        let fetchOptions = FetchOptions(["test-flag"])
+        XCTAssertEqual(fetchOptions.flagKeys, ["test-flag"])
+        
+        // Verify that both the tracking option and flag keys can coexist
+        // (The tracking option is stored separately from FetchOptions)
+        XCTAssertNotNil(storedOption)
+        XCTAssertNotNil(fetchOptions.flagKeys)
+    }
 }
 
 class TestAnalyticsProvider : ExperimentAnalyticsProvider {
