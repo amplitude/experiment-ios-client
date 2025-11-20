@@ -5,6 +5,7 @@
 //  Copyright © 2020 Amplitude. All rights reserved.
 //
 
+import AmplitudeCore
 import Foundation
 
 @objc public protocol ExperimentClient {
@@ -40,10 +41,11 @@ private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     let apiKey: String
-    
+    private let logger: any CoreLogger
+
     internal let variants: LoadStoreCache<Variant>
     private let variantsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
-    
+
     internal let flags: LoadStoreCache<EvaluationFlag>
     private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
     
@@ -82,6 +84,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             configBuilder.flagConfigPollingIntervalMillis(minFlagConfigPollingIntervalMillis)
         }
         self.config = configBuilder.build()
+        self.logger = self.config.logger
         if config.userProvider != nil {
             self.userProvider = config.userProvider
         }
@@ -96,9 +99,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         } else {
             self.userSessionExposureTracker = nil
         }
-        self.variants = getVariantStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.variants = getVariantStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage, logger: self.logger)
         self.variants.load()
-        self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage, logger: self.logger)
         self.flags.load()
         self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
         self.trackingOption = getTrackingOptionStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
@@ -258,7 +261,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 evaluationVariant.toVariant()
             }
         } catch {
-            print("[Experiment] encountered evaluation error: \(error)")
+            logger.error(message: "encountered evaluation error: \(error)")
             return [:]
         }
     }
@@ -415,11 +418,11 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     
     private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
         flagsQueue.async {
-            self.debug("Updating flag configurations")
+            self.logger.debug(message: "Updating flag configurations")
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
                 switch result {
                 case .success(let flags):
-                    self.debug("Got \(flags.count) flag configurations")
+                    self.logger.debug(message: "Got \(flags.count) flag configurations")
                     self.flagsStorageQueue.sync(flags: .barrier) {
                         self.flags.clear()
                         self.flags.putAll(values: flags)
@@ -428,7 +431,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                     }
                     completion?(nil)
                 case .failure(let error):
-                    print("[Expeirment] get flags failed: \(error)")
+                    self.logger.error(message: "get flags failed: \(error)")
                     completion?(error)
                 }
             }
@@ -476,7 +479,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 }
                 completion(Result.success(result))
             } catch {
-                print("[Experiment] Failed to parse flag data: \(error)")
+                self.logger.error(message: "Failed to parse flag data: \(error)")
                 completion(Result.failure(error))
             }
         }.resume()
@@ -494,9 +497,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         let userId = user.userId
         let deviceId = user.deviceId
         if userId == nil && deviceId == nil {
-            print("[Experiment] WARN: user id and device id are null; amplitude will not be able to resolve identity")
+            logger.warn(message: "user id and device id are null; amplitude will not be able to resolve identity")
         }
-        self.debug("Fetch variants for user: \(user)")
+        logger.debug(message: "Fetch variants for user: \(user)")
         // Build fetch request
         let userDictionary = user.toDictionary()
         guard let requestData = try? JSONSerialization.data(withJSONObject: userDictionary, options: []) else {
@@ -539,7 +542,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 completion(Result.failure(ExperimentError("Response is nil")))
                 return
             }
-            self.debug("Received fetch response: \(httpResponse)")
+            self.logger.debug(message: "Received fetch response: \(httpResponse)")
             guard httpResponse.statusCode == 200 else {
                 completion(Result.failure(FetchError(httpResponse.statusCode, "Error Response: status=\(httpResponse.statusCode)")))
                 return
@@ -551,10 +554,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             do {
                 let variants = try self.parseResponseData(data)
                 let end = CFAbsoluteTimeGetCurrent()
-                self.debug("Fetched variants in \(end - start) s")
+                self.logger.debug(message: "Fetched variants in \(end - start) s")
                 completion(Result.success(variants))
             } catch {
-                print("[Experiment] Failed to parse response data: \(error)")
+                self.logger.error(message: "Failed to parse response data: \(error)")
                 completion(Result.failure(error))
             }
         }
@@ -570,7 +573,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
             attempts: fetchBackoffAttempts,
             min: fetchBackoffMinMillis,
             max: fetchBackoffMaxMillis,
-            scalar: fetchBackoffScalar
+            scalar: fetchBackoffScalar,
+            logger: logger
         )
         self.backoff?.start() { completion in
             return self.fetchInternal(user: user, timeoutMillis: fetchBackoffTimeout, retry: false, options: options) { result in
@@ -639,7 +643,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 self.variants.remove(key: key)
             }
             self.variants.store()
-            self.debug("Stored variants: \(variants)")
+            logger.debug(message: "Stored variants: \(variants)")
         }
     }
     
@@ -697,14 +701,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
     }
 
-    private func debug(_ msg: String) {
-        if self.config.debug {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-            print("\(formatter.string(from: Date())) [Experiment] \(msg)")
-        }
-    }
-    
     private func shouldRetryFetch(_ e: Error) -> Bool {
         guard let e = e as? FetchError else {
             return true
