@@ -18,9 +18,9 @@ internal func getFlagStorage(apiKey: String, instanceName: String, storage: Stor
     return LoadStoreCache(namespace: namespace, storage: storage, logger: logger)
 }
 
-internal func getTrackingOptionStorage(apiKey: String, instanceName: String, storage: Storage) -> LoadStoreCache<String> {
+internal func getTrackingOptionStorage(apiKey: String, instanceName: String, storage: Storage, logger: any CoreLogger) -> LoadStoreCache<String> {
     let namespace = "com.amplituide.experiment.trackingOption.\(instanceName).\(apiKey.suffix(6))"
-    return LoadStoreCache(namespace: namespace, storage: storage)
+    return LoadStoreCache(namespace: namespace, storage: storage, logger: logger)
 }
 
 internal protocol Storage {
