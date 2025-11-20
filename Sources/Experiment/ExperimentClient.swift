@@ -104,7 +104,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.flags = getFlagStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage, logger: self.logger)
         self.flags.load()
         self.flags.mergeInitialFlagsWithStorage(config.initialFlags)
-        self.trackingOption = getTrackingOptionStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage)
+        self.trackingOption = getTrackingOptionStorage(apiKey: self.apiKey, instanceName: self.config.instanceName, storage: storage, logger: self.logger)
         self.trackingOption.load()
     }
     
