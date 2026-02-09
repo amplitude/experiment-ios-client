@@ -33,7 +33,7 @@ internal class Backoff {
     }
 
     func start(
-        function: @escaping ( @escaping (Error?) -> Void) -> URLSessionTask?
+        function: @escaping @Sendable ( @escaping (Error?) -> Void) -> URLSessionTask?
     ) {
         lock.wait()
         defer { lock.signal() }
@@ -58,7 +58,7 @@ internal class Backoff {
     private func backoff(
         attempt: Int,
         delay: Int,
-        function: @escaping ( @escaping (Error?) -> Void) -> URLSessionTask?
+        function: @escaping @Sendable ( @escaping (Error?) -> Void) -> URLSessionTask?
     ) {
         fetchQueue.asyncAfter(deadline: .now() + .milliseconds(delay)) { [weak self] in
             guard let self = self else {

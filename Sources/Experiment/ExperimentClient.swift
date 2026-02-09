@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public protocol ExperimentClient {
+@objc public protocol ExperimentClient : Sendable {
     @objc func start(_ user: ExperimentUser?, completion: ((Error?) -> Void)?) -> Void
     @objc func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)?)
     @objc func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)?)
@@ -37,7 +37,18 @@ private let minFlagConfigPollingIntervalMillis = 60000
 private let euServerUrl = "https://api.lab.eu.amplitude.com";
 private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 
-internal class DefaultExperimentClient : NSObject, ExperimentClient {
+// Helper class to wrap non-@Sendable closures for GCD usage
+// Marked as @unchecked Sendable because GCD properly serializes access
+private final class SendableBox<T>: @unchecked Sendable {
+    let value: T
+    init(_ value: T) {
+        self.value = value
+    }
+}
+
+/// - Note: Uses @unchecked Sendable because thread-safety is managed through
+///   internal dispatch queues rather than Swift concurrency primitives.
+internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked Sendable {
 
     let apiKey: String
     
@@ -165,7 +176,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if user != nil && user != ExperimentUser() {
             self.setUser(user)
         }
-        fetchQueue.async {
+        let completionBox = completion.map { SendableBox($0) }
+        fetchQueue.async { [weak self] in
+            guard let self = self else { return }
             do {
                 let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(10))
                 _ = self.fetchInternal(
@@ -176,13 +189,13 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                 ) { result in
                     switch result {
                     case .success:
-                        completion?(self, nil)
+                        completionBox?.value(self, nil)
                     case .failure(let error):
-                        completion?(self, error)
+                        completionBox?.value(self, error)
                     }
                 }
             } catch {
-                completion?(self, error)
+                completionBox?.value(self, error)
             }
         }
     }
@@ -414,7 +427,9 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     }
     
     private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
-        flagsQueue.async {
+        let completionBox = completion.map { SendableBox($0) }
+        flagsQueue.async { [weak self] in
+            guard let self = self else { return }
             self.debug("Updating flag configurations")
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
                 switch result {
@@ -426,10 +441,10 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
                         self.flags.store()
                         self.flags.mergeInitialFlagsWithStorage(self.config.initialFlags)
                     }
-                    completion?(nil)
+                    completionBox?.value(nil)
                 case .failure(let error):
                     print("[Expeirment] get flags failed: \(error)")
-                    completion?(error)
+                    completionBox?.value(error)
                 }
             }
         }
@@ -754,9 +769,9 @@ private enum VariantSource : String {
 
 internal extension EvaluationVariant {
     func toVariant() -> Variant {
-        var metadata: [String: Any]? = nil
+        var metadata: [String: any Sendable]? = nil
         if let m = self.metadata {
-            metadata = m as [String: Any]
+            metadata = m.compactMapValues { $0 }
         }
         let experimentKey = self.metadata?["experimentKey"] as? String ?? nil
         return Variant(self.value as? String, payload: self.payload, expKey: experimentKey, key: self.key, metadata: metadata)

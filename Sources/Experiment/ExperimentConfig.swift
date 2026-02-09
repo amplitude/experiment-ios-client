@@ -7,17 +7,19 @@
 
 import Foundation
 
-@objc public enum Source: Int {
+@objc public enum Source: Int, Sendable {
     case LocalStorage = 0
     case InitialVariants = 1
 }
 
-@objc public enum ServerZone: Int {
+@objc public enum ServerZone: Int, Sendable {
     case US = 0
     case EU = 1
 }
 
-@objc public class ExperimentConfig : NSObject {
+/// - Note: Uses @unchecked Sendable due to @objc compatibility requirements
+///   and protocol type erasure. All properties are immutable (`let`).
+@objc public final class ExperimentConfig : NSObject, Sendable {
 
     @objc public let debug: Bool
     @objc public let instanceName: String
@@ -133,7 +135,7 @@ import Foundation
         public static let customRequestHeaders: CustomRequestHeadersBuilder = { [:] }
     }
     
-    public typealias CustomRequestHeadersBuilder = () -> [String: String]
+    public typealias CustomRequestHeadersBuilder = @Sendable () -> [String: String]
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
     public class Builder {

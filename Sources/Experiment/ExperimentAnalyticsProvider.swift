@@ -10,7 +10,7 @@ import Foundation
 /// Provides a analytics implementation for standard experiment events generated
 /// by the client (e.g. ``ExposureEvent``).
 @available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
-@objc public protocol ExperimentAnalyticsProvider {
+@objc public protocol ExperimentAnalyticsProvider : Sendable {
 
     /// Wraps an analytics event track call. This is typically called by the
     /// experiment client after setting user properties to track an

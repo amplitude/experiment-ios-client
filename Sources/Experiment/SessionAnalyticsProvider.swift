@@ -10,10 +10,15 @@ import Foundation
 /// Wraps another analytics provider in order to limit exposure events to once per flag,
 /// per session unless the variant changes. Effectively minimizes the number of exposure
 /// events sent per user.
-internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider {
+internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider, @unchecked Sendable {
+    // @unchecked Sendable:
+    // let analyticsProvider is Snedable.
+    // All properties changes are guarded.
+    
     private let analyticsProvider: ExperimentAnalyticsProvider
     private var setProperties: [String: String] = [:]
     private var unsetProperties: [String: String] = [:]
+    private let propertiesLock = DispatchSemaphore(value: 1)
     
     init(analyticsProvider: ExperimentAnalyticsProvider) {
         self.analyticsProvider = analyticsProvider
@@ -23,6 +28,8 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
         guard let variant = event.variant.value else {
             return
         }
+        propertiesLock.wait()
+        defer { propertiesLock.signal() }
         if setProperties[event.key] == variant {
             return
         } else {
@@ -36,6 +43,8 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
         guard let variant = event.variant.value else {
             return
         }
+        propertiesLock.wait()
+        defer { propertiesLock.signal() }
         if setProperties[event.key] == variant {
             return
         }
@@ -43,6 +52,8 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider 
     }
     
     func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
+        propertiesLock.wait()
+        defer { propertiesLock.signal() }
         if unsetProperties[event.key] != nil {
             return
         } else {

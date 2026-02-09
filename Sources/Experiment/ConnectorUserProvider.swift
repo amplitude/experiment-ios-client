@@ -13,7 +13,10 @@ func copyId(_ identity: Identity) -> Identity {
 }
 
 // TODO This class needs a rewrite.
-internal class ConnectorUserProvider : ExperimentUserProvider {
+internal final class ConnectorUserProvider : ExperimentUserProvider, @unchecked Sendable {
+    // @unchecked Sendable:
+    // Assumed IdentityStore is Sendable.
+    // var initialized is guarded.
     
     private let identityStore: IdentityStore
     private let baseUserProvider = DefaultUserProvider()
@@ -39,7 +42,7 @@ internal class ConnectorUserProvider : ExperimentUserProvider {
         return baseUserProvider.getUser().copyToBuilder()
             .userId(identity.userId)
             .deviceId(identity.deviceId)
-            .userProperties(identity.userProperties as? [String:Any])
+            .userProperties(identity.userProperties as? [String: any Sendable])
             .build()
     }
     
@@ -55,7 +58,7 @@ internal class ConnectorUserProvider : ExperimentUserProvider {
         return baseUserProvider.getUser().copyToBuilder()
             .userId(identity.userId)
             .deviceId(identity.deviceId)
-            .userProperties(identity.userProperties as? [String:Any])
+            .userProperties(identity.userProperties as? [String: any Sendable])
             .build()
     }
     
