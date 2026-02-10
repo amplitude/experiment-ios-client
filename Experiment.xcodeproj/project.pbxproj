@@ -44,6 +44,9 @@
 		4E22BCAC2DCE99B70069239F /* ExperimentPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E22BCAB2DCE99B00069239F /* ExperimentPluginTests.swift */; };
 		4EDAAFB02DB0609B00C90724 /* AmplitudeCoreFramework in Frameworks */ = {isa = PBXBuildFile; productRef = 4EDAAFAF2DB0609B00C90724 /* AmplitudeCoreFramework */; };
 		4EDAAFB22DB060A700C90724 /* ExperimentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */; };
+		E3200C2E2EBEB40400A99A62 /* DefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3200C2D2EBEB40400A99A62 /* DefaultLogger.swift */; };
+		E394E4AE2EC3C12D00F4901A /* AmpLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E394E4AD2EC3C12900F4901A /* AmpLogger.swift */; };
+		E394E4B12EC3E26C00F4901A /* LoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E394E4B02EC3E26C00F4901A /* LoggerTests.swift */; };
 		E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9030DB425B8AFC600BA1BA8 /* Variant.swift */; };
 		E914961925796DA800C64B38 /* Experiment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E914960F25796DA800C64B38 /* Experiment.framework */; };
 		E914961E25796DA800C64B38 /* ExperimentClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914961D25796DA800C64B38 /* ExperimentClientTests.swift */; };
@@ -108,6 +111,9 @@
 		3E0148332921C08D004D259D /* FetchOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchOptions.swift; sourceTree = "<group>"; };
 		4E22BCAB2DCE99B00069239F /* ExperimentPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentPluginTests.swift; sourceTree = "<group>"; };
 		4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentPlugin.swift; sourceTree = "<group>"; };
+		E3200C2D2EBEB40400A99A62 /* DefaultLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogger.swift; sourceTree = "<group>"; };
+		E394E4AD2EC3C12900F4901A /* AmpLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmpLogger.swift; sourceTree = "<group>"; };
+		E394E4B02EC3E26C00F4901A /* LoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerTests.swift; sourceTree = "<group>"; };
 		E9030DB425B8AFC600BA1BA8 /* Variant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variant.swift; sourceTree = "<group>"; };
 		E914960F25796DA800C64B38 /* Experiment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Experiment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E914961225796DA800C64B38 /* Experiment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Experiment.h; sourceTree = "<group>"; };
@@ -180,36 +186,38 @@
 		E914961125796DA800C64B38 /* Experiment */ = {
 			isa = PBXGroup;
 			children = (
-				4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */,
-				201FCB5F2BBB879500F07EC1 /* PrivacyInfo.xcprivacy */,
-				20F8C8C32AAFE2A100B5717C /* Murmur3.swift */,
-				20F8C8C62AAFE2B300B5717C /* SemanticVersion.swift */,
-				20F8C8C92AAFE2BF00B5717C /* TopologicalSort.swift */,
-				20F8C8CC2AAFF6CB00B5717C /* EvaluationFlag.swift */,
-				20F8C8CF2AAFF6DC00B5717C /* Selectable.swift */,
-				20F8C8D22AAFF6E900B5717C /* EvaluationEngine.swift */,
-				3E0148332921C08D004D259D /* FetchOptions.swift */,
-				E9C5D9192579718E00867574 /* Storage.swift */,
-				E9C5D91A2579718E00867574 /* ExperimentUserProvider.swift */,
-				E9C5D9172579718E00867574 /* Experiment.swift */,
-				E9C5D9122579718E00867574 /* DefaultUserProvider.swift */,
-				E9C5D9132579718E00867574 /* ExperimentClient.swift */,
-				E9C5D9152579718E00867574 /* ExperimentConfig.swift */,
-				E9C5D9162579718E00867574 /* ExperimentUser.swift */,
+				E394E4AD2EC3C12900F4901A /* AmpLogger.swift */,
+				20E6CCC82ABB488000F72385 /* AnyCodable.swift */,
 				20B1BB8D2683CC2A003A960F /* Backoff.swift */,
-				E9030DB425B8AFC600BA1BA8 /* Variant.swift */,
-				E914961225796DA800C64B38 /* Experiment.h */,
-				E914961325796DA800C64B38 /* Info.plist */,
-				207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */,
-				207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */,
-				207CBB9726AB8C9800A0029D /* ExposureEvent.swift */,
 				20C9FA372787621100A4D530 /* ConnectorExposureTrackingProvider.swift */,
 				20C9FA3D2787621B00A4D530 /* ConnectorUserProvider.swift */,
-				20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */,
-				207C96E527B71262008EE143 /* ExposureTrackingProvider.swift */,
+				E9C5D9122579718E00867574 /* DefaultUserProvider.swift */,
+				20F8C8D22AAFF6E900B5717C /* EvaluationEngine.swift */,
+				E3200C2D2EBEB40400A99A62 /* DefaultLogger.swift */,
+				20F8C8CC2AAFF6CB00B5717C /* EvaluationFlag.swift */,
+				E914961225796DA800C64B38 /* Experiment.h */,
+				E9C5D9172579718E00867574 /* Experiment.swift */,
+				207CBB9326AB8BD400A0029D /* ExperimentAnalyticsEvent.swift */,
+				207CBB8F26AB8B9900A0029D /* ExperimentAnalyticsProvider.swift */,
+				E9C5D9132579718E00867574 /* ExperimentClient.swift */,
+				E9C5D9152579718E00867574 /* ExperimentConfig.swift */,
+				4EDAAFB12DB060A600C90724 /* ExperimentPlugin.swift */,
+				E9C5D9162579718E00867574 /* ExperimentUser.swift */,
+				E9C5D91A2579718E00867574 /* ExperimentUserProvider.swift */,
 				207C96EB27B71770008EE143 /* Exposure.swift */,
+				207CBB9726AB8C9800A0029D /* ExposureEvent.swift */,
+				207C96E527B71262008EE143 /* ExposureTrackingProvider.swift */,
+				3E0148332921C08D004D259D /* FetchOptions.swift */,
+				E914961325796DA800C64B38 /* Info.plist */,
+				20F8C8C32AAFE2A100B5717C /* Murmur3.swift */,
+				201FCB5F2BBB879500F07EC1 /* PrivacyInfo.xcprivacy */,
+				20F8C8CF2AAFF6DC00B5717C /* Selectable.swift */,
+				20F8C8C62AAFE2B300B5717C /* SemanticVersion.swift */,
+				20732759278E42B0002BBD43 /* SessionAnalyticsProvider.swift */,
+				E9C5D9192579718E00867574 /* Storage.swift */,
+				20F8C8C92AAFE2BF00B5717C /* TopologicalSort.swift */,
 				207C96EF27B719F2008EE143 /* UserSessionExposureTracker.swift */,
-				20E6CCC82ABB488000F72385 /* AnyCodable.swift */,
+				E9030DB425B8AFC600BA1BA8 /* Variant.swift */,
 			);
 			path = Experiment;
 			sourceTree = "<group>";
@@ -235,6 +243,7 @@
 				20C9FA43278791E400A4D530 /* ConnectorIntegrationTests.swift */,
 				2047CE302809FCD9002D2B06 /* UserSessionExposureTrackerTests.swift */,
 				20A5A6E02AC3583E00047E7F /* LoadStoreCacheTests.swift */,
+				E394E4B02EC3E26C00F4901A /* LoggerTests.swift */,
 			);
 			path = ExperimentTests;
 			sourceTree = "<group>";
@@ -375,10 +384,12 @@
 				207C96E627B71262008EE143 /* ExposureTrackingProvider.swift in Sources */,
 				20E6CCC92ABB488000F72385 /* AnyCodable.swift in Sources */,
 				207C96F027B719F2008EE143 /* UserSessionExposureTracker.swift in Sources */,
+				E3200C2E2EBEB40400A99A62 /* DefaultLogger.swift in Sources */,
 				E9C5D9232579718E00867574 /* ExperimentUserProvider.swift in Sources */,
 				E9C5D91F2579718E00867574 /* ExperimentUser.swift in Sources */,
 				3E0148342921C08D004D259D /* FetchOptions.swift in Sources */,
 				E9C5D91C2579718E00867574 /* ExperimentClient.swift in Sources */,
+				E394E4AE2EC3C12D00F4901A /* AmpLogger.swift in Sources */,
 				E9030DB525B8AFC600BA1BA8 /* Variant.swift in Sources */,
 				20C9FA3E2787621B00A4D530 /* ConnectorUserProvider.swift in Sources */,
 				207C96EC27B71770008EE143 /* Exposure.swift in Sources */,
@@ -421,6 +432,7 @@
 				20B1BF21268BBDA4003A960F /* VariantTests.swift in Sources */,
 				20F8C8DB2AB0D36400B5717C /* HashX8632.swift in Sources */,
 				20F8C8D72AAFF9DA00B5717C /* Murmur3Tests.swift in Sources */,
+				E394E4B12EC3E26C00F4901A /* LoggerTests.swift in Sources */,
 				20A5A6E12AC3583E00047E7F /* LoadStoreCacheTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

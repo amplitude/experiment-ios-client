@@ -122,6 +122,7 @@ public class ExperimentPlugin: NSObject, UniversalPlugin, @unchecked Sendable {
                       amplitudeContext: AmplitudeCore.AmplitudeContext) {
         self.context = amplitudeContext
         self.analytics = analyticsClient
+        self.logger = amplitudeContext.logger
 
         switch mode {
         case .hosted(let config):

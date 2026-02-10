@@ -1,3 +1,16 @@
+# [1.19.0](https://github.com/amplitude/experiment-ios-client/compare/v1.18.3...v1.19.0) (2025-11-14)
+
+
+### Bug Fixes
+
+* tests assertion ignore evaluationId ([#79](https://github.com/amplitude/experiment-ios-client/issues/79)) ([7e50987](https://github.com/amplitude/experiment-ios-client/commit/7e50987a6855e54cf5402d3b17bb3801f533456d))
+
+
+### Features
+
+* Add support for defining custom headers ([#81](https://github.com/amplitude/experiment-ios-client/issues/81)) ([dae84df](https://github.com/amplitude/experiment-ios-client/commit/dae84dfe02fad4dddd82de612c338b288cd820de))
+* add user control for assignment event tracking ([#80](https://github.com/amplitude/experiment-ios-client/issues/80)) ([7fd963b](https://github.com/amplitude/experiment-ios-client/commit/7fd963b0b60064d16cddcc2310470bc56f3dd327))
+
 ## [1.18.3](https://github.com/amplitude/experiment-ios-client/compare/v1.18.2...v1.18.3) (2025-09-02)
 
 
