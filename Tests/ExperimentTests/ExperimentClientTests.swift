@@ -163,7 +163,7 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testFetch_CustomRequestHeadersBuilderCalledOnEveryFetch() {
-        var builderCallCount = 0
+        nonisolated(unsafe) var builderCallCount = 0
         
         let config = ExperimentConfigBuilder()
             .debug(true)
@@ -1188,7 +1188,7 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testStart_CustomRequestHeadersBuilderCalledForFlags() {
-        var builderCallCount = 0
+        nonisolated(unsafe) var builderCallCount = 0
 
         let config = ExperimentConfigBuilder()
             .debug(true)
@@ -1398,7 +1398,7 @@ class ExperimentClientTests: XCTestCase {
     }
 }
 
-class TestAnalyticsProvider : ExperimentAnalyticsProvider {
+class TestAnalyticsProvider : ExperimentAnalyticsProvider, @unchecked Sendable {
     var didExposureGetTracked = false
     var didUserPropertyGetSet = false
     var didUserPropertyGetUnset = false
@@ -1424,7 +1424,7 @@ class TestAnalyticsProvider : ExperimentAnalyticsProvider {
     }
 }
 
-class TestUserProvider : ExperimentUserProvider {
+class TestUserProvider : ExperimentUserProvider, @unchecked Sendable {
     func getUser() -> ExperimentUser {
         return ExperimentUserBuilder()
             .deviceId("")

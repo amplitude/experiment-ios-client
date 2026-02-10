@@ -9,7 +9,7 @@ import AmplitudeCore
 import XCTest
 @testable import Experiment
 
-class MockCoreLogger: CoreLogger {
+class MockCoreLogger: CoreLogger, @unchecked Sendable {
     var errorMessages: [String] = []
     var warnMessages: [String] = []
     var logMessages: [String] = []

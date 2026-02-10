@@ -10,10 +10,10 @@ import XCTest
 
 let instance = "test"
 let apiKey = "123456"
-let userDefaults = UserDefaults.standard
+nonisolated(unsafe) let userDefaults = UserDefaults.standard
 let userDefaultsKey = "com.amplituide.experiment.variants.\(instance).\(apiKey)"
 
-let storage = UserDefaultsStorage()
+nonisolated(unsafe) let storage = UserDefaultsStorage()
 
 class UserDefaultsStorageTests: XCTestCase {
     

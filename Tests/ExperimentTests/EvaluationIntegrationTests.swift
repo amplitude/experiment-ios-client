@@ -11,7 +11,7 @@ import Foundation
 
 private let DEPLOYMENT_KEY = "server-NgJxxvg8OGwwBsWVXqyxQbdiflbhvugy"
 
-private var flags: [EvaluationFlag] = []
+nonisolated(unsafe) private var flags: [EvaluationFlag] = []
 
 class EvaluationIntegrationTests: XCTestCase {
     

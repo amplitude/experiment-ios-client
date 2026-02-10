@@ -137,7 +137,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked 
         runningLock.signal()
         setUser(user)
         startQueue.async {
-            var error: Error? = nil
+            nonisolated(unsafe) var error: Error? = nil
             let fetchOnStart = self.config.fetchOnStart?.boolValue ?? true
             let startGroup = DispatchGroup()
             startGroup.enter()
@@ -429,7 +429,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked 
         }
     }
     
-    private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
+    private func flagsInternal(completion: (@Sendable (Error?) -> Void)? = nil) {
         flagsQueue.async {
             self.logger.debug(message: "Updating flag configurations")
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
@@ -442,7 +442,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked 
                         self.flags.store()
                         self.flags.mergeInitialFlagsWithStorage(self.config.initialFlags)
                     }
-                    completionBox?.value(nil)
+                    completion?(nil)
                 case .failure(let error):
                     self.logger.error(message: "get flags failed: \(error)")
                     completion?(error)
