@@ -121,7 +121,7 @@ import Foundation
             .groupProperties(self.groupProperties)
     }
     
-    func getUserProperties() -> [String: Any]? {
+    @objc public func getUserProperties() -> [String: Any]? {
         return userPropertiesAnyValue
     }
     
