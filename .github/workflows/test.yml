@@ -16,6 +16,13 @@ jobs:
       - name: Set Xcode 16.3
         run: |
           sudo xcode-select -switch /Applications/Xcode_16.3.app
+          xcodebuild -runFirstLaunch
+
+      - name: Download iOS Simulator Runtime
+        run: xcodebuild -downloadPlatform iOS
+
+      - name: Download tvOS Simulator Runtime
+        run: xcodebuild -downloadPlatform tvOS
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -26,23 +33,21 @@ jobs:
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
 
       - name: macOS Tests
         run: |
-          xcodebuild \
+          xcodebuild test \
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk macosx \
-            -destination 'platform=macOS' \
-            test
+            -destination 'platform=macOS'
 
       - name: tvOS Tests
         run: |
-          xcodebuild \
+          xcodebuild test \
             -project Experiment.xcodeproj \
             -scheme Experiment \
             -sdk appletvsimulator \
-            -destination 'platform=tvOS Simulator,name=Apple TV' \
-            test
+            -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest'
 
