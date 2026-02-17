@@ -12,7 +12,7 @@ import Foundation
 /// - Note: Uses @unchecked Sendable due to @objc compatibility requirements.
 ///   All properties are immutable (`let`).
 @available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
-@objc public class ExposureEvent : NSObject, ExperimentAnalyticsEvent, @unchecked Sendable {
+@objc public final class ExposureEvent : NSObject, ExperimentAnalyticsEvent, Sendable {
 
     @objc public let name: String = "[Experiment] Exposure"
     @objc public let properties: [String: String]
@@ -31,8 +31,8 @@ import Foundation
     @objc public let userProperty: String
 
     // Protocol conformance - bridges to Any for compatibility with deprecated protocol
-    @objc public var userProperties: [String: Any]? {
-        return _userProperties as? [String: Any]
+    @objc public var userProperties: [String: any Sendable]? {
+        return _userProperties
     }
 
     @objc public init(user: ExperimentUser, key: String, variant: Variant, source: String) {

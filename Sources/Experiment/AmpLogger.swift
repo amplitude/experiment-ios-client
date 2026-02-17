@@ -10,10 +10,10 @@ import AmplitudeCore
 
 @objc
 @preconcurrency
-public class AmpLogger: NSObject, CoreLogger, @unchecked Sendable {
+public final class AmpLogger: NSObject, CoreLogger {
 
-    public var logLevel: LogLevel
-    public var loggerProvider: any CoreLogger
+    public let logLevel: LogLevel
+    public let loggerProvider: any CoreLogger
 
     public init(logLevel: LogLevel = LogLevel.warn, loggerProvier: any CoreLogger) {
         self.logLevel = logLevel

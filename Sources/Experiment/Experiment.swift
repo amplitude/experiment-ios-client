@@ -8,7 +8,7 @@
 import Foundation
 import AnalyticsConnector
 
-@objc public class Experiment : NSObject {
+@objc public final class Experiment : NSObject {
     
     private nonisolated(unsafe) static var instancesLock = DispatchSemaphore(value: 1)
     private nonisolated(unsafe) static var instances: [String: ExperimentClient] = [:]

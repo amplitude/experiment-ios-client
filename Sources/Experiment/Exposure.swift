@@ -38,9 +38,7 @@ import Foundation
  * ])
  * ```
  */
-/// - Note: Uses @unchecked Sendable due to @objc compatibility requirements.
-///   All properties are immutable (`let`).
-@objc public class Exposure : NSObject, @unchecked Sendable {
+@objc public final class Exposure : NSObject, Sendable {
     /**
      * (Required) The key for the flag the user was exposed to.
      */
@@ -59,7 +57,7 @@ import Foundation
      * (Optional) Flag, segment, and variant metadata produced as a result of
      * evaluation for the user. Used for system purposes.
      */
-    @objc public let metadata: [String: any Sendable]?
+    @objc public let metadata: [String: (any Sendable)]?
 
     internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: (any Sendable)?]?) {
         self.flagKey = flagKey
