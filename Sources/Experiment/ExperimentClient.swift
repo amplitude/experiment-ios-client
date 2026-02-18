@@ -38,15 +38,6 @@ private let minFlagConfigPollingIntervalMillis = 60000
 private let euServerUrl = "https://api.lab.eu.amplitude.com";
 private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 
-// Helper class to wrap non-@Sendable closures for GCD usage
-// Marked as @unchecked Sendable because GCD properly serializes access
-private final class SendableBox<T>: @unchecked Sendable {
-    let value: T
-    init(_ value: T) {
-        self.value = value
-    }
-}
-
 /// - Note: Uses @unchecked Sendable because thread-safety is managed through
 ///   internal dispatch queues rather than Swift concurrency primitives.
 internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked Sendable {
@@ -179,7 +170,6 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked 
         if user != nil && user != ExperimentUser() {
             self.setUser(user)
         }
-        let completionBox = completion.map { SendableBox($0) }
         fetchQueue.async { [weak self] in
             guard let self = self else { return }
             do {
@@ -192,13 +182,13 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked 
                 ) { result in
                     switch result {
                     case .success:
-                        completionBox?.value(self, nil)
+                        completion?(self, nil)
                     case .failure(let error):
-                        completionBox?.value(self, error)
+                        completion?(self, error)
                     }
                 }
             } catch {
-                completionBox?.value(self, error)
+                completion?(self, error)
             }
         }
     }
@@ -765,7 +755,7 @@ internal extension EvaluationVariant {
     func toVariant() -> Variant {
         var metadata: [String: any Sendable]? = nil
         if let m = self.metadata {
-            metadata = m.compactMapValues { $0 }
+            metadata = m as [String: any Sendable]
         }
         let experimentKey = self.metadata?["experimentKey"] as? String ?? nil
         return Variant(self.value as? String, payload: self.payload, expKey: experimentKey, key: self.key, metadata: metadata)

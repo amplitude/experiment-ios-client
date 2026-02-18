@@ -18,8 +18,6 @@ import AmplitudeCore
     case EU = 1
 }
 
-/// - Note: Uses @unchecked Sendable due to @objc compatibility requirements
-///   and protocol type erasure. All properties are immutable (`let`).
 @objc public final class ExperimentConfig : NSObject, Sendable {
 
     @available(*, deprecated, message: "Use logLevel instead. Set to .DEBUG to enable debug logging")

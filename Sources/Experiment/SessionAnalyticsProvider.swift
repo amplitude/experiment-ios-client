@@ -28,13 +28,15 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider,
         guard let variant = event.variant.value else {
             return
         }
-        propertiesLock.wait()
-        defer { propertiesLock.signal() }
-        if setProperties[event.key] == variant {
-            return
-        } else {
-            setProperties[event.key] = variant
-            unsetProperties.removeValue(forKey: event.key)
+        do {
+            propertiesLock.wait()
+            defer { propertiesLock.signal() }
+            if setProperties[event.key] == variant {
+                return
+            } else {
+                setProperties[event.key] = variant
+                unsetProperties.removeValue(forKey: event.key)
+            }
         }
         analyticsProvider.track(event)
     }
@@ -43,22 +45,26 @@ internal class SessionAnalyticsProvider : NSObject, ExperimentAnalyticsProvider,
         guard let variant = event.variant.value else {
             return
         }
-        propertiesLock.wait()
-        defer { propertiesLock.signal() }
-        if setProperties[event.key] == variant {
-            return
+        do {
+            propertiesLock.wait()
+            defer { propertiesLock.signal() }
+            if setProperties[event.key] == variant {
+                return
+            }
         }
         analyticsProvider.setUserProperty(event)
     }
     
     func unsetUserProperty(_ event: ExperimentAnalyticsEvent) {
-        propertiesLock.wait()
-        defer { propertiesLock.signal() }
-        if unsetProperties[event.key] != nil {
-            return
-        } else {
-            unsetProperties[event.key] = "-"
-            setProperties.removeValue(forKey: event.key)
+        do {
+            propertiesLock.wait()
+            defer { propertiesLock.signal() }
+            if unsetProperties[event.key] != nil {
+                return
+            } else {
+                unsetProperties[event.key] = "-"
+                setProperties.removeValue(forKey: event.key)
+            }
         }
         analyticsProvider.unsetUserProperty(event)
     }
