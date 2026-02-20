@@ -10,7 +10,7 @@ import Foundation
 
 @objc
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public class ExperimentPlugin: NSObject, UniversalPlugin {
+public class ExperimentPlugin: NSObject, UniversalPlugin, @unchecked Sendable {
 
     @objc(ExperimentPluginConfig)
     @objcMembers
@@ -173,7 +173,7 @@ extension ExperimentPlugin: ExperimentUserProvider {
             let identity = analytics.identity
             userBuilder.deviceId = identity.deviceId
             userBuilder.userId = identity.userId
-            userBuilder.userPropertiesAnyValue = identity.userProperties
+            userBuilder.userPropertiesAnyValue = identity.userProperties as? [String: any Sendable]
         }
 
         return userBuilder.build()

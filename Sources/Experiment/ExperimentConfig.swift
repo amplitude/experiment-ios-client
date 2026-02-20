@@ -8,17 +8,17 @@
 import Foundation
 import AmplitudeCore
 
-@objc public enum Source: Int {
+@objc public enum Source: Int, Sendable {
     case LocalStorage = 0
     case InitialVariants = 1
 }
 
-@objc public enum ServerZone: Int {
+@objc public enum ServerZone: Int, Sendable {
     case US = 0
     case EU = 1
 }
 
-@objc public class ExperimentConfig : NSObject {
+@objc public final class ExperimentConfig : NSObject, Sendable {
 
     @available(*, deprecated, message: "Use logLevel instead. Set to .DEBUG to enable debug logging")
     @objc public let debug: Bool
@@ -141,7 +141,7 @@ import AmplitudeCore
         public static let customRequestHeaders: CustomRequestHeadersBuilder = { [:] }
     }
     
-    public typealias CustomRequestHeadersBuilder = () -> [String: String]
+    public typealias CustomRequestHeadersBuilder = @Sendable () -> [String: String]
     
     @available(*, deprecated, message: "Use ExperimentConfigBuilder instead")
     public class Builder {

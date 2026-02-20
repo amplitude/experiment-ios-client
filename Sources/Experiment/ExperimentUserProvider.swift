@@ -15,6 +15,6 @@ import Foundation
 /// This is useful for providing contextual information about the platform, or pulling
 /// data which may potentially change without explicitly pass the data into the
 /// client on each fetch.
-@objc public protocol ExperimentUserProvider {
+@objc public protocol ExperimentUserProvider : Sendable {
     @objc func getUser() -> ExperimentUser
 }

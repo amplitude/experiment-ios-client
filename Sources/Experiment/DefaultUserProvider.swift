@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public class DefaultUserProvider : NSObject, ExperimentUserProvider {
+@objc public final class DefaultUserProvider : NSObject, ExperimentUserProvider, Sendable {
     
     private let userId: String?
     private let deviceId: String?

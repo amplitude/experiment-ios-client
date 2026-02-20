@@ -8,7 +8,8 @@
 import Foundation
 import AnalyticsConnector
 
-internal class ConnectorExposureTrackingProvider : ExposureTrackingProvider {
+internal class ConnectorExposureTrackingProvider : ExposureTrackingProvider, @unchecked Sendable {
+    // @unchecked Sendable: Assuming EventBridge handles its own concurrencies and is Sendable.
     
     private let eventBridge: EventBridge
     

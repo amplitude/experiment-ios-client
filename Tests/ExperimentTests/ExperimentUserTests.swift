@@ -21,7 +21,7 @@ class ExperimentUserTests: XCTestCase {
         .userProperty("boolUserProperty", value: true)
         .userProperty("stringArrayUserProperty", value: ["zero", "one", "two", "three"])
         .userProperty("intArrayUserProperty", value: [0, 1, 2, 3])
-        .userProperty("anyArrayUserProperty", value: [0, "one", true, 3.0])
+        .userProperty("anyArrayUserProperty", value: [0, "one", true, 3.0] as [any Sendable])
         .group("groupType", "groupName")
         .groupProperty("groupType", "groupName", "key", "value")
         .build()
@@ -38,7 +38,7 @@ class ExperimentUserTests: XCTestCase {
             "boolUserProperty": true,
             "stringArrayUserProperty": ["zero", "one", "two", "three"],
             "intArrayUserProperty": [0, 1, 2, 3],
-            "anyArrayUserProperty": [0, "one", true, 3.0]
+            "anyArrayUserProperty": [0, "one", true, 3.0] as [any Sendable]
         ])
         .groups(["groupType": ["groupName"]])
         .groupProperties(["groupType":["groupName":["key":"value"]]])

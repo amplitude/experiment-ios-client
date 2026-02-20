@@ -8,10 +8,10 @@
 import AmplitudeCore
 import Foundation
 
-@objc public protocol ExperimentClient {
-    @objc func start(_ user: ExperimentUser?, completion: ((Error?) -> Void)?) -> Void
-    @objc func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)?)
-    @objc func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)?)
+@objc public protocol ExperimentClient : Sendable {
+    @objc func start(_ user: ExperimentUser?, completion: (@Sendable (Error?) -> Void)?) -> Void
+    @objc func fetch(user: ExperimentUser?, completion: (@Sendable (ExperimentClient, Error?) -> Void)?)
+    @objc func fetch(user: ExperimentUser?, options: FetchOptions?, completion: (@Sendable (ExperimentClient, Error?) -> Void)?)
     @objc func variant(_ key: String) -> Variant
     @objc func variant(_ key: String, fallback: Variant?) -> Variant
     @objc func all() -> [String:Variant]
@@ -38,7 +38,9 @@ private let minFlagConfigPollingIntervalMillis = 60000
 private let euServerUrl = "https://api.lab.eu.amplitude.com";
 private let euFlagsServerUrl = "https://flag.lab.eu.amplitude.com";
 
-internal class DefaultExperimentClient : NSObject, ExperimentClient {
+/// - Note: Uses @unchecked Sendable because thread-safety is managed through
+///   internal dispatch queues rather than Swift concurrency primitives.
+internal class DefaultExperimentClient : NSObject, ExperimentClient, @unchecked Sendable {
 
     let apiKey: String
     private let logger: any CoreLogger
@@ -48,27 +50,27 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
 
     internal let flags: LoadStoreCache<EvaluationFlag>
     private let flagsStorageQueue = DispatchQueue(label: "com.amplitude.experiment.VariantsStorageQueue", attributes: .concurrent)
-    
+
     public let trackingOption: LoadStoreCache<String>
     private let trackingOptionStorageQueue = DispatchQueue(label: "com.amplitude.experiment.TrackingOptionStorageQueue", attributes: .concurrent)
 
     internal let config: ExperimentConfig
     private let engine = EvaluationEngine()
-    
+
     private var isRunning = false
     private let runningLock = DispatchSemaphore(value: 1)
     private var poller: DispatchSourceTimer? = nil
     private var pollerQueue = DispatchQueue(label: "com.amplitude.experiment.PollerQueue", qos: .background)
-    
+
     private var user: ExperimentUser? = nil
     private var userProvider: ExperimentUserProvider? = DefaultUserProvider()
-    
+
     private var analyticsProvider: SessionAnalyticsProvider?
     private var userSessionExposureTracker: UserSessionExposureTracker?
-    
+
     private var backoff: Backoff? = nil
     private let backoffLock = DispatchSemaphore(value: 1)
-    
+
     private let fetchQueue = DispatchQueue(label: "com.amplitude.experiment.FetchQueue")
     private let flagsQueue = DispatchQueue(label: "com.amplitude.experiment.FlagsQueue")
     private let startQueue = DispatchQueue(label: "com.amplitude.experiment.StartQueue")
@@ -126,7 +128,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         runningLock.signal()
         setUser(user)
         startQueue.async {
-            var error: Error? = nil
+            nonisolated(unsafe) var error: Error? = nil
             let fetchOnStart = self.config.fetchOnStart?.boolValue ?? true
             let startGroup = DispatchGroup()
             startGroup.enter()
@@ -160,15 +162,16 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         self.runningLock.signal()
     }
 
-    public func fetch(user: ExperimentUser?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
+    public func fetch(user: ExperimentUser?, completion: (@Sendable (ExperimentClient, Error?) -> Void)? = nil) -> Void {
         self.fetch(user: user, options: nil, completion: completion)
     }
 
-    public func fetch(user: ExperimentUser?, options: FetchOptions?, completion: ((ExperimentClient, Error?) -> Void)? = nil) -> Void {
+    public func fetch(user: ExperimentUser?, options: FetchOptions?, completion: (@Sendable (ExperimentClient, Error?) -> Void)? = nil) -> Void {
         if user != nil && user != ExperimentUser() {
             self.setUser(user)
         }
-        fetchQueue.async {
+        fetchQueue.async { [weak self] in
+            guard let self = self else { return }
             do {
                 let fetchUser = try self.mergeUserWithProviderOrWait(timeout: .seconds(10))
                 _ = self.fetchInternal(
@@ -395,7 +398,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         timeoutMillis: Int,
         retry: Bool,
         options: FetchOptions?,
-        completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+        completion: @escaping (@Sendable (Result<[String: Variant], Error>) -> Void)
     ) -> URLSessionTask? {
         // Proactively cancel retries if active in order to avoid unecessary API
         // requests. A new failure will restart the retries.
@@ -416,7 +419,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         }
     }
     
-    private func flagsInternal(completion: ((Error?) -> Void)? = nil) {
+    private func flagsInternal(completion: ((@Sendable (Error?) -> Void)?) = nil) {
         flagsQueue.async {
             self.logger.debug(message: "Updating flag configurations")
             return self.doFlags(timeoutMillis: self.config.fetchTimeoutMillis) { result in
@@ -441,7 +444,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
     // Must be run on flagsQueue
     internal func doFlags(
         timeoutMillis: Int,
-        completion: @escaping ((Result<[String: EvaluationFlag], Error>) -> Void)
+        completion: @escaping @Sendable (Result<[String: EvaluationFlag], Error>) -> Void
     ) {
         let url = URL(string: "\(config.flagsServerUrl)/sdk/v2/flags")!
         var request = URLRequest(url: url)
@@ -490,7 +493,7 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         user: ExperimentUser,
         timeoutMillis: Int,
         options: FetchOptions?,
-        completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+        completion: @escaping @Sendable (Result<[String: Variant], Error>) -> Void
     ) -> URLSessionTask? {
         let start = CFAbsoluteTimeGetCurrent()
         
@@ -750,9 +753,9 @@ private enum VariantSource : String {
 
 internal extension EvaluationVariant {
     func toVariant() -> Variant {
-        var metadata: [String: Any]? = nil
+        var metadata: [String: any Sendable]? = nil
         if let m = self.metadata {
-            metadata = m as [String: Any]
+            metadata = m as [String: any Sendable]
         }
         let experimentKey = self.metadata?["experimentKey"] as? String ?? nil
         return Variant(self.value as? String, payload: self.payload, expKey: experimentKey, key: self.key, metadata: metadata)

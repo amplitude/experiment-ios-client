@@ -38,7 +38,7 @@ import Foundation
  * ])
  * ```
  */
-@objc public class Exposure : NSObject {
+@objc public final class Exposure : NSObject, Sendable {
     /**
      * (Required) The key for the flag the user was exposed to.
      */
@@ -57,14 +57,14 @@ import Foundation
      * (Optional) Flag, segment, and variant metadata produced as a result of
      * evaluation for the user. Used for system purposes.
      */
-    @objc public let metadata: [String: Any]?
-    
-    internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: Any?]?) {
+    @objc public let metadata: [String: (any Sendable)]?
+
+    internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: (any Sendable)?]?) {
         self.flagKey = flagKey
         self.variant = variant
         self.experimentKey = experimentKey
         if let m = metadata {
-            self.metadata = m as [String: Any]
+            self.metadata = m.compactMapValues { $0 }
         } else {
             self.metadata = nil
         }

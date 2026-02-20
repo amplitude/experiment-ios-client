@@ -341,7 +341,7 @@ internal class EvaluationEngine {
         }
     }
     
-    private func mergeMetadata(_ m1: [String: Any?]?, _ m2: [String: Any?]?, _ m3: [String: Any?]?) -> [String: Any?]? {
+    private func mergeMetadata(_ m1: [String: (any Sendable)?]?, _ m2: [String: (any Sendable)?]?, _ m3: [String: (any Sendable)?]?) -> [String: (any Sendable)?]? {
         var mergedMetadata = m1 ?? [:]
         if let m2 = m2 {
             mergedMetadata = mergedMetadata.merging(m2, uniquingKeysWith: { (_, other) in other })

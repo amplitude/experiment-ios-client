@@ -41,7 +41,7 @@ import Foundation
  * ])
  * ```
  */
-@objc public protocol ExposureTrackingProvider {
+@objc public protocol ExposureTrackingProvider : Sendable {
     /**
      * Called when the `ExperimentClient` intends to track an exposure event;
      * either when `ExperimentClient.variant` serves a variant (and

@@ -7,48 +7,48 @@
 
 import Foundation
 
-internal struct EvaluationFlag: Codable {
+internal struct EvaluationFlag: Codable, Sendable {
     let key: String
     let variants: [String: EvaluationVariant]
     let segments: [EvaluationSegment]
     let dependencies: [String]?
-    let metadata: [String: Any?]?
+    let metadata: [String: (any Sendable)?]?
 }
 
-internal struct EvaluationSegment: Codable {
+internal struct EvaluationSegment: Codable, Sendable {
     let bucket: EvaluationBucket?
     let conditions: [[EvaluationCondition]]?
     let variant: String?
-    let metadata: [String: Any?]?
+    let metadata: [String: (any Sendable)?]?
 }
 
-internal struct EvaluationBucket: Codable {
+internal struct EvaluationBucket: Codable, Sendable {
     let selector: [String]
     let salt: String
     let allocations: [EvaluationAllocation]
 }
 
-internal struct EvaluationCondition: Codable {
+internal struct EvaluationCondition: Codable, Sendable {
     let selector: [String]
     let op: String
     let values: Set<String>
 }
 
-internal struct EvaluationAllocation: Codable {
+internal struct EvaluationAllocation: Codable, Sendable {
     let range: [Int]
     let distributions: [EvaluationDistribution]
 }
 
-internal struct EvaluationDistribution: Codable {
+internal struct EvaluationDistribution: Codable, Sendable {
     let variant: String
     let range: [Int]
 }
 
-internal struct EvaluationVariant: Codable, Selectable {
+internal struct EvaluationVariant: Codable, Selectable, Sendable {
     let key: String?
-    let value: Any?
-    let payload: Any?
-    let metadata: [String: Any?]?
+    let value: (any Sendable)?
+    let payload: (any Sendable)?
+    let metadata: [String: (any Sendable)?]?
 }
 
 internal class EvaluationOperator {

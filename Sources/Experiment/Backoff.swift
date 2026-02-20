@@ -7,7 +7,7 @@
 import AmplitudeCore
 import Foundation
 
-internal class Backoff {
+internal final class Backoff: Sendable {
 
     // Configuration
     private let attempts: Int
@@ -21,9 +21,9 @@ internal class Backoff {
     private let fetchQueue: DispatchQueue
 
     // State
-    private var started: Bool = false
-    private var cancelled: Bool = false
-    private var fetchTask: URLSessionTask? = nil
+    nonisolated(unsafe) private var started: Bool = false
+    nonisolated(unsafe) private var cancelled: Bool = false
+    nonisolated(unsafe) private var fetchTask: URLSessionTask? = nil
 
     init(attempts: Int, min: Int, max: Int, scalar: Float, logger: any CoreLogger, queue: DispatchQueue = DispatchQueue(label: "com.amplitude.experiment.backoff", qos: .default)) {
         self.attempts = attempts
@@ -35,7 +35,7 @@ internal class Backoff {
     }
 
     func start(
-        function: @escaping ( @escaping (Error?) -> Void) -> URLSessionTask?
+        function: @escaping @Sendable ( @Sendable @escaping (Error?) -> Void) -> URLSessionTask?
     ) {
         lock.wait()
         defer { lock.signal() }
@@ -60,7 +60,7 @@ internal class Backoff {
     private func backoff(
         attempt: Int,
         delay: Int,
-        function: @escaping ( @escaping (Error?) -> Void) -> URLSessionTask?
+        function: @escaping @Sendable ( @escaping @Sendable (Error?) -> Void) -> URLSessionTask?
     ) {
         fetchQueue.asyncAfter(deadline: .now() + .milliseconds(delay)) { [weak self] in
             guard let self = self else {

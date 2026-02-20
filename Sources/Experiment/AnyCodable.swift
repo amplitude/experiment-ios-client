@@ -7,11 +7,11 @@
 
 import Foundation
 
-internal struct AnyDecodable: Decodable {
+internal struct AnyDecodable: Decodable, Sendable {
     
-    let value: Any?
+    let value: (any Sendable)?
 
-    init<T>(_ value: T?) {
+    init<T: Sendable>(_ value: T?) {
         if value is NSNull {
             self.value = nil
         } else {

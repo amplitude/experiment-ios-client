@@ -9,7 +9,7 @@ import Foundation
 @testable import Experiment
 import XCTest
 
-class TestExposureTrackingProvider: ExposureTrackingProvider {
+class TestExposureTrackingProvider: ExposureTrackingProvider, @unchecked Sendable {
     
     public var lastExposure: Exposure? = nil
     public var trackCount = 0

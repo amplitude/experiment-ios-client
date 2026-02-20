@@ -8,10 +8,10 @@
 import Foundation
 import AnalyticsConnector
 
-@objc public class Experiment : NSObject {
+@objc public final class Experiment : NSObject {
     
-    private static var instancesLock = DispatchSemaphore(value: 1)
-    private static var instances: [String: ExperimentClient] = [:]
+    private nonisolated(unsafe) static var instancesLock = DispatchSemaphore(value: 1)
+    private nonisolated(unsafe) static var instances: [String: ExperimentClient] = [:]
 
     @objc public static func initialize(apiKey: String, config: ExperimentConfig) -> ExperimentClient {
         instancesLock.wait()
@@ -68,17 +68,17 @@ import AnalyticsConnector
     }
 }
 
-internal struct ExperimentError: Error {
+internal struct ExperimentError: Error, Sendable {
     let message: String
     init(_ msg: String) {
         self.message = msg
     }
 }
 
-internal struct FetchError: Error {
+internal struct FetchError: Error, Sendable {
     let statusCode: Int
     let message: String
-    
+
     init(_ statusCode: Int, _ msg: String) {
         self.statusCode = statusCode
         self.message = msg

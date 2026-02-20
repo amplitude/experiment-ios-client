@@ -163,7 +163,7 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testFetch_CustomRequestHeadersBuilderCalledOnEveryFetch() {
-        var builderCallCount = 0
+        nonisolated(unsafe) var builderCallCount = 0
         
         let config = ExperimentConfigBuilder()
             .debug(true)
@@ -286,7 +286,7 @@ class ExperimentClientTests: XCTestCase {
                 .build(),
             storage: InMemoryStorage()
         )
-        var variant = initialVariantSourceClient.variant(KEY, fallback: nil)
+        nonisolated(unsafe) var variant = initialVariantSourceClient.variant(KEY, fallback: nil)
         XCTAssertNotNil(variant)
         let s = DispatchSemaphore(value: 0)
         initialVariantSourceClient.fetch(user: testUser) { (client, error) in
@@ -1068,7 +1068,7 @@ class ExperimentClientTests: XCTestCase {
             user: ExperimentUser,
             timeoutMillis: Int,
             options: FetchOptions?,
-            completion: @escaping ((Result<[String: Variant], Error>) -> Void)
+            completion: @escaping (@Sendable (Result<[String: Variant], Error>) -> Void)
         ) -> URLSessionTask? {
             fetchCalls += 1
             if let mockFetch = mockFetch {
@@ -1081,7 +1081,7 @@ class ExperimentClientTests: XCTestCase {
         
         override func doFlags(
             timeoutMillis: Int,
-            completion: @escaping ((Result<[String: EvaluationFlag], Error>) -> Void)
+            completion: @escaping (@Sendable (Result<[String: EvaluationFlag], Error>) -> Void)
         ) {
             flagCalls += 1
             if let mockFlags = mockFlags {
@@ -1188,7 +1188,7 @@ class ExperimentClientTests: XCTestCase {
     }
     
     func testStart_CustomRequestHeadersBuilderCalledForFlags() {
-        var builderCallCount = 0
+        nonisolated(unsafe) var builderCallCount = 0
 
         let config = ExperimentConfigBuilder()
             .debug(true)
@@ -1398,7 +1398,7 @@ class ExperimentClientTests: XCTestCase {
     }
 }
 
-class TestAnalyticsProvider : ExperimentAnalyticsProvider {
+class TestAnalyticsProvider : ExperimentAnalyticsProvider, @unchecked Sendable {
     var didExposureGetTracked = false
     var didUserPropertyGetSet = false
     var didUserPropertyGetUnset = false
@@ -1424,7 +1424,7 @@ class TestAnalyticsProvider : ExperimentAnalyticsProvider {
     }
 }
 
-class TestUserProvider : ExperimentUserProvider {
+class TestUserProvider : ExperimentUserProvider, @unchecked Sendable {
     func getUser() -> ExperimentUser {
         return ExperimentUserBuilder()
             .deviceId("")
@@ -1465,7 +1465,7 @@ extension DefaultExperimentClient {
     }
     func startBlockingThrows(user: ExperimentUser) throws {
         let s = DispatchSemaphore(value: 0)
-        var err: Error?
+        nonisolated(unsafe) var err: Error?
         start(user) { error in
             if let error = error {
                 err = error

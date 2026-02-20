@@ -7,39 +7,38 @@
 
 import Foundation
 
-@objc public class Variant : NSObject, Codable {
-    
+@objc public final class Variant : NSObject, Codable, Sendable {
     @objc public let key: String?
     @objc public let value: String?
-    @objc public let payload: Any?
+    @objc public let payload: (any Sendable)?
     @objc public let expKey: String?
-    @objc public let metadata: [String: Any]?
+    @objc public let metadata: [String: any Sendable]?
 
-    @objc public init(_ value: String? = nil, payload: Any? = nil) {
+    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil) {
         self.key = nil
         self.value = value
         self.payload = payload
         self.expKey = nil
         self.metadata = nil
     }
-    
-    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil) {
+
+    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil) {
         self.key = nil
         self.value = value
         self.payload = payload
         self.expKey = expKey
         self.metadata = nil
     }
-    
-    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil, key: String? = nil, metadata: [String: Any]? = nil) {
+
+    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil, key: String? = nil, metadata: [String: any Sendable]? = nil) {
         self.key = key
         self.value = value
         self.payload = payload
         self.expKey = expKey
         self.metadata = metadata
     }
-    
-    internal init(key: String? = nil, value: String? = nil, payload: Any? = nil, expKey: String? = nil, metadata: [String:Any]? = nil) {
+
+    internal init(key: String? = nil, value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil, metadata: [String: any Sendable]? = nil) {
         self.key = key
         self.value = value
         self.payload = payload
@@ -66,10 +65,10 @@ import Foundation
         //
         // Check if the payload can be decoded as base64 data, and if the decoded string can be
         // dedcoded to a json object with one key, "payload" which contains the actual json value.
-        var payload: Any? = nil
+        var payload: (any Sendable)? = nil
         if let data = try? values.decode(Data.self, forKey: .payload) {
             if let opt = try? JSONSerialization.jsonObject(with: data, options: []) {
-                if let objectPayload = opt as? [String: Any?] {
+                if let objectPayload = opt as? [String: (any Sendable)?] {
                     if let subPayload = objectPayload["payload"] {
                         payload = subPayload
                     }
@@ -128,7 +127,7 @@ import Foundation
         guard self.payload != nil, other.payload != nil else {
             return false
         }
-        if let objectPayload = self.payload as? [String: Any], let otherObjectPayload = other.payload as? [String: Any] {
+        if let objectPayload = self.payload as? [String: any Sendable], let otherObjectPayload = other.payload as? [String: any Sendable] {
             return NSDictionary(dictionary: objectPayload).isEqual(to: otherObjectPayload)
         }
         let encoder = JSONEncoder()

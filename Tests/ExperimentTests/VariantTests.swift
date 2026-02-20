@@ -15,12 +15,12 @@ let decoder = JSONDecoder()
 let payloadObjectJson = """
 {"testing":123,"repeat":[1,2,3],"ok":true}
 """
-let payloadObject = try! JSONSerialization.jsonObject(with: payloadObjectJson.data(using: .utf8)!, options: [])
+let payloadObject = try! JSONSerialization.jsonObject(with: payloadObjectJson.data(using: .utf8)!, options: []) as! [String: any Sendable]
 
 let payloadArrayJson = """
 ["testing","testing",123]
 """
-let payloadArray = try! JSONSerialization.jsonObject(with: payloadArrayJson.data(using: .utf8)!, options: [])
+let payloadArray = try! JSONSerialization.jsonObject(with: payloadArrayJson.data(using: .utf8)!, options: []) as! [any Sendable]
 
 let variantNullPayload = Variant("testNull", payload: nil)
 let variantStringPayload = Variant("testString", payload: "test", key: "testString")

@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public class ExperimentUser: NSObject {
+@objc public final class ExperimentUser: NSObject, Sendable {
 
     @objc public let deviceId: String?
     @objc public let userId: String?
@@ -25,9 +25,9 @@ import Foundation
     @objc public let library: String?
     @available(*, deprecated, message: "Support for non-string values added. Use the `getUserProperties()` function instead to access all user properties.")
     @objc public let userProperties: [String: String]?
-    @objc private let userPropertiesAnyValue: [String: Any]?
+    @objc private let userPropertiesAnyValue: [String: any Sendable]?
     @objc public let groups: [String: [String]]?
-    @objc public let groupProperties: [String: [String: [String: Any]]]?
+    @objc public let groupProperties: [String: [String: [String: any Sendable]]]?
     
     @objc public override init() {
         self.deviceId = nil
@@ -122,6 +122,10 @@ import Foundation
     }
     
     @objc public func getUserProperties() -> [String: Any]? {
+        return userPropertiesAnyValue?.mapValues { $0 as Any }
+    }
+
+    internal func getSendableUserProperties() -> [String: any Sendable]? {
         return userPropertiesAnyValue
     }
     
@@ -189,9 +193,9 @@ import Foundation
         internal var carrier: String?
         internal var library: String?
         internal var userProperties: [String: String]?
-        internal var userPropertiesAnyValue: [String: Any]?
+        internal var userPropertiesAnyValue: [String: any Sendable]?
         internal var groups: [String: [String]]?
-        internal var groupProperties: [String: [String: [String: Any]]]?
+        internal var groupProperties: [String: [String: [String: any Sendable]]]?
         
         public init() {
             // public init
@@ -282,7 +286,7 @@ import Foundation
         }
 
         @discardableResult
-        public func userProperties(_ userProperties: [String: Any]?) -> Builder {
+        public func userProperties(_ userProperties: [String: any Sendable]?) -> Builder {
             guard let userProperties = userProperties else {
                 self.userProperties = nil
                 self.userPropertiesAnyValue = nil
@@ -295,7 +299,7 @@ import Foundation
         }
 
         @discardableResult
-        public func userProperty(_ property: String, value: Any) -> Builder {
+        public func userProperty(_ property: String, value: any Sendable) -> Builder {
             if let stringValue = value as? String {
                 if self.userProperties == nil {
                     self.userProperties = [property: stringValue]
@@ -326,7 +330,7 @@ import Foundation
         }
         
         @discardableResult
-        public func groupProperties(_ groupProperties: [String: [String: [String: Any]]]?) -> Builder {
+        public func groupProperties(_ groupProperties: [String: [String: [String: any Sendable]]]?) -> Builder {
             self.groupProperties = groupProperties
             return self
         }
@@ -368,9 +372,9 @@ import Foundation
     internal var carrier: String?
     internal var library: String?
     internal var userProperties: [String: String]?
-    internal var userPropertiesAnyValue: [String: Any]?
+    internal var userPropertiesAnyValue: [String: any Sendable]?
     internal var groups: [String: [String]]?
-    internal var groupProperties: [String: [String: [String: Any]]]?
+    internal var groupProperties: [String: [String: [String: any Sendable]]]?
 
     @discardableResult
     @objc public func userId(_ userId: String?) -> ExperimentUserBuilder {
@@ -457,7 +461,7 @@ import Foundation
     }
 
     @discardableResult
-    @objc public func userProperties(_ userProperties: [String: Any]?) -> ExperimentUserBuilder {
+    @objc public func userProperties(_ userProperties: [String: any Sendable]?) -> ExperimentUserBuilder {
         guard let userProperties = userProperties else {
             self.userProperties = nil
             self.userPropertiesAnyValue = nil
@@ -470,7 +474,7 @@ import Foundation
     }
 
     @discardableResult
-    @objc public func userProperty(_ property: String, value: Any) -> ExperimentUserBuilder {
+    @objc public func userProperty(_ property: String, value: any Sendable) -> ExperimentUserBuilder {
         if let stringValue = value as? String {
             if self.userProperties == nil {
                 self.userProperties = [property: stringValue]
@@ -501,7 +505,7 @@ import Foundation
     }
    
     @discardableResult
-    public func groupProperties(_ groupProperties: [String: [String: [String: Any]]]?) -> ExperimentUserBuilder {
+    public func groupProperties(_ groupProperties: [String: [String: [String: any Sendable]]]?) -> ExperimentUserBuilder {
         self.groupProperties = groupProperties
         return self
     }
@@ -527,8 +531,8 @@ import Foundation
 
 internal extension ExperimentUser {
 
-    func toDictionary() -> [String:Any] {
-        var data = [String:Any]()
+    func toDictionary() -> [String: any Sendable] {
+        var data = [String: any Sendable]()
         data["device_id"] = self.deviceId
         data["user_id"] = self.userId
         data["version"] = self.version
@@ -546,7 +550,7 @@ internal extension ExperimentUser {
         
         // Convert NSDate objects to ISO 8601 strings in user_properties
         if let userProperties = self.userPropertiesAnyValue {
-            var convertedUserProperties = [String:Any]()
+            var convertedUserProperties = [String: any Sendable]()
             for (key, value) in userProperties {
                 if let dateValue = value as? Date {
                     convertedUserProperties[key] = dateValue.iso8601
@@ -559,11 +563,11 @@ internal extension ExperimentUser {
         
         // Convert NSDate objects to ISO 8601 strings in group_properties
         if let groupProperties = self.groupProperties {
-            var convertedGroupProperties = [String:Any]()
+            var convertedGroupProperties = [String: any Sendable]()
             for (groupType, groups) in groupProperties {
-                var convertedGroups = [String:Any]()
+                var convertedGroups = [String: any Sendable]()
                 for (groupName, properties) in groups {
-                    var convertedProperties = [String:Any]()
+                    var convertedProperties = [String: any Sendable]()
                     for (key, value) in properties {
                         if let dateValue = value as? Date {
                             convertedProperties[key] = dateValue.iso8601
@@ -582,7 +586,7 @@ internal extension ExperimentUser {
     }
     
     func merge(_ user: ExperimentUser?) -> ExperimentUser {
-        let mergedUserProperties = takeOrMerge(self.getUserProperties(), user?.getUserProperties()) { t, o in
+        let mergedUserProperties = takeOrMerge(self.getSendableUserProperties(), user?.getSendableUserProperties()) { t, o in
             return t.merging(o) { (new, _) in new }
         }
         return self.copyToBuilder()
@@ -622,17 +626,17 @@ private func takeOrMerge<T>(_ this: T?, _ other: T?, _ merger: ((T, T) -> T)? = 
 }
 
 extension ExperimentUser {
-    func toEvaluationContext() -> [String: Any?] {
+    func toEvaluationContext() -> [String: (any Sendable)?] {
         var user = toDictionary()
         user.removeValue(forKey: "groups")
         user.removeValue(forKey: "group_properties")
-        var context: [String: Any?] = ["user": user]
+        var context: [String: (any Sendable)?] = ["user": user]
         // Re-configured group properties to match expected context format.
         if let userGroups = groups {
-            var groups: [String: [String: Any]] = [:]
+            var groups: [String: [String: any Sendable]] = [:]
             for (groupType, groupNames) in userGroups {
                 if let groupName = groupNames.first {
-                    var groupNameMap: [String: Any] = ["group_name": groupName]
+                    var groupNameMap: [String: any Sendable] = ["group_name": groupName]
                     // Check for group properties
                     if let groupProperties = groupProperties?[groupType]?[groupName] ?? nil {
                         groupNameMap["group_properties"] = groupProperties

@@ -11,7 +11,7 @@ import Foundation
 /// These events are sent to the implementation provided by an
 /// ``ExperimentAnalyticsProvider``.
 @available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
-@objc public protocol ExperimentAnalyticsEvent {
+@objc public protocol ExperimentAnalyticsEvent : Sendable {
     
     /// The name of the event. Should be passed as the event tracking name to the
     /// analytics implementation provided by the ``ExperimentAnalyticsProvider``.
@@ -23,7 +23,7 @@ import Foundation
     @objc var properties: [String: String] { get }
     
     /// User properties to identify with the user prior to sending the event.
-    @objc var userProperties: [String: Any]? { get }
+    @objc var userProperties: [String: any Sendable]? { get }
 
     /// The user exposed to the flag/experiment variant.
     @objc var user: ExperimentUser { get };
