@@ -7,14 +7,14 @@
 
 import Foundation
 
-@objc public final class Variant : NSObject, Codable, Sendable {
+@objc public final class Variant : NSObject, Codable, @unchecked Sendable {
     @objc public let key: String?
     @objc public let value: String?
-    @objc public let payload: (any Sendable)?
+    @objc public let payload: Any?
     @objc public let expKey: String?
-    @objc public let metadata: [String: any Sendable]?
+    @objc public let metadata: [String: Any]?
 
-    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil) {
+    @objc public init(_ value: String? = nil, payload: Any? = nil) {
         self.key = nil
         self.value = value
         self.payload = payload
@@ -22,7 +22,7 @@ import Foundation
         self.metadata = nil
     }
 
-    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil) {
+    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil) {
         self.key = nil
         self.value = value
         self.payload = payload
@@ -30,7 +30,7 @@ import Foundation
         self.metadata = nil
     }
 
-    @objc public init(_ value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil, key: String? = nil, metadata: [String: any Sendable]? = nil) {
+    @objc public init(_ value: String? = nil, payload: Any? = nil, expKey: String? = nil, key: String? = nil, metadata: [String: Any]? = nil) {
         self.key = key
         self.value = value
         self.payload = payload
@@ -38,7 +38,7 @@ import Foundation
         self.metadata = metadata
     }
 
-    internal init(key: String? = nil, value: String? = nil, payload: (any Sendable)? = nil, expKey: String? = nil, metadata: [String: any Sendable]? = nil) {
+    internal init(key: String? = nil, value: String? = nil, payload: Any? = nil, expKey: String? = nil, metadata: [String: Any]? = nil) {
         self.key = key
         self.value = value
         self.payload = payload

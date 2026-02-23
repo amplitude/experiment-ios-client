@@ -23,7 +23,7 @@ import Foundation
     @objc var properties: [String: String] { get }
     
     /// User properties to identify with the user prior to sending the event.
-    @objc var userProperties: [String: any Sendable]? { get }
+    @objc var userProperties: [String: Any]? { get }
 
     /// The user exposed to the flag/experiment variant.
     @objc var user: ExperimentUser { get };

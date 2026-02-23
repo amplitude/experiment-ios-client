@@ -38,7 +38,7 @@ import Foundation
  * ])
  * ```
  */
-@objc public final class Exposure : NSObject, Sendable {
+@objc public final class Exposure : NSObject, @unchecked Sendable {
     /**
      * (Required) The key for the flag the user was exposed to.
      */
@@ -57,9 +57,9 @@ import Foundation
      * (Optional) Flag, segment, and variant metadata produced as a result of
      * evaluation for the user. Used for system purposes.
      */
-    @objc public let metadata: [String: (any Sendable)]?
+    @objc public let metadata: [String: Any]?
 
-    internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: (any Sendable)?]?) {
+    internal init(flagKey: String, variant: String?, experimentKey: String?, metadata: [String: Any?]?) {
         self.flagKey = flagKey
         self.variant = variant
         self.experimentKey = experimentKey

@@ -10,11 +10,11 @@ import Foundation
 /// Event for tracking a user's exposure to a variant. This event will not count
 /// towards your analytics event volume.
 @available(*, deprecated, message: "Use ExposureTrackingProvider instead.")
-@objc public final class ExposureEvent : NSObject, ExperimentAnalyticsEvent, Sendable {
+@objc public final class ExposureEvent : NSObject, ExperimentAnalyticsEvent, @unchecked Sendable {
 
     @objc public let name: String = "[Experiment] Exposure"
     @objc public let properties: [String: String]
-    @objc public let userProperties: [String : any Sendable]?
+    @objc public let userProperties: [String : Any]?
 
     /// The user exposed to the flag/experiment variant.
     @objc public let user: ExperimentUser
