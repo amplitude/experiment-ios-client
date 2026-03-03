@@ -26,9 +26,8 @@ jobs:
     runs-on: macos-15
     needs: [authorize]
     env:
-      SWIFT_DOC_VERSION: '1.0.0-rc.1'
+      SWIFT_DOC_VERSION: "1.0.0-rc.1"
     steps:
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -39,36 +38,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-
-      - name: Carthage Bootstrap
-        run: carthage bootstrap --use-xcframeworks
-
-#      - name: iOS Tests
-#        run: |
-#          xcodebuild test \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk iphonesimulator \
-#            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1'
-#
-#      - name: macOS Tests
-#        run: |
-#          xcodebuild \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk macosx \
-#            -destination 'platform=macosx' \
-#            test
-#
-#      - name: tvOS Tests
-#        run: |
-#          xcodebuild \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk appletvsimulator \
-#            -destination 'platform=tvOS Simulator,name=Apple TV' \
-#            test
+          node-version: "22"
 
       - name: Validate Podfile
         run: pod lib lint --allow-warnings --verbose
