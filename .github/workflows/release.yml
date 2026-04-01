@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: ${{ github.actor }} permission check to do a release
-        uses: octokit/request-action@v2.0.0
+        uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165 # v2.0.0
         with:
           route: GET /repos/:repository/collaborators/${{ github.actor }}
           repository: ${{ github.repository }}
@@ -30,14 +30,14 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
       - name: Set Xcode 16.3
         run: |
           sudo xcode-select -switch /Applications/Xcode_16.3.app
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
 
