@@ -79,21 +79,23 @@ internal class EvaluationEngine {
     
     private func matchCondition(target: EvaluationTarget, condition: EvaluationCondition) -> Bool {
         let propValue = target.select(selector: condition.selector)
-        // We need special matching for null properties and set type prop values
-        // and operators. All other values are matched as strings, since the
-        // filter values are always strings.
         if propValue == nil {
             return matchNull(op: condition.op, filterValues: condition.values)
-        } else if (isSetOperator(op: condition.op)) {
-            guard let propValueStringList = coerceStringList(value: propValue) else {
-                return false
-            }
-            return matchSet(propValues: propValueStringList, op: condition.op, filterValues: condition.values)
         } else {
-            guard let propValueString = coerceString(value: propValue) else {
-                return false
+            let propValueStringList = coerceStringList(value: propValue)
+            if isSetOperator(op: condition.op) {
+                guard let propValueStringList = propValueStringList else {
+                    return false
+                }
+                return matchSet(propValues: propValueStringList, op: condition.op, filterValues: condition.values)
+            } else if let propValueStringList = propValueStringList {
+                return matchStringsNonSet(propValues: propValueStringList, op: condition.op, filterValues: condition.values)
+            } else {
+                guard let propValueString = coerceString(value: propValue) else {
+                    return false
+                }
+                return matchString(propValue: propValueString, op: condition.op, filterValues: condition.values)
             }
-            return matchString(propValue: propValueString, op: condition.op, filterValues: condition.values)
         }
     }
     
@@ -188,6 +190,12 @@ internal class EvaluationEngine {
         }
     }
     
+    private func matchStringsNonSet(propValues: Set<String>, op: String, filterValues: Set<String>) -> Bool {
+        return propValues.contains { element in
+            matchString(propValue: element, op: op, filterValues: filterValues)
+        }
+    }
+
     private func matchesIs(propValue: String, filterValues: Set<String>) -> Bool {
         if containsBooleans(filterValues: filterValues) {
             let lower = propValue.lowercased()
@@ -290,7 +298,10 @@ internal class EvaluationEngine {
         }
         // Parse the string value as a json array and convert to a set of strings
         // or return nil if the string could not be parsed as a json array.
-        guard let dataValue = coerceString(value: value)?.data(using: .utf8) else {
+        guard let stringValue = coerceString(value: value), stringValue.hasPrefix("[") else {
+            return nil
+        }
+        guard let dataValue = stringValue.data(using: .utf8) else {
             return nil
         }
         if let opt = try? JSONSerialization.jsonObject(with: dataValue) {
