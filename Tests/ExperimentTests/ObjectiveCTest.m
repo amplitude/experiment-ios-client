@@ -16,6 +16,7 @@ void assertVariantEqualExpected(Variant *expected, Variant *actual) {
     }
     if (metadata != nil && actual.metadata != nil) {
         metadata[@"evaluationId"] = actual.metadata[@"evaluationId"];
+        metadata[@"segmentName"] = actual.metadata[@"segmentName"];
     }
     
     Variant *matchedExpected = [[Variant alloc] init:expected.value payload:expected.payload expKey:expected.expKey key:expected.key metadata:metadata];
