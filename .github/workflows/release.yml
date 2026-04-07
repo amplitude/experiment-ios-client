@@ -11,26 +11,73 @@ on:
 jobs:
   authorize:
     name: Authorize
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     steps:
       - name: ${{ github.actor }} permission check to do a release
-        uses: octokit/request-action@v2.0.0
+        uses: octokit/request-action@57ec46afcc4c58c813af3afe67e57ced1ea9f165 # v2.0.0
         with:
           route: GET /repos/:repository/collaborators/${{ github.actor }}
           repository: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  test:
+    name: Test
+    runs-on: macos-15
+    needs: [authorize]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Xcode 16.3
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_16.3.app
+          xcodebuild -runFirstLaunch
+
+      - name: Download iOS Simulator Runtime
+        run: xcodebuild -downloadPlatform iOS
+
+      - name: Download tvOS Simulator Runtime
+        run: xcodebuild -downloadPlatform tvOS
+
+      - name: Carthage Bootstrap
+        run: carthage bootstrap --use-xcframeworks
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: iOS Tests
+        run: |
+          xcodebuild test \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+
+      - name: macOS Tests
+        run: |
+          xcodebuild test \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
+            -sdk macosx \
+            -destination 'platform=macOS'
+
+      - name: tvOS Tests
+        run: |
+          xcodebuild test \
+            -project Experiment.xcodeproj \
+            -scheme Experiment \
+            -sdk appletvsimulator \
+            -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest'
+
   release:
     name: Release
     runs-on: macos-15
-    needs: [authorize]
+    needs: [test]
     env:
       SWIFT_DOC_VERSION: '1.0.0-rc.1'
     steps:
-
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set Xcode 16.3
         run: |
@@ -40,35 +87,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Carthage Bootstrap
-        run: carthage bootstrap --use-xcframeworks
-
-#      - name: iOS Tests
-#        run: |
-#          xcodebuild test \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk iphonesimulator \
-#            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1'
-#
-#      - name: macOS Tests
-#        run: |
-#          xcodebuild \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk macosx \
-#            -destination 'platform=macosx' \
-#            test
-#
-#      - name: tvOS Tests
-#        run: |
-#          xcodebuild \
-#            -project Experiment.xcodeproj \
-#            -scheme Experiment \
-#            -sdk appletvsimulator \
-#            -destination 'platform=tvOS Simulator,name=Apple TV' \
-#            test
 
       - name: Validate Podfile
         run: pod lib lint --allow-warnings --verbose
