@@ -9,7 +9,7 @@ import XCTest
 import Foundation
 @testable import Experiment
 
-private let DEPLOYMENT_KEY = "server-NgJxxvg8OGwwBsWVXqyxQbdiflbhvugy"
+private let DEPLOYMENT_KEY = "server-VVhLULXCxxY0xqmszXouXxiEzoeJWmSh"
 
 private var flags: [EvaluationFlag] = []
 
@@ -451,6 +451,50 @@ class EvaluationIntegrationTests: XCTestCase {
         result = engine.evaluate(context: user, flags: flags)["test-is-with-booleans"]
         XCTAssertEqual("on", result?.key)
     }
+
+    // Multi-Value Array Property Tests
+
+    func testSetIsWithJsonArrayString() {
+        let user = userContext(userProperties: ["key": "[\"1\", \"2\", \"3\"]"])
+        let result = engine.evaluate(context: user, flags: flags)["test-set-is"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testIsWithArrayCollection() {
+        let user = userContext(userProperties: ["key": ["value1", "value2"]])
+        let result = engine.evaluate(context: user, flags: flags)["test-is-array"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testIsNotWithArray() {
+        let user = userContext(userProperties: ["key": ["value3", "value4"]])
+        let result = engine.evaluate(context: user, flags: flags)["test-is-not-array"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testContainsWithArray() {
+        let user = userContext(userProperties: ["key": ["has-target-value", "has", "value"]])
+        let result = engine.evaluate(context: user, flags: flags)["test-contains-array"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testDoesNotContainWithArray() {
+        let user = userContext(userProperties: ["key": ["has-value", "has", "value"]])
+        let result = engine.evaluate(context: user, flags: flags)["test-does-not-contain-array"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testIsWithJsonArrayString() {
+        let user = userContext(userProperties: ["key": "[\"value1\", \"value2\"]"])
+        let result = engine.evaluate(context: user, flags: flags)["test-is-array"]
+        XCTAssertEqual("on", result?.key)
+    }
+
+    func testDoesNotContainWithJsonArrayString() {
+        let user = userContext(userProperties: ["key": "[\"has-value\", \"has\", \"value\"]"])
+        let result = engine.evaluate(context: user, flags: flags)["test-does-not-contain-array"]
+        XCTAssertEqual("on", result?.key)
+    }
 }
 
 // Object utils
@@ -502,7 +546,6 @@ private func doFlagsAsync(_ completion: @escaping (Result<[EvaluationFlag], Erro
     request.httpMethod = "GET"
     request.setValue("Api-Key \(DEPLOYMENT_KEY)", forHTTPHeaderField: "Authorization")
     request.timeoutInterval = 20.0
-    // Do fetch request
     URLSession.shared.dataTask(with: request) { (data, response, error) in
         if let error = error {
             completion(Result.failure(error))

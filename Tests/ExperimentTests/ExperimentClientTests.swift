@@ -15,7 +15,7 @@ let KEY = "sdk-ci-test"
 let INITIAL_KEY = "initial-key"
 
 let testUser = ExperimentUserBuilder().userId("test_user").build()
-let serverVariant = Variant("on", payload: "payload", key: "on", metadata: ["evaluationId": ""])
+let serverVariant = Variant("on", payload: "payload", key: "on", metadata: ["evaluationId": "", "segmentName": ""])
 let fallbackVariant = Variant("fallback", payload: "payload")
 let initialVariant = Variant("initial")
 let initialVariants: [String: Variant] = [
@@ -28,6 +28,7 @@ let serverVariant2 = Variant("on", metadata: ["evaluationId": ""])
 func assertVariantEqual(expected: Variant, actual: Variant) {
     var metadata = expected.metadata ?? (actual.metadata != nil ? [:] : nil)
     metadata?["evaluationId"] = actual.metadata?["evaluationId"]
+    metadata?["segmentName"] = actual.metadata?["segmentName"]
     let matchedExpected = Variant(key: expected.key, value: expected.value, payload: expected.payload, expKey: expected.expKey, metadata: metadata)
     XCTAssertEqual(matchedExpected, actual)
 }
