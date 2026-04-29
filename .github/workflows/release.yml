@@ -34,11 +34,15 @@ jobs:
           sudo xcode-select -switch /Applications/Xcode_16.3.app
           xcodebuild -runFirstLaunch
 
-      - name: Download iOS Simulator Runtime
-        run: xcodebuild -downloadPlatform iOS
+      - name: Install iOS Simulator Runtime
+        run: |
+          xcrun simctl list > /dev/null
+          sudo xcodebuild -downloadPlatform iOS
 
-      - name: Download tvOS Simulator Runtime
-        run: xcodebuild -downloadPlatform tvOS
+      - name: Install tvOS Simulator Runtime
+        run: |
+          xcrun simctl list > /dev/null
+          sudo xcodebuild -downloadPlatform tvOS
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
