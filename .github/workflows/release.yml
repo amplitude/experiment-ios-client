@@ -22,9 +22,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    name: Test
+    name: Test (${{ matrix.platform }})
     runs-on: macos-15
     needs: [authorize]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            sdk: iphonesimulator
+            destination: 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+            download-runtime: iOS
+          - platform: macOS
+            sdk: macosx
+            destination: 'platform=macOS'
+            download-runtime: ''
+          - platform: tvOS
+            sdk: appletvsimulator
+            destination: 'platform=tvOS Simulator,name=Apple TV,OS=latest'
+            download-runtime: tvOS
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -34,44 +50,24 @@ jobs:
           sudo xcode-select -switch /Applications/Xcode_16.3.app
           xcodebuild -runFirstLaunch
 
-      - name: Install iOS Simulator Runtime
+      - name: Install Simulator Runtime
+        if: matrix.download-runtime != ''
         run: |
           xcrun simctl list > /dev/null
-          sudo xcodebuild -downloadPlatform iOS
-
-      - name: Install tvOS Simulator Runtime
-        run: |
-          xcrun simctl list > /dev/null
-          sudo xcodebuild -downloadPlatform tvOS
+          sudo xcodebuild -downloadPlatform ${{ matrix.download-runtime }}
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: iOS Tests
+      - name: Run Tests
         run: |
           xcodebuild test \
             -project Experiment.xcodeproj \
             -scheme Experiment \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
-
-      - name: macOS Tests
-        run: |
-          xcodebuild test \
-            -project Experiment.xcodeproj \
-            -scheme Experiment \
-            -sdk macosx \
-            -destination 'platform=macOS'
-
-      - name: tvOS Tests
-        run: |
-          xcodebuild test \
-            -project Experiment.xcodeproj \
-            -scheme Experiment \
-            -sdk appletvsimulator \
-            -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest'
+            -sdk ${{ matrix.sdk }} \
+            -destination '${{ matrix.destination }}'
 
   release:
     name: Release
@@ -91,6 +87,16 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
+
+      - name: Install Apple platform SDKs
+        run: |
+          # Warm up CoreSimulator to avoid "Unable to connect to simulator":
+          # https://github.com/actions/runner-images/issues/12862#issuecomment-3239326872
+          xcrun simctl list > /dev/null
+          sudo xcodebuild -downloadPlatform iOS
+          sudo xcodebuild -downloadPlatform tvOS
+          sudo xcodebuild -downloadPlatform watchOS
+          sudo xcodebuild -downloadPlatform visionOS
 
       - name: Validate Podfile
         run: pod lib lint --allow-warnings --verbose
