@@ -25,6 +25,10 @@ jobs:
             sdk: appletvsimulator
             destination: 'platform=tvOS Simulator,name=Apple TV,OS=latest'
             download-runtime: tvOS
+          - platform: visionOS
+            sdk: xrsimulator
+            destination: 'platform=visionOS Simulator,name=Apple Vision Pro,OS=latest'
+            download-runtime: visionOS
     name: test (${{ matrix.platform }})
     steps:
       - name: Checkout 
