@@ -88,6 +88,16 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install Apple platform SDKs
+        run: |
+          # Warm up CoreSimulator to avoid "Unable to connect to simulator":
+          # https://github.com/actions/runner-images/issues/12862#issuecomment-3239326872
+          xcrun simctl list > /dev/null
+          sudo xcodebuild -downloadPlatform iOS
+          sudo xcodebuild -downloadPlatform tvOS
+          sudo xcodebuild -downloadPlatform watchOS
+          sudo xcodebuild -downloadPlatform visionOS
+
       - name: Validate Podfile
         run: pod lib lint --allow-warnings --verbose
 
