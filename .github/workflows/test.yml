@@ -27,7 +27,9 @@ jobs:
             download-runtime: tvOS
           - platform: visionOS
             sdk: xrsimulator
-            destination: 'platform=visionOS Simulator,name=Apple Vision Pro,OS=latest'
+            # Pin OS: macos-15 has both visionOS 2.x and 26.x installed,
+            # which makes OS=latest ambiguous and fails destination matching.
+            destination: 'platform=visionOS Simulator,name=Apple Vision Pro,OS=2.5'
             download-runtime: visionOS
     name: test (${{ matrix.platform }})
     steps:
