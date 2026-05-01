@@ -79,8 +79,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          # Use a bot PAT so semantic-release's git push can bypass main
-          # branch protection. The bot identity must be on the bypass list.
           token: ${{ secrets.GH_PUBLISH_TOKEN }}
 
       - name: Set Xcode 16.3
