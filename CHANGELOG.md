@@ -1,3 +1,17 @@
+# [1.20.0](https://github.com/amplitude/experiment-ios-client/compare/v1.19.0...v1.20.0) (2026-05-01)
+
+
+### Bug Fixes
+
+* expose getUserProperties() as a public function ([#85](https://github.com/amplitude/experiment-ios-client/issues/85)) ([b99db4d](https://github.com/amplitude/experiment-ios-client/commit/b99db4dfdeb24ac9d609af0eead9bc3de8bf214d))
+* fix poorly applied merge ([#84](https://github.com/amplitude/experiment-ios-client/issues/84)) ([afd6ebc](https://github.com/amplitude/experiment-ios-client/commit/afd6ebc887eb0410416a7ba8864fab2b5d2c1b59))
+
+
+### Features
+
+* allow for better user defined logging behavior with logLevel and loggerProvider config fields ([#82](https://github.com/amplitude/experiment-ios-client/issues/82)) ([06653ad](https://github.com/amplitude/experiment-ios-client/commit/06653ad9ff885a0eae354ac0b071210ddca7a9f5))
+* support multi-value array properties with non-set operators ([#90](https://github.com/amplitude/experiment-ios-client/issues/90)) ([bb8a3e1](https://github.com/amplitude/experiment-ios-client/commit/bb8a3e1fc109607dcbca76307aced7f8c0f13ca7))
+
 # [1.19.0](https://github.com/amplitude/experiment-ios-client/compare/v1.18.3...v1.19.0) (2025-11-14)
 
 
