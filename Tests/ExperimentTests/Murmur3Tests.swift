@@ -24,7 +24,7 @@ class Murmur3Tests: XCTestCase {
         let outputs = MURMUR3_X86_32.split(separator: "\n")
         for i in 0..<inputs.count {
             let input = String(inputs[i])
-            let output = Int(outputs[i])
+            let output = UInt32(outputs[i])
             let result = input.murmurHash32x86(seed: MURMUR_SEED)
             XCTAssertEqual(result, output)
         }
