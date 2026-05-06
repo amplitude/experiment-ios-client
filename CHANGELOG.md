@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/amplitude/experiment-ios-client/compare/v1.20.0...v1.20.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* Update `Murmur3` to return `UInt32` to avoid crashes on `watchOS`. ([#96](https://github.com/amplitude/experiment-ios-client/issues/96)) ([5768707](https://github.com/amplitude/experiment-ios-client/commit/5768707bf6716dbed22b9faea3eaf33bf3233102))
+
 # [1.20.0](https://github.com/amplitude/experiment-ios-client/compare/v1.19.0...v1.20.0) (2026-05-01)
 
 
