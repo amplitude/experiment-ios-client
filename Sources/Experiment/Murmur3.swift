@@ -15,14 +15,14 @@ private let M_32: UInt32 = 5
 private let N_32: UInt32 = UInt32(bitPattern: -0x19ab949c)
 
 internal extension String {
-    func murmurHash32x86(seed: Int) -> Int? {
+    func murmurHash32x86(seed: Int) -> UInt32? {
         self.data(using: .utf8)?.murmurHash32x86(seed: seed)
     }
 }
 
 internal extension Data {
     
-    func murmurHash32x86(seed: Int) -> Int {
+    func murmurHash32x86(seed: Int) -> UInt32 {
         let length = self.count
         var hash = UInt32(seed)
         let nBlocks = length >> 2
@@ -66,7 +66,7 @@ internal extension Data {
             break
         }
         hash ^= UInt32(length)
-        return Int(fmix32(hash: hash))
+        return fmix32(hash: hash)
     }
 }
 
