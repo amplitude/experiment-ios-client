@@ -681,7 +681,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         if !fallback && !variantAndSource.variant.isDefaultVariant() {
             exposureVariant = variantAndSource.variant.key ?? variantAndSource.variant.value
         }
-        userSessionExposureTracker.track(exposure: Exposure(flagKey: key, variant: exposureVariant, experimentKey: variantAndSource.variant.expKey, metadata: variantAndSource.variant.metadata))
+        let exposureUser = mergeUserWithProvider()
+        userSessionExposureTracker.track(exposure: Exposure(flagKey: key, variant: exposureVariant, experimentKey: variantAndSource.variant.expKey, metadata: variantAndSource.variant.metadata), user: exposureUser)
     }
     
     private func legacyExposureInternal(key: String, variantAndSource: VariantAndSource) {
