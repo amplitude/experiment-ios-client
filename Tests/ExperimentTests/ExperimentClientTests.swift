@@ -1354,6 +1354,107 @@ class ExperimentClientTests: XCTestCase {
         XCTAssertEqual(storedOption, "track")
     }
     
+    // Exposure dedup reset tests (mirrors Android PR #77)
+
+    func testExposureDedup_ResetsOnUserIdChange() {
+        let exposureTrackingProvider = TestExposureTrackingProvider()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .exposureTrackingProvider(exposureTrackingProvider)
+                .source(.LocalStorage)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let flagKey = "test-dedup-flag"
+        client.variants.put(key: flagKey, value: Variant(key: "on", value: "on"))
+
+        let userA = ExperimentUserBuilder().userId("userA").build()
+        client.setUser(userA)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount, "User A should trigger first exposure")
+
+        _ = client.variant(flagKey)
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount, "Same user and variant should be deduped")
+
+        let userB = ExperimentUserBuilder().userId("userB").build()
+        client.setUser(userB)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(2, exposureTrackingProvider.trackCount, "User B on same flag should fire a new exposure")
+    }
+
+    func testExposureDedup_ResetsOnDeviceIdChange() {
+        let exposureTrackingProvider = TestExposureTrackingProvider()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .exposureTrackingProvider(exposureTrackingProvider)
+                .source(.LocalStorage)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let flagKey = "test-dedup-flag"
+        client.variants.put(key: flagKey, value: Variant(key: "on", value: "on"))
+
+        let deviceA = ExperimentUserBuilder().deviceId("deviceA").build()
+        client.setUser(deviceA)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount, "Device A should trigger first exposure")
+
+        _ = client.variant(flagKey)
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount, "Same device and variant should be deduped")
+
+        let deviceB = ExperimentUserBuilder().deviceId("deviceB").build()
+        client.setUser(deviceB)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(2, exposureTrackingProvider.trackCount, "Device B on same flag should fire a new exposure")
+    }
+
+    func testExposureDedup_DoesNotResetWhenUserUnchanged() {
+        let exposureTrackingProvider = TestExposureTrackingProvider()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .exposureTrackingProvider(exposureTrackingProvider)
+                .source(.LocalStorage)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let flagKey = "test-dedup-flag"
+        client.variants.put(key: flagKey, value: Variant(key: "on", value: "on"))
+
+        let user = ExperimentUserBuilder().userId("userA").deviceId("deviceA").build()
+        client.setUser(user)
+        for _ in 0...5 {
+            _ = client.variant(flagKey)
+        }
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount, "Same user should deduplicate repeated exposures")
+    }
+
+    func testExposureDedup_ResetsOnUserIdAndDeviceIdChange() {
+        let exposureTrackingProvider = TestExposureTrackingProvider()
+        let client = DefaultExperimentClient(
+            apiKey: API_KEY,
+            config: ExperimentConfigBuilder()
+                .exposureTrackingProvider(exposureTrackingProvider)
+                .source(.LocalStorage)
+                .build(),
+            storage: InMemoryStorage()
+        )
+        let flagKey = "test-dedup-flag"
+        client.variants.put(key: flagKey, value: Variant(key: "on", value: "on"))
+
+        let userA = ExperimentUserBuilder().userId("userA").deviceId("deviceA").build()
+        client.setUser(userA)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(1, exposureTrackingProvider.trackCount)
+
+        let userB = ExperimentUserBuilder().userId("userB").deviceId("deviceB").build()
+        client.setUser(userB)
+        _ = client.variant(flagKey)
+        XCTAssertEqual(2, exposureTrackingProvider.trackCount, "Changing both userId and deviceId should reset dedup cache")
+    }
+
     func testMultipleCallsToSetTracksAssignmentUsesLatestSetting() {
         let client = DefaultExperimentClient(
             apiKey: API_KEY,
