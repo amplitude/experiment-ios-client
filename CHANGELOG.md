@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/amplitude/experiment-ios-client/compare/v1.20.1...v1.20.2) (2026-05-20)
+
+
+### Bug Fixes
+
+* pass current user to UserSessionExposureTracker to reset dedup on identity change ([#97](https://github.com/amplitude/experiment-ios-client/issues/97)) ([a8a9fca](https://github.com/amplitude/experiment-ios-client/commit/a8a9fca50617678ecba273f3d43f12754095e210)), closes [#77](https://github.com/amplitude/experiment-ios-client/issues/77)
+
 ## [1.20.1](https://github.com/amplitude/experiment-ios-client/compare/v1.20.0...v1.20.1) (2026-05-06)
 
 

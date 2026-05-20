@@ -322,7 +322,7 @@ import AmplitudeCore
     internal struct Constants {
         // Version string is matched in release.config.js
         // Changing this may result in breaking automated releases
-        internal static let Version: String = "1.20.1"
+        internal static let Version: String = "1.20.2"
         internal static let Library: String = "experiment-ios-client"
     }
     
