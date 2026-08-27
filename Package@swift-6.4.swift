@@ -7,8 +7,8 @@ let package = Package(
     name: "experiment-ios-client",
     platforms: [
         .iOS(.v15),
-        .macOS(.v10_13),
-        .tvOS(.v12),
+        .macOS(.v12),
+        .tvOS(.v15),
         .watchOS(.v9),
         .visionOS(.v1),
     ],
