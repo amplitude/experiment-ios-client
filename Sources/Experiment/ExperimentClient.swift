@@ -118,7 +118,8 @@ internal class DefaultExperimentClient : NSObject, ExperimentClient {
         isRunning = true
         if self.config.pollOnStart {
             let timer = DispatchSource.makeTimerSource(queue: pollerQueue)
-            timer.schedule(deadline: .now() + .seconds(60), repeating: .seconds(60))
+            let pollingInterval = DispatchTimeInterval.milliseconds(self.config.flagConfigPollingIntervalMillis)
+            timer.schedule(deadline: .now() + pollingInterval, repeating: pollingInterval)
             timer.setEventHandler { self.flagsInternal() }
             timer.activate()
             self.poller = timer
