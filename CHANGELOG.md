@@ -1,3 +1,11 @@
+## [1.20.3](https://github.com/amplitude/experiment-ios-client/compare/v1.20.2...v1.20.3) (2026-09-08)
+
+
+### Bug Fixes
+
+* add Swift 6.4 package manifest ([#99](https://github.com/amplitude/experiment-ios-client/issues/99)) ([40f2210](https://github.com/amplitude/experiment-ios-client/commit/40f221061d4f4c62457414dcf6f8030b34e483d9))
+* **experiment:** honor flag config polling interval ([#100](https://github.com/amplitude/experiment-ios-client/issues/100)) ([85c88ac](https://github.com/amplitude/experiment-ios-client/commit/85c88ac1b2d6b065a0ef612605efba423f051e10))
+
 ## [1.20.2](https://github.com/amplitude/experiment-ios-client/compare/v1.20.1...v1.20.2) (2026-05-20)
 
 
